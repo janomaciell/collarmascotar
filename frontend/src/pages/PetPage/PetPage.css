@@ -1,0 +1,116 @@
+.pet-page-container {
+  max-width: 800px;
+  margin: 2rem auto;
+  padding: 0 1rem;
+}
+
+.pet-profile {
+  background-color: #fff;
+  border-radius: 8px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+}
+
+.pet-profile h1 {
+  background-color: #4CAF50;
+  color: white;
+  padding: 1.5rem;
+  margin: 0;
+  text-align: center;
+  font-size: 1.8rem;
+}
+
+.pet-details {
+  padding: 2rem;
+}
+
+.detail-group {
+  margin-bottom: 2rem;
+}
+
+.detail-group:last-child {
+  margin-bottom: 0;
+}
+
+.detail-group h2 {
+  color: #333;
+  font-size: 1.3rem;
+  margin-bottom: 1rem;
+  border-bottom: 2px solid #4CAF50;
+  padding-bottom: 0.5rem;
+}
+
+.detail-group p {
+  color: #666;
+  line-height: 1.6;
+  margin-bottom: 0.5rem;
+}
+
+.detail-group p:last-child {
+  margin-bottom: 0;
+}
+
+.detail-group a {
+  color: #4CAF50;
+  text-decoration: none;
+}
+
+.detail-group a:hover {
+  text-decoration: underline;
+}
+
+.contact-buttons {
+  padding: 1.5rem 2rem;
+  background-color: #f9f9f9;
+  border-top: 1px solid #eee;
+  text-align: center;
+}
+
+.call-button {
+  display: inline-block;
+  background-color: #4CAF50;
+  color: white;
+  padding: 0.75rem 2rem;
+  border-radius: 4px;
+  text-decoration: none;
+  font-size: 1.1rem;
+  transition: background-color 0.3s;
+}
+
+.call-button:hover {
+  background-color: #388E3C;
+}
+
+.loading,
+.error-container,
+.not-found {
+  text-align: center;
+  padding: 3rem 1rem;
+  background-color: #fff;
+  border-radius: 8px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+.loading {
+  color: #666;
+}
+
+.error-container {
+  color: #f44336;
+}
+
+.not-found {
+  color: #f57c00;
+}
+
+@media (max-width: 768px) {
+  .pet-profile h1 {
+    font-size: 1.5rem;
+    padding: 1rem;
+  }
+  
+  .pet-details,
+  .contact-buttons {
+    padding: 1.5rem;
+  }
+} 

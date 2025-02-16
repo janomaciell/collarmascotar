@@ -1,5 +1,6 @@
 from django.urls import path, include
 from rest_framework.routers import DefaultRouter
+from rest_framework.authtoken.views import obtain_auth_token
 from . import views
 
 router = DefaultRouter()
@@ -9,4 +10,5 @@ urlpatterns = [
     path('', include(router.urls)),
     path('pet/<uuid:uuid>/', views.get_pet_public_info, name='pet-public-info'),
     path('register/', views.RegisterUserView.as_view(), name='register'),
+    path('login/', obtain_auth_token, name='api_token_auth'),
 ]
