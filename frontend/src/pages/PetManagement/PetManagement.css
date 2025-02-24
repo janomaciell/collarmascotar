@@ -1,44 +1,161 @@
+:root {
+  --primary-color: #6E9F1F;     /* Verde principal */
+  --primary-dark: #5a8712;      /* Verde oscuro */
+  --secondary-color: #8b5a2b;   /* Marrón */
+  --accent-color: #d8c4a0;      /* Beige */
+  --text-primary: #4b3d2e;      /* Marrón oscuro para texto */
+  --text-secondary: #5a4e42;    /* Marrón medio para texto */
+  --background-light: #f4f7fc;  /* Fondo claro */
+  --error-color: #f44336;       /* Rojo para errores */
+  --success-color: #4CAF50;     /* Verde para éxito */
+  --shadow-standard: 0 8px 20px rgba(0, 0, 0, 0.1);
+}
+
+/* Estilos Generales */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Arial', sans-serif;
+  background-color: var(--background-light); /* Fondo suave azul grisáceo */
+  color: var(--text-primary); /* Color marrón oscuro */
+  line-height: 1.6;
+}
+
+/* Contenedor Principal */
 .pet-management-container {
-  max-width: 800px;
+  max-width: 100%;
+  width: 850px;
   margin: 2rem auto;
-  padding: 1rem;
+  padding: 2.5rem;
   background-color: #fff;
-  border-radius: 8px;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  border-radius: 12px;
+  box-shadow: var(--shadow-standard);
+  background: linear-gradient(to right, #ffffff 0%, #e1e8f0 100%); /* Fondo sutil */
+  background-image: url('https://via.placeholder.com/800x400/cccccc/ffffff?text=Imagen+de+Mascotas'); /* Agrega una imagen de fondo */
+  background-size: cover;
+  background-position: center;
 }
 
+/* Título de la Sección */
 .pet-management-container h2 {
-  color: #333;
-  margin-bottom: 1.5rem;
-  font-size: 1.8rem;
+  color: var(--text-primary);
+  margin-bottom: 2rem;
+  font-size: 2.4rem;
+  text-align: center;
+  font-weight: bold;
+  text-shadow: 2px 2px 6px rgba(0, 0, 0, 0.1);
 }
 
+/* Botón para Añadir Mascota */
 .add-pet-button {
-  background-color: #4CAF50;
+  background-color: var(--primary-color); /* Verde vibrante */
   color: white;
   border: none;
-  padding: 0.75rem 1.5rem;
-  border-radius: 4px;
+  padding: 1rem 2rem;
+  border-radius: 8px;
   cursor: pointer;
-  font-size: 1rem;
-  transition: background-color 0.3s;
-  margin-bottom: 1.5rem;
+  font-size: 1.3rem;
+  font-weight: bold;
+  display: block;
+  margin: 0 auto 2rem;
+  transition: all 0.3s ease;
+  box-shadow: 0 6px 15px rgba(0, 0, 0, 0.1);
+  width: 100%;
 }
 
 .add-pet-button:hover {
-  background-color: #388E3C;
+  background-color: var(--primary-dark); /* Verde más oscuro */
+  transform: translateY(-3px);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
 }
 
+/* Mensaje de Carga */
 .loading-message {
   text-align: center;
   color: #666;
-  padding: 2rem;
-  background-color: #f9f9f9;
-  border-radius: 8px;
+  padding: 3rem;
+  background-color: rgba(255, 255, 255, 0.9);
+  border-radius: 12px;
+  margin-bottom: 2rem;
+  font-size: 1.2rem;
+  box-shadow: 0 6px 15px rgba(0, 0, 0, 0.1);
+  background: linear-gradient(135deg, #f9f9f9 0%, #e1e8f0 100%);
 }
 
+.loading-message i {
+  font-size: 3rem;
+  color: var(--primary-color);
+  margin-bottom: 1rem;
+}
+
+/* Mensaje de Error */
 .error-message {
-  color: #f44336;
+  color: var(--error-color);
   text-align: center;
-  margin-top: 1rem;
-} 
+  margin-top: 2rem;
+  font-size: 1.2rem;
+  font-weight: bold;
+  padding: 1.2rem;
+  border-radius: 8px;
+  background-color: rgba(244, 67, 54, 0.1);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1);
+}
+
+/* Estilos Responsivos */
+@media (max-width: 768px) {
+  .pet-management-container {
+    padding: 2rem;
+    width: 100%;
+  }
+
+  .pet-management-container h2 {
+    font-size: 2rem;
+  }
+
+  .add-pet-button {
+    font-size: 1.1rem;
+    padding: 1rem 1.8rem;
+  }
+
+  .loading-message {
+    font-size: 1.1rem;
+    padding: 2rem;
+  }
+
+  .error-message {
+    font-size: 1.1rem;
+    padding: 1rem;
+  }
+}
+
+/* Sección de Héroe */
+.hero-section {
+  background: linear-gradient(120deg, var(--accent-color) 0%, var(--secondary-color) 100%);
+  position: relative;
+  overflow: hidden;
+}
+
+.hero-section::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: url('/assets/paw-pattern.png'); /* Asegúrate de que la ruta de la imagen sea correcta */
+  opacity: 0.1;
+}
+
+/* Tarjeta de Característica */
+.feature-card {
+  border-left: 4px solid var(--primary-color);
+  transition: all 0.3s ease;
+}
+
+.feature-card:hover {
+  transform: translateY(-10px) scale(1.02);
+}

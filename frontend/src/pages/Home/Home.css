@@ -1,124 +1,207 @@
-.home-container {
-  max-width: 1200px;
-  margin: 0 auto;
+/* Estilos Generales */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
 }
 
+body {
+  font-family: 'Arial', sans-serif;
+  background-color: #f1f5f8; /* Fondo suave gris azulado */
+  color: #4b3d2e; /* Color marrón oscuro */
+  line-height: 1.6;
+  margin: 0;
+  padding: 0;
+  width: 100%;
+}
+
+/* Contenedor principal */
+.home-container {
+  max-width: 100%;
+  margin: 0 auto;
+  width: 100%;
+  padding: 0 2rem;
+}
+
+/* Sección de Héroe */
 .hero-section {
-  text-align: center;
-  padding: 3rem 1rem;
-  background-color: #f9f9f9;
-  border-radius: 8px;
-  margin-bottom: 3rem;
+  background: linear-gradient(120deg, #d8c4a0 0%, #bca581 100%); /* Fondo degradado marrón claro */
+  padding: 6rem 2rem; /* Espaciado interno */
+  text-align: center; /* Centrar texto */
+  border-radius: 12px; /* Esquinas redondeadas */
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.1); /* Sombra */
+  margin-bottom: 4rem; /* Espaciado inferior */
 }
 
 .hero-section h1 {
-  font-size: 2.5rem;
-  margin-bottom: 1rem;
-  color: #333;
+  font-size: 3.4rem; /* Ajusté el tamaño para más impacto */
+  color: #4b3d2e; /* Color marrón oscuro */
+  margin-bottom: 1.5rem; /* Espaciado inferior */
+  font-weight: 700; /* Negrita */
+  text-transform: uppercase; /* Texto en mayúsculas */
+  letter-spacing: 2px; /* Espaciado entre letras */
 }
 
 .hero-section p {
-  font-size: 1.2rem;
-  color: #666;
-  max-width: 700px;
-  margin: 0 auto 2rem;
+  font-size: 1.6rem;
+  color: #5a4e42;
+  margin-bottom: 2.5rem;
+  line-height: 1.8;
+  max-width: 800px;
+  margin-left: auto;
+  margin-right: auto;
 }
 
 .cta-button {
-  display: inline-block;
-  background-color: #4CAF50;
-  color: white;
-  font-size: 1.1rem;
-  padding: 0.8rem 2rem;
-  border-radius: 4px;
-  text-decoration: none;
-  transition: background-color 0.3s;
+  background-color: #8b5a2b; /* Color marrón */
+  color: white; /* Texto blanco */
+  font-size: 1.3rem; /* Tamaño de fuente */
+  padding: 1rem 3rem; /* Espaciado interno */
+  border-radius: 8px; /* Esquinas redondeadas */
+  text-decoration: none; /* Sin subrayado */
+  display: inline-block; /* Mostrar como bloque en línea */
+  transition: all 0.3s ease; /* Transición suave */
+  margin-top: 1rem; /* Espaciado superior */
+  box-shadow: 0 6px 25px rgba(0, 0, 0, 0.15); /* Sombra */
 }
 
 .cta-button:hover {
-  background-color: #388E3C;
+  background-color: #7a4e2b; /* Color marrón más oscuro al pasar el mouse */
+  transform: scale(1.05); /* Aumentar tamaño al pasar el mouse */
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.2); /* Sombra más notoria */
 }
 
+/* Sección de Características */
 .features-section {
-  margin-bottom: 3rem;
+  margin-bottom: 5rem; /* Espaciado inferior */
 }
 
 .features-section h2 {
-  text-align: center;
-  margin-bottom: 2rem;
-  font-size: 2rem;
-  color: #333;
+  text-align: center; /* Centrar texto */
+  font-size: 2.8rem; /* Tamaño de fuente */
+  margin-bottom: 3.5rem; /* Espaciado inferior */
+  color: #4b3d2e; /* Color marrón oscuro */
 }
 
 .features-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-  gap: 2rem;
+  display: grid; /* Usar grid para el diseño */
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); /* Columnas responsivas */
+  gap: 2rem; /* Espaciado entre elementos */
 }
 
 .feature-card {
-  background-color: #fff;
-  border-radius: 8px;
-  padding: 2rem;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-  transition: transform 0.3s;
+  background-color: #fff; /* Fondo blanco */
+  padding: 2.5rem; /* Espaciado interno */
+  border-radius: 12px; /* Esquinas redondeadas */
+  box-shadow: 0 12px 35px rgba(0, 0, 0, 0.1); /* Sombra */
+  transition: transform 0.3s, box-shadow 0.3s; /* Transición suave */
+  text-align: center; /* Centrar texto */
+  position: relative; /* Posición relativa para efectos */
 }
 
 .feature-card:hover {
-  transform: translateY(-5px);
+  transform: translateY(-10px); /* Desplazamiento hacia arriba al pasar el mouse */
+  box-shadow: 0 15px 40px rgba(0, 0, 0, 0.15); /* Sombra más notoria */
 }
 
 .feature-card h3 {
-  color: #4CAF50;
-  margin-bottom: 1rem;
-  font-size: 1.3rem;
+  font-size: 1.8rem;
+  color: #8b5a2b;
+  margin-bottom: 1.5rem;
+  font-weight: 700;
 }
 
 .feature-card p {
-  color: #666;
-  line-height: 1.6;
+  font-size: 1.2rem;
+  color: #5a4e42;
+  line-height: 1.7;
 }
 
+/* Sección ¿Cómo Funciona? */
 .how-it-works {
-  background-color: #f9f9f9;
-  padding: 3rem 2rem;
-  border-radius: 8px;
+  background-color: #d8c4a0; /* Color marrón claro */
+  padding: 4rem 3rem; /* Espaciado interno */
+  border-radius: 12px; /* Esquinas redondeadas */
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1); /* Sombra */
 }
 
 .how-it-works h2 {
   text-align: center;
-  margin-bottom: 2rem;
-  font-size: 2rem;
-  color: #333;
+  font-size: 2.8rem;
+  margin-bottom: 3rem;
+  color: #4b3d2e;
+  font-weight: 700;
 }
 
 .steps-list {
-  max-width: 600px;
+  max-width: 750px;
   margin: 0 auto;
-  padding-left: 2rem;
+  padding-left: 1.5rem;
 }
 
 .steps-list li {
-  font-size: 1.1rem;
-  margin-bottom: 1rem;
-  padding-left: 0.5rem;
-  color: #333;
+  font-size: 1.4rem;
+  color: #4b3d2e;
+  margin-bottom: 1.5rem;
+  padding-left: 1.3rem;
+  position: relative;
+}
+
+.steps-list li::before {
+  content: '✔';
+  position: absolute;
+  left: 0;
+  color: #8b5a2b;
+  font-size: 1.8rem;
+}
+
+/* Estilos Responsivos */
+@media (max-width: 1024px) {
+  .hero-section h1 {
+    font-size: 2.8rem; /* Tamaño de fuente ajustado para pantallas más pequeñas */
+  }
+
+  .hero-section p {
+    font-size: 1.4rem;
+  }
+
+  .cta-button {
+    font-size: 1.2rem; /* Tamaño de fuente ajustado */
+    padding: 1rem 2.8rem; /* Espaciado interno ajustado */
+  }
+
+  .features-grid {
+    grid-template-columns: 1fr 1fr; /* Dos columnas en pantallas más pequeñas */
+  }
 }
 
 @media (max-width: 768px) {
+  .hero-section {
+    padding: 3.5rem 1.5rem; /* Espaciado interno ajustado */
+  }
+
   .hero-section h1 {
-    font-size: 2rem;
+    font-size: 2.2rem;
   }
-  
+
   .hero-section p {
-    font-size: 1rem;
+    font-size: 1.3rem;
   }
-  
+
+  .cta-button {
+    font-size: 1.1rem; /* Tamaño de fuente ajustado */
+    padding: 1rem 2.5rem; /* Espaciado interno ajustado */
+  }
+
   .features-grid {
-    grid-template-columns: 1fr;
+    grid-template-columns: 1fr; /* Una columna en pantallas pequeñas */
   }
-  
+
   .how-it-works {
-    padding: 2rem 1rem;
+    padding: 3.5rem 2rem;
   }
-} 
+
+  .how-it-works h2 {
+    font-size: 2.5rem;
+  }
+}

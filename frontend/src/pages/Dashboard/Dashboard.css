@@ -2,6 +2,8 @@
   max-width: 1200px;
   margin: 0 auto;
   padding: 2rem 1rem;
+  background: var(--background-light);
+  min-height: 100vh;
 }
 
 .dashboard-header {
@@ -13,7 +15,7 @@
 
 .dashboard-header h2 {
   color: #333;
-  font-size: 1.8rem;
+  font-size: 2rem;
   margin: 0;
 }
 
@@ -22,9 +24,9 @@
   color: white;
   border: none;
   padding: 0.75rem 1.5rem;
-  border-radius: 4px;
+  border-radius: 6px;
   cursor: pointer;
-  font-size: 1rem;
+  font-size: 1.1rem;
   transition: background-color 0.3s;
 }
 
@@ -35,9 +37,9 @@
 .error-message {
   color: #f44336;
   background-color: #ffebee;
-  padding: 0.75rem;
-  border-radius: 4px;
-  margin-bottom: 1.5rem;
+  padding: 1rem;
+  border-radius: 6px;
+  margin-bottom: 2rem;
 }
 
 .pet-form-container {
@@ -47,13 +49,13 @@
 .pet-form-container h3 {
   color: #333;
   margin-bottom: 1.5rem;
-  font-size: 1.3rem;
+  font-size: 1.4rem;
 }
 
 .pets-container h3 {
   color: #333;
   margin-bottom: 1.5rem;
-  font-size: 1.3rem;
+  font-size: 1.4rem;
 }
 
 .loading-message {
@@ -62,6 +64,27 @@
   padding: 2rem;
   background-color: #f9f9f9;
   border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.pet-card {
+  background: white;
+  border-radius: 12px;
+  padding: 1.5rem;
+  margin-bottom: 1rem;
+  border-left: 4px solid var(--primary-color);
+  transition: transform 0.3s ease;
+}
+
+.pet-card:hover {
+  transform: translateX(10px);
+}
+
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 1.5rem;
+  margin-bottom: 2rem;
 }
 
 @media (max-width: 768px) {

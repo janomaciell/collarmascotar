@@ -11,7 +11,7 @@
   justify-content: space-between;
   align-items: center;
   padding: 1rem 2rem;
-  max-width: 1200px;
+  max-width: 100%;
   margin: 0 auto;
 }
 
@@ -40,12 +40,13 @@
   transition: color 0.3s;
 }
 
+
 .nav-link:hover {
-  color: #4CAF50;
+  color: #c5953c77;
 }
 
 .register-button {
-  background-color: #4CAF50;
+  background-color: #2515064d;
   color: white;
   padding: 0.5rem 1rem;
   border-radius: 4px;
@@ -53,7 +54,7 @@
 }
 
 .register-button:hover {
-  background-color: #388E3C;
+  background-color: #000000;
   color: white;
 }
 
@@ -92,4 +93,4 @@
     margin: 0.5rem 0;
     margin-left: 0;
   }
-} 
+}
