@@ -131,12 +131,12 @@ body {
     padding: 1rem;
   }
 }
-
 /* Sección de Héroe */
 .hero-section {
-  background: linear-gradient(120deg, var(--accent-color) 0%, var(--secondary-color) 100%);
   position: relative;
   overflow: hidden;
+  background: url('C:/Users/JBR/Documents/GitHub/pet-qr-collar/frontend/src/img/pet-collar-QR.jpg') no-repeat center center; /* Imagen de fondo */
+  background-size: cover; /* Asegurar que la imagen cubra todo el fondo */
 }
 
 .hero-section::before {
@@ -150,9 +150,10 @@ body {
   opacity: 0.1;
 }
 
+
 /* Tarjeta de Característica */
 .feature-card {
-  border-left: 4px solid var(--primary-color);
+  border-left: 4px solid var(--secondary-color);
   transition: all 0.3s ease;
 }
 
