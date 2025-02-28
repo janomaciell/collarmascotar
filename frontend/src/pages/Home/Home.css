@@ -20,17 +20,16 @@ body {
   max-width: 100%;
   margin: 0 auto;
   width: 100%;
-  padding: 0 2rem;
 }
 
 /* Sección de Héroe */
 .hero-section {
-  background: linear-gradient(120deg, #d8c4a0 0%, #bca581 100%); /* Fondo degradado marrón claro */
-  padding: 6rem 2rem; /* Espaciado interno */
+  background-size: cover; /* Asegurar que la imagen cubra todo el fondo */
+  padding: 12rem 2rem; /* Espaciado interno */
   text-align: center; /* Centrar texto */
-  border-radius: 12px; /* Esquinas redondeadas */
   box-shadow: 0 12px 40px rgba(0, 0, 0, 0.1); /* Sombra */
   margin-bottom: 4rem; /* Espaciado inferior */
+  
 }
 
 .hero-section h1 {
@@ -81,14 +80,17 @@ body {
   font-size: 2.8rem; /* Tamaño de fuente */
   margin-bottom: 3.5rem; /* Espaciado inferior */
   color: #4b3d2e; /* Color marrón oscuro */
+  max-width: 1200px; /* Ancho máximo */
+  
 }
 
 .features-grid {
   display: grid; /* Usar grid para el diseño */
   grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); /* Columnas responsivas */
   gap: 2rem; /* Espaciado entre elementos */
+  max-width: 1200px; /* Ancho máximo */
+  margin: 0 auto; /* Centrar elementos */
 }
-
 .feature-card {
   background-color: #fff; /* Fondo blanco */
   padding: 2.5rem; /* Espaciado interno */

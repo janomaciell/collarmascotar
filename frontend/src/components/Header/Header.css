@@ -10,7 +10,7 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 1rem 2rem;
+  padding: 0.3rem 0.6rem;
   max-width: 100%;
   margin: 0 auto;
 }
@@ -39,7 +39,6 @@
   font-weight: 500;
   transition: color 0.3s;
 }
-
 
 .nav-link:hover {
   color: #c5953c77;
@@ -73,24 +72,44 @@
   color: #f44336;
 }
 
+.hamburger {
+  display: none;
+  font-size: 1.5rem;
+  cursor: pointer;
+}
+
+
+.hamburger span {
+  display: block;
+  width: 30px;
+  height: 3px;
+  background: #333;
+  margin: 6px auto;
+  transition: 0.3s;
+}
+
+.hamburger.open span:nth-child(1) {
+  transform: translateY(9px) rotate(45deg);
+}
+
+.hamburger.open span:nth-child(2) {
+  opacity: 0;
+}
+
+.hamburger.open span:nth-child(3) {
+  transform: translateY(-9px) rotate(-45deg);
+}
+
 @media (max-width: 768px) {
-  .header-container {
-    flex-direction: column;
-    padding: 1rem;
+  .hamburger {
+    display: block;
   }
-  
+
   .nav {
-    margin-top: 1rem;
-    width: 100%;
+    display: none;
   }
-  
-  .nav-list {
-    flex-direction: column;
-    align-items: center;
-  }
-  
-  .nav-item {
-    margin: 0.5rem 0;
-    margin-left: 0;
+
+  .nav.active {
+    display: flex;
   }
 }
