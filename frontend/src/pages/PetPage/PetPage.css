@@ -103,6 +103,14 @@
   color: #f57c00;
 }
 
+.lost-alert {
+  background-color: #ff4444;
+  color: white;
+  padding: 10px;
+  text-align: center;
+  margin-bottom: 20px;
+}
+
 @media (max-width: 768px) {
   .pet-profile h1 {
     font-size: 1.5rem;

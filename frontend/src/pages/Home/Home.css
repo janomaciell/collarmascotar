@@ -232,11 +232,11 @@ body {
 
 .steps-container {
   display: flex;
-  flex-wrap: wrap;
   justify-content: center;
-  gap: 2rem;
-  max-width: 1000px;
-  margin: 0 auto;
+  gap: 3rem;
+  max-width: 1200px;
+  padding: 10rem;
+  margin: auto;
   position: relative;
   z-index: 1;
 }

@@ -17,9 +17,9 @@ class Pet(models.Model):
     qr_code = models.ImageField(upload_to='qr_codes/', blank=True)
     qr_uuid = models.UUIDField(default=uuid.uuid4, editable=False, unique=True)
     created_at = models.DateTimeField(auto_now_add=True)
+    is_lost = models.BooleanField(default=False)
     
     def save(self, *args, **kwargs):
-        # Generar QR si no existe
         if not self.qr_code:
             qr = qrcode.QRCode(
                 version=1,
@@ -27,14 +27,19 @@ class Pet(models.Model):
                 box_size=10,
                 border=4,
             )
-            # URL donde se mostrará la información del perro
             qr.add_data(f'http://localhost:3000/pet/{self.qr_uuid}')
             qr.make(fit=True)
-            
             img = qr.make_image(fill_color="black", back_color="white")
             buffer = BytesIO()
             img.save(buffer, format='PNG')
-            self.qr_code.save(f'qr_{self.name}_{self.qr_uuid}.png', 
-                             File(buffer), save=False)
-        
+            self.qr_code.save(f'qr_{self.name}_{self.qr_uuid}.png', File(buffer), save=False)
         super().save(*args, **kwargs)
+
+class Scan(models.Model):
+    pet = models.ForeignKey(Pet, on_delete=models.CASCADE, related_name='scans')
+    timestamp = models.DateTimeField(auto_now_add=True)
+    latitude = models.FloatField()
+    longitude = models.FloatField()
+
+    def __str__(self):
+        return f"Scan de {self.pet.name} el {self.timestamp}"

@@ -1,32 +1,71 @@
+/* Estructura principal del contenedor de registro */
 .register-container {
   max-width: 500px;
-  margin: 2rem auto;
-  padding: 2rem;
-  background-color: #fff;
-  border-radius: 8px;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  margin: 4rem auto; /* Más margen superior para consistencia */
+  padding: 3rem;
+  background: #fff;
+  border-radius: 20px;
+  box-shadow: 0 10px 30px rgba(61, 43, 31, 0.15); /* Sombra marrón suave */
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+  border: 2px solid #f4c430; /* Borde dorado inspirado en pelaje */
 }
 
+.register-container:hover {
+  transform: translateY(-10px); /* Elevación al hover como en home.css */
+  box-shadow: 0 15px 40px rgba(61, 43, 31, 0.25);
+  border-color: #d4a017;
+}
+
+.register-container::before {
+  content: '🐾'; /* Huella decorativa */
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  font-size: 2rem;
+  color: #d4a017;
+  opacity: 0.2;
+  transform: rotate(15deg);
+}
+
+/* Título de la página */
 .register-container h2 {
   text-align: center;
-  color: #333;
-  margin-bottom: 1.5rem;
+  font-size: 2.5rem;
+  color: #3d2b1f; /* Marrón oscuro de la paleta */
+  font-weight: 700;
+  margin-bottom: 2rem;
+  text-transform: uppercase;
+  letter-spacing: 3px;
+  background: linear-gradient(90deg, #d4a017, #fff); /* Gradiente dorado */
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  text-shadow: 0 0 10px rgba(61, 43, 31, 0.3);
+  animation: fadeInDown 1s ease; /* Animación de entrada */
 }
 
+/* Mensaje de error */
 .error-message {
-  color: #f44336;
-  background-color: #ffebee;
-  padding: 0.75rem;
-  border-radius: 4px;
-  margin-bottom: 1.5rem;
+  color: #fff;
+  background: rgba(244, 67, 54, 0.9); /* Rojo con opacidad */
+  padding: 1rem;
+  border-radius: 15px;
+  margin-bottom: 2rem;
   text-align: center;
+  font-weight: 700;
+  font-size: 1.1rem;
+  box-shadow: 0 5px 15px rgba(61, 43, 31, 0.2);
 }
 
+/* Formulario de registro */
 .register-form {
   display: flex;
   flex-direction: column;
+  gap: 1.8rem; /* Espaciado más amplio y elegante */
 }
 
+/* Estilos para los campos de formulario */
 .form-group {
   margin-bottom: 1.5rem;
 }
@@ -34,57 +73,143 @@
 .form-group label {
   display: block;
   margin-bottom: 0.5rem;
-  color: #555;
-  font-weight: 500;
+  color: #5c4033; /* Marrón medio para etiquetas */
+  font-weight: 600;
+  font-size: 1.1rem;
 }
 
 .form-group input {
   width: 100%;
-  padding: 0.75rem;
-  border: 1px solid #ddd;
-  border-radius: 4px;
+  padding: 1rem;
+  border: 2px solid #f4c430; /* Borde dorado claro */
+  border-radius: 12px;
   font-size: 1rem;
-  transition: border-color 0.3s;
+  background: #f9e9d5; /* Fondo crema cálido */
+  color: #3d2b1f;
+  transition: all 0.3s ease;
 }
 
 .form-group input:focus {
   outline: none;
-  border-color: #4CAF50;
+  border-color: #d4a017; /* Dorado más intenso al enfocar */
+  background: #fff;
+  box-shadow: 0 5px 15px rgba(61, 43, 31, 0.2);
 }
 
+.form-group input::placeholder {
+  color: #8b6f47; /* Tono marrón suave para placeholder */
+  opacity: 0.8;
+}
+
+/* Botón de enviar */
 .submit-button {
-  background-color: #4CAF50;
-  color: white;
+  background: linear-gradient(135deg, #d4a017, #f4c430); /* Gradiente dorado */
+  color: #3d2b1f;
   border: none;
-  padding: 0.75rem;
-  font-size: 1rem;
-  border-radius: 4px;
+  padding: 1rem;
+  font-size: 1.3rem;
+  font-weight: 700;
+  border-radius: 50px; /* Bordes más redondeados */
   cursor: pointer;
-  transition: background-color 0.3s;
+  transition: all 0.3s ease;
+  box-shadow: 0 5px 20px rgba(61, 43, 31, 0.3);
+  position: relative;
+  overflow: hidden;
+}
+
+.submit-button::after {
+  content: '🐾'; /* Huella como en el botón CTA */
+  position: absolute;
+  right: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 1.2rem;
+  opacity: 0;
+  transition: opacity 0.3s ease;
 }
 
 .submit-button:hover {
-  background-color: #388E3C;
+  transform: translateY(-5px);
+  box-shadow: 0 10px 30px rgba(61, 43, 31, 0.4);
 }
 
+.submit-button:hover::after {
+  opacity: 1;
+}
+
+/* Enlace para login */
 .login-link {
   text-align: center;
   margin-top: 1.5rem;
-  color: #666;
+  color: #5c4033;
+  font-size: 1.1rem;
+  font-weight: 500;
 }
 
 .login-link a {
-  color: #4CAF50;
+  color: #d4a017; /* Dorado para el enlace */
   text-decoration: none;
+  font-weight: 700;
+  transition: all 0.3s ease;
 }
 
 .login-link a:hover {
+  color: #f4c430;
   text-decoration: underline;
+  text-shadow: 0 0 5px rgba(61, 43, 31, 0.2);
 }
 
+/* Animaciones */
+@keyframes fadeInDown {
+  from { opacity: 0; transform: translateY(-20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes fadeInUp {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.register-container {
+  animation: fadeInUp 0.8s ease-out; /* Animación de entrada */
+}
+
+/* Estilos responsivos */
 @media (max-width: 768px) {
   .register-container {
-    padding: 1.5rem;
-    margin: 1rem;
+    padding: 2rem;
+    width: 90%;
+    margin: 2rem auto;
   }
-} 
+
+  .register-container h2 {
+    font-size: 2rem;
+  }
+
+  .form-group input {
+    padding: 0.9rem;
+  }
+
+  .submit-button {
+    padding: 0.9rem;
+    font-size: 1.2rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .register-container h2 {
+    font-size: 1.8rem;
+  }
+
+  .error-message {
+    font-size: 1rem;
+  }
+
+  .form-group label {
+    font-size: 1rem;
+  }
+
+  .submit-button {
+    padding: 0.8rem;
+  }
+}

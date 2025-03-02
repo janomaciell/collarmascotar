@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
-import { getPetByUuid } from '../../services/api';
+import { getPetByUuid, notifyOwner } from '../../services/api';
 import './PetPage.css';
 
 const PetPage = () => {
@@ -10,37 +10,47 @@ const PetPage = () => {
   const [error, setError] = useState('');
 
   useEffect(() => {
-    const fetchPet = async () => {
+    const fetchPetAndNotify = async () => {
       try {
         setIsLoading(true);
         const data = await getPetByUuid(uuid);
         setPet(data);
+
+        if (navigator.geolocation) {
+          navigator.geolocation.getCurrentPosition(
+            async (position) => {
+              const location = {
+                latitude: position.coords.latitude,
+                longitude: position.coords.longitude,
+              };
+              await notifyOwner(uuid, location);
+            },
+            (err) => console.error('Geolocalización denegada:', err),
+            { enableHighAccuracy: true, timeout: 5000 }
+          );
+        }
       } catch (err) {
-        setError('No se pudo encontrar la información de esta mascota.');
+        setError('No se pudo encontrar la información de esta mascota: ' + (err.detail || err));
         console.error(err);
       } finally {
         setIsLoading(false);
       }
     };
 
-    fetchPet();
+    fetchPetAndNotify();
   }, [uuid]);
 
-  if (isLoading) {
-    return <div className="loading">Cargando información de la mascota...</div>;
-  }
-
-  if (error) {
-    return <div className="error-container">{error}</div>;
-  }
-
-  if (!pet) {
-    return <div className="not-found">Mascota no encontrada</div>;
-  }
-
+  if (isLoading) return <div className="loading">Cargando información de la mascota...</div>;
+  if (error) return <div className="error-container">{error}</div>;
+  if (!pet) return <div className="not-found">Mascota no encontrada</div>;
   return (
     <div className="pet-page-container">
       <div className="pet-profile">
+        {pet.isLost && (
+          <div className="lost-alert">
+            <h2>¡Estoy perdido! Por favor, ayuda a contactar a mi dueño</h2>
+          </div>
+        )}
         <h1>¡Has encontrado a {pet.name}!</h1>
         
         <div className="pet-details">

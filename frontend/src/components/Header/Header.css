@@ -1,9 +1,12 @@
 .header {
   background-color: #ffffff;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  position: sticky;
+  position: fixed;
   top: 0;
-  z-index: 1000;
+  left: 0;
+  width: 100%;
+  z-index: 1000; /* Asegura que el header esté por encima de todo */
+  height: 60px; /* Altura fija para consistencia, ajusta si es necesario */
 }
 
 .header-container {
@@ -11,8 +14,9 @@
   justify-content: space-between;
   align-items: center;
   padding: 0.3rem 5.6rem;
-  max-width: 100%;
+  max-width: 1200px; /* Ajusta al ancho máximo del contenido */
   margin: 0 auto;
+  height: 100%; /* Asegura que el contenedor use toda la altura del header */
 }
 
 .logo a {
@@ -78,7 +82,6 @@
   cursor: pointer;
 }
 
-
 .hamburger span {
   display: block;
   width: 30px;
@@ -107,9 +110,26 @@
 
   .nav {
     display: none;
+    position: absolute;
+    top: 100%; /* Aparece justo debajo del header */
+    left: 0;
+    width: 100%;
+    background-color: #ffffff;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    z-index: 999; /* Menor que el header pero mayor que el contenido */
   }
 
   .nav.active {
     display: flex;
+    flex-direction: column;
+    padding: 1rem;
+  }
+
+  .nav-item {
+    margin: 0.5rem 0;
+  }
+
+  .header-container {
+    padding: 0.3rem 1.5rem; /* Menos padding en móvil */
   }
 }

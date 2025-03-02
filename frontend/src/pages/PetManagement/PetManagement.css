@@ -20,143 +20,279 @@
 
 body {
   font-family: 'Arial', sans-serif;
-  background-color: var(--background-light); /* Fondo suave azul grisáceo */
-  color: var(--text-primary); /* Color marrón oscuro */
+  background: var(--background-light);
+  color: var(--text-primary);
   line-height: 1.6;
+  overflow-x: hidden;
 }
 
 /* Contenedor Principal */
 .pet-management-container {
-  max-width: 100%;
-  width: 850px;
-  margin: 2rem auto;
-  padding: 2.5rem;
-  background-color: #fff;
-  border-radius: 12px;
-  box-shadow: var(--shadow-standard);
-  background: linear-gradient(to right, #ffffff 0%, #e1e8f0 100%); /* Fondo sutil */
-  background-image: url('https://via.placeholder.com/800x400/cccccc/ffffff?text=Imagen+de+Mascotas'); /* Agrega una imagen de fondo */
-  background-size: cover;
-  background-position: center;
+  position: absolute;
+  top: 60px; /* Altura del header, ajusta si es necesario */
+  left: 0;
+  width: 100vw;
+  height: calc(100vh - 60px); /* Resta la altura del header */
+  background: linear-gradient(135deg, var(--background-light) 0%, var(--accent-color) 100%);
+  overflow-y: auto;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  padding: 2rem;
+  z-index: 1; /* Menor que el header */
 }
 
-/* Título de la Sección */
-.pet-management-container h2 {
-  color: var(--text-primary);
-  margin-bottom: 2rem;
-  font-size: 2.4rem;
-  text-align: center;
-  font-weight: bold;
-  text-shadow: 2px 2px 6px rgba(0, 0, 0, 0.1);
-}
-
-/* Botón para Añadir Mascota */
-.add-pet-button {
-  background-color: var(--primary-color); /* Verde vibrante */
-  color: white;
-  border: none;
-  padding: 1rem 2rem;
-  border-radius: 8px;
-  cursor: pointer;
-  font-size: 1.3rem;
-  font-weight: bold;
-  display: block;
-  margin: 0 auto 2rem;
-  transition: all 0.3s ease;
-  box-shadow: 0 6px 15px rgba(0, 0, 0, 0.1);
-  width: 100%;
-}
-
-.add-pet-button:hover {
-  background-color: var(--primary-dark); /* Verde más oscuro */
-  transform: translateY(-3px);
-  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
-}
-
-/* Mensaje de Carga */
-.loading-message {
-  text-align: center;
-  color: #666;
-  padding: 3rem;
-  background-color: rgba(255, 255, 255, 0.9);
-  border-radius: 12px;
-  margin-bottom: 2rem;
-  font-size: 1.2rem;
-  box-shadow: 0 6px 15px rgba(0, 0, 0, 0.1);
-  background: linear-gradient(135deg, #f9f9f9 0%, #e1e8f0 100%);
-}
-
-.loading-message i {
-  font-size: 3rem;
-  color: var(--primary-color);
-  margin-bottom: 1rem;
-}
-
-/* Mensaje de Error */
-.error-message {
-  color: var(--error-color);
-  text-align: center;
-  margin-top: 2rem;
-  font-size: 1.2rem;
-  font-weight: bold;
-  padding: 1.2rem;
-  border-radius: 8px;
-  background-color: rgba(244, 67, 54, 0.1);
-  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1);
-}
-
-/* Estilos Responsivos */
-@media (max-width: 768px) {
-  .pet-management-container {
-    padding: 2rem;
-    width: 100%;
-  }
-
-  .pet-management-container h2 {
-    font-size: 2rem;
-  }
-
-  .add-pet-button {
-    font-size: 1.1rem;
-    padding: 1rem 1.8rem;
-  }
-
-  .loading-message {
-    font-size: 1.1rem;
-    padding: 2rem;
-  }
-
-  .error-message {
-    font-size: 1.1rem;
-    padding: 1rem;
-  }
-}
-/* Sección de Héroe */
-.hero-section {
-  position: relative;
-  overflow: hidden;
-  background: url('C:/Users/JBR/Documents/GitHub/pet-qr-collar/frontend/src/img/pet-collar-QR.jpg') no-repeat center center; /* Imagen de fondo */
-  background-size: cover; /* Asegurar que la imagen cubra todo el fondo */
-}
-
-.hero-section::before {
+/* Fondo con olas y animales */
+.pet-management-container::before {
   content: '';
   position: absolute;
   top: 0;
   left: 0;
   width: 100%;
   height: 100%;
-  background: url('/assets/paw-pattern.png'); /* Asegúrate de que la ruta de la imagen sea correcta */
-  opacity: 0.1;
+  background: url('data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 320"%3E%3Cpath fill="%238b5a2b" fill-opacity="0.2" d="M0,224L60,213.3C120,203,240,181,360,170.7C480,160,600,160,720,165.3C840,171,960,181,1080,186.7C1200,192,1320,192,1380,192L1440,192L1440,320L1380,320C1320,320,1200,320,1080,320C960,320,840,320,720,320C600,320,480,320,360,320C240,320,120,320,60,320L0,320Z"%3E%3C/path%3E%3C/svg%3E'),
+              url('data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 50 50"%3E%3Cpath d="M25 10c5 5 10 0 15 5s5 10 0 15-10 5-15 0-5-10 0-15z" fill="%236E9F1F" opacity="0.1"/%3E%3C/svg%3E');
+  background-repeat: repeat-x, repeat;
+  background-position: bottom, center;
+  z-index: 0;
+  animation: waveMove 10s infinite linear;
 }
 
-
-/* Tarjeta de Característica */
-.feature-card {
-  border-left: 4px solid var(--secondary-color);
-  transition: all 0.3s ease;
+/* Contenido */
+.pet-management-content {
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  max-width: 1200px;
+  padding: 2rem;
+  background: rgba(255, 255, 255, 0.9);
+  border-radius: 20px;
+  box-shadow: var(--shadow-standard);
+  animation: fadeInUp 0.8s ease-out;
 }
 
-.feature-card:hover {
-  transform: translateY(-10px) scale(1.02);
+/* Título */
+.pet-management-content h2 {
+  font-size: 3rem;
+  font-weight: 800;
+  text-align: center;
+  color: var(--text-primary);
+  margin-bottom: 2rem;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  background: linear-gradient(90deg, var(--primary-color), var(--secondary-color));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+/* Botón */
+.add-pet-button {
+  background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-dark) 100%);
+  color: #fff;
+  border: none;
+  padding: 1rem 2.5rem;
+  border-radius: 50px;
+  cursor: pointer;
+  font-size: 1.3rem;
+  font-weight: 700;
+  display: block;
+  margin: 0 auto 2rem;
+  box-shadow: 0 8px 20px rgba(110, 159, 31, 0.3);
+}
+
+/* Mensaje de Carga */
+.loading-message {
+  text-align: center;
+  padding: 2rem;
+  background: rgba(255, 255, 255, 0.95);
+  border-radius: 15px;
+  font-size: 1.2rem;
+  color: var(--text-secondary);
+  box-shadow: var(--shadow-standard);
+  backdrop-filter: blur(5px);
+}
+
+.loading-message i {
+  font-size: 3rem;
+  color: var(--primary-color);
+  margin-bottom: 1rem;
+  display: block;
+  animation: spin 2s infinite linear;
+}
+
+/* Mensaje de Error */
+.error-message {
+  color: #fff;
+  text-align: center;
+  margin-top: 2rem;
+  font-size: 1.2rem;
+  font-weight: 700;
+  padding: 1.5rem;
+  border-radius: 15px;
+  background: linear-gradient(135deg, var(--error-color) 0%, rgba(244, 67, 54, 0.8) 100%);
+  box-shadow: 0 8px 20px rgba(244, 67, 54, 0.3);
+}
+
+/* Historial de Escaneo */
+.scan-history {
+  margin-top: 2rem;
+  padding: 1.5rem;
+  background: var(--accent-color);
+  border-radius: 15px;
+  border: 2px dashed var(--secondary-color);
+}
+
+.scan-history h3 {
+  font-size: 1.5rem;
+  color: var(--text-primary);
+  margin-bottom: 1rem;
+}
+
+.scan-history ul {
+  list-style: none;
+  padding: 0;
+}
+
+.scan-history li {
+  padding: 0.5rem 0;
+  border-bottom: 1px solid rgba(139, 90, 43, 0.2);
+}
+
+/* Tarjeta de Mascota (Pet Card) */
+.pet-card {
+  background: #fff;
+  padding: 1.5rem;
+  border-radius: 15px;
+  box-shadow: var(--shadow-standard);
+  margin: 1rem;
+  border-left: 4px solid var(--primary-color);
+  position: relative;
+  overflow: hidden;
+  animation: slideIn 0.8s ease-out;
+}
+
+.pet-card::before {
+  content: '';
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background-size: 50px;
+  z-index: 0;
+  animation: petPattern 5s infinite linear;
+}
+
+.pet-card-content {
+  position: relative;
+  z-index: 1;
+}
+
+.pet-card h3 {
+  font-size: 1.5rem;
+  color: var(--text-primary);
+  margin-bottom: 0.5rem;
+}
+
+.pet-card p {
+  color: var(--text-secondary);
+  margin: 0.5rem 0;
+}
+
+.pet-card .qr-code {
+  display: block;
+  margin: 1rem auto;
+  max-width: 150px;
+  padding: 1rem;
+  background: linear-gradient(135deg, var(--background-light), var(--accent-color));
+  border-radius: 10px;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+}
+
+.pet-card button {
+  background: var(--primary-color);
+  color: #fff;
+  border: none;
+  padding: 0.8rem 1.5rem;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 1rem;
+  margin: 0.5rem 0;
+  box-shadow: 0 4px 12px rgba(110, 159, 31, 0.3);
+}
+
+.pet-card button:disabled {
+  background: #ccc;
+  cursor: not-allowed;
+}
+
+/* Animaciones */
+@keyframes waveMove {
+  0% { background-position: 0 bottom, 0 0; }
+  100% { background-position: 1440px bottom, 50px 50px; }
+}
+
+@keyframes fadeInUp {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+@keyframes petPattern {
+  0% { transform: translate(0, 0); }
+  100% { transform: translate(50px, 50px); }
+}
+
+@keyframes qrGlow {
+  0% { box-shadow: 0 5px 15px rgba(110, 159, 31, 0.1); }
+  50% { box-shadow: 0 5px 15px rgba(110, 159, 31, 0.4); }
+  100% { box-shadow: 0 5px 15px rgba(110, 159, 31, 0.1); }
+}
+
+@keyframes slideIn {
+  from { opacity: 0; transform: translateX(-20px); }
+  to { opacity: 1; transform: translateX(0); }
+}
+
+/* Estilos Responsivos */
+@media (max-width: 768px) {
+  .pet-management-container {
+    top: 60px;
+    height: calc(100vh - 60px);
+    padding: 1.5rem;
+  }
+
+  .pet-management-content {
+    padding: 1.5rem;
+  }
+
+  .pet-management-content h2 {
+    font-size: 2.2rem;
+  }
+
+  .add-pet-button {
+    font-size: 1.1rem;
+    padding: 0.8rem 2rem;
+  }
+
+  .loading-message, .error-message {
+    font-size: 1.1rem;
+    padding: 1.5rem;
+  }
+
+  .scan-history h3 {
+    font-size: 1.3rem;
+  }
+
+  .pet-card {
+    margin: 0.5rem;
+  }
+
+  .pet-card .qr-code {
+    max-width: 120px;
+  }
 }
