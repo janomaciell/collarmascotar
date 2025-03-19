@@ -1,3 +1,5 @@
+# models.py (update to add notification models)
+
 from django.db import models
 from django.contrib.auth.models import User
 import qrcode
@@ -5,6 +7,8 @@ from io import BytesIO
 from django.core.files import File
 from PIL import Image
 import uuid
+from django.utils import timezone
+import math
 
 class Pet(models.Model):
     owner = models.ForeignKey(User, on_delete=models.CASCADE)
@@ -18,6 +22,9 @@ class Pet(models.Model):
     qr_uuid = models.UUIDField(default=uuid.uuid4, editable=False, unique=True)
     created_at = models.DateTimeField(auto_now_add=True)
     is_lost = models.BooleanField(default=False)
+    last_seen_date = models.DateTimeField(null=True, blank=True)
+    last_location = models.CharField(max_length=255, blank=True, null=True)
+    photo = models.ImageField(upload_to='pet_photos/', blank=True, null=True)
     
     def save(self, *args, **kwargs):
         if not self.qr_code:
@@ -33,6 +40,11 @@ class Pet(models.Model):
             buffer = BytesIO()
             img.save(buffer, format='PNG')
             self.qr_code.save(f'qr_{self.name}_{self.qr_uuid}.png', File(buffer), save=False)
+        
+        # If setting as lost for the first time, update last_seen_date
+        if self.is_lost and not self.last_seen_date:
+            self.last_seen_date = timezone.now()
+            
         super().save(*args, **kwargs)
 
 class Scan(models.Model):
@@ -40,6 +52,78 @@ class Scan(models.Model):
     timestamp = models.DateTimeField(auto_now_add=True)
     latitude = models.FloatField()
     longitude = models.FloatField()
-
+    
     def __str__(self):
         return f"Scan de {self.pet.name} el {self.timestamp}"
+
+class UserLocation(models.Model):
+    """Model to store user's location for notifications"""
+    user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='location')
+    latitude = models.FloatField()
+    longitude = models.FloatField()
+    notification_radius = models.IntegerField(default=50)  # radius in km
+    updated_at = models.DateTimeField(auto_now=True)
+    
+    def __str__(self):
+        return f"Location for {self.user.username}"
+    
+    def is_within_radius(self, lat, lon, radius_km=None):
+        """Check if a location is within user's notification radius"""
+        if radius_km is None:
+            radius_km = self.notification_radius
+            
+        # Calculate distance using Haversine formula
+        R = 6371  # Earth's radius in km
+        
+        lat1_rad = math.radians(self.latitude)
+        lon1_rad = math.radians(self.longitude)
+        lat2_rad = math.radians(lat)
+        lon2_rad = math.radians(lon)
+        
+        dlat = lat2_rad - lat1_rad
+        dlon = lon2_rad - lon1_rad
+        
+        a = math.sin(dlat/2) ** 2 + math.cos(lat1_rad) * math.cos(lat2_rad) * math.sin(dlon/2) ** 2
+        c = 2 * math.atan2(math.sqrt(a), math.sqrt(1-a))
+        distance = R * c
+        
+        return distance <= radius_km
+
+class DeviceRegistration(models.Model):
+    """Model to store push notification device registrations"""
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='devices')
+    registration_id = models.TextField(unique=True)  # FCM/Web Push subscription info
+    device_type = models.CharField(max_length=20, choices=[
+        ('web', 'Web Browser'),
+        ('android', 'Android'),
+        ('ios', 'iOS'),
+    ])
+    created_at = models.DateTimeField(auto_now_add=True)
+    last_active = models.DateTimeField(auto_now=True)
+    
+    def __str__(self):
+        return f"{self.device_type} device for {self.user.username}"
+
+class PosterShare(models.Model):
+    """Model to store lost pet posters for sharing"""
+    pet = models.ForeignKey(Pet, on_delete=models.CASCADE, related_name='posters')
+    image = models.ImageField(upload_to='lost_posters/')
+    pdf_file = models.FileField(upload_to='lost_posters/pdf/', blank=True, null=True)
+    share_url = models.URLField(blank=True)
+    share_count = models.IntegerField(default=0)
+    created_at = models.DateTimeField(auto_now_add=True)
+    
+    def __str__(self):
+        return f"Poster for {self.pet.name}"
+
+class LostPetAlert(models.Model):
+    """Model to store records of lost pet alerts sent"""
+    pet = models.ForeignKey(Pet, on_delete=models.CASCADE, related_name='alerts')
+    owner_latitude = models.FloatField()
+    owner_longitude = models.FloatField()
+    radius_km = models.IntegerField(default=50)
+    recipients_count = models.IntegerField(default=0)
+    sent_at = models.DateTimeField(auto_now_add=True)
+    
+    def __str__(self):
+        return f"Alert for {self.pet.name} at {self.sent_at}"

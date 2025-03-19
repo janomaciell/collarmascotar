@@ -83,7 +83,10 @@ export const getScanHistory = async (petId) => {
 // Notificar al dueño (escaneo del QR)
 export const notifyOwner = async (uuid, location) => {
   try {
-    const response = await axios.post(`${API_URL}/pet/${uuid}/scan/`, location);
+    const response = await axios.post(`${API_URL}/pet/${uuid}/scan/`, {
+      latitude: location.latitude,
+      longitude: location.longitude,
+    });
     return response.data;
   } catch (error) {
     throw error.response?.data || error.message;
@@ -94,6 +97,20 @@ export const notifyOwner = async (uuid, location) => {
 export const updatePetLostStatus = async (petId, isLost) => {
   try {
     const response = await axios.patch(`${API_URL}/pets/${petId}/`, { is_lost: isLost });
+    return response.data;
+  } catch (error) {
+    throw error.response?.data || error.message;
+  }
+};
+
+// Notificar a la comunidad (mascota perdida)
+export const sendCommunityNotification = async (petId, scannerLocation, radiusKm) => {
+  try {
+    const response = await axios.post(`${API_URL}/notifications/community/`, {
+      petId,
+      scannerLocation,
+      radiusKm,
+    });
     return response.data;
   } catch (error) {
     throw error.response?.data || error.message;

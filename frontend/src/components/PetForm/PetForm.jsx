@@ -8,7 +8,9 @@ const PetForm = ({ onSubmit, initialData = {} }) => {
     breed: initialData.breed || '',
     address: initialData.address || '',
     phone: initialData.phone || '',
-    notes: initialData.notes || ''
+    notes: initialData.notes || '',
+    latitude: initialData.latitude || '', // Nueva ubicación
+    longitude: initialData.longitude || '', // Nueva ubicación
   });
 
   const handleChange = (e) => {
@@ -97,6 +99,30 @@ const PetForm = ({ onSubmit, initialData = {} }) => {
         />
       </div>
       
+      <div className="form-group">
+        <label htmlFor="latitude">Latitud (Opcional)</label>
+        <input
+          type="number"
+          id="latitude"
+          name="latitude"
+          value={formData.latitude}
+          onChange={handleChange}
+          step="0.000001"
+        />
+      </div>
+      
+      <div className="form-group">
+        <label htmlFor="longitude">Longitud (Opcional)</label>
+        <input
+          type="number"
+          id="longitude"
+          name="longitude"
+          value={formData.longitude}
+          onChange={handleChange}
+          step="0.000001"
+        />
+      </div>
+      
       <button type="submit" className="submit-button">
         {initialData.id ? 'Actualizar Mascota' : 'Crear Mascota'}
       </button>
@@ -104,4 +130,4 @@ const PetForm = ({ onSubmit, initialData = {} }) => {
   );
 };
 
-export default PetForm; 
+export default PetForm;

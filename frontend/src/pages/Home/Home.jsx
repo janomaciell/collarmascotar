@@ -7,7 +7,7 @@ const Home = () => {
   return (
     <div className="home-container">
       {/* Sección Héroe */}
-      <section className="hero-section" style={{ backgroundImage: `url(${heroImage})` }}>
+      <section className="hero-section">
         <div className="hero-overlay">
           <h1>Encuentra a tu mascota con nuestro Collar QR</h1>
           <p>Protección moderna y segura para que tu mejor amigo siempre regrese a casa.</p>

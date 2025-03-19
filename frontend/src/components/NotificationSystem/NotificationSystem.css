@@ -1,0 +1,79 @@
+/* NotificationSystem.css */
+
+.notification-system {
+    background-color: #f8f9fa;
+    border-radius: 8px;
+    padding: 20px;
+    margin: 20px 0;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+  }
+  
+  .notification-system h3 {
+    margin-top: 0;
+    color: #333;
+    border-bottom: 1px solid #ddd;
+    padding-bottom: 10px;
+  }
+  
+  .permission-button, .subscribe-button {
+    display: block;
+    width: 100%;
+    padding: 12px;
+    margin: 15px 0;
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    font-size: 16px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+  }
+  
+  .permission-button:hover, .subscribe-button:hover {
+    background-color: #388E3C;
+  }
+  
+  .subscribe-button.subscribed {
+    background-color: #9E9E9E;
+    cursor: not-allowed;
+  }
+  
+  .radius-selector {
+    margin: 20px 0;
+  }
+  
+  .radius-selector label {
+    display: block;
+    margin-bottom: 10px;
+    font-weight: bold;
+  }
+  
+  .radius-selector input {
+    width: 100%;
+    margin-top: 5px;
+  }
+  
+  .error-message {
+    color: #D32F2F;
+    padding: 10px;
+    background-color: #FFEBEE;
+    border-radius: 4px;
+    margin: 10px 0;
+  }
+  
+  .info-box {
+    background-color: #E8F5E9;
+    border-left: 4px solid #4CAF50;
+    padding: 15px;
+    margin-top: 20px;
+    border-radius: 4px;
+  }
+  
+  .info-box p {
+    margin-top: 0;
+  }
+  
+  .info-box ul {
+    padding-left: 20px;
+    margin-bottom: 0;
+  }

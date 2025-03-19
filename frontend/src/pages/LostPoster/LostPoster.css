@@ -1,0 +1,161 @@
+.lost-poster-container {
+    padding: 2rem;
+    max-width: 1200px;
+    margin: 0 auto;
+    background: rgba(255, 255, 255, 0.9);
+    border-radius: 20px;
+    box-shadow: var(--shadow-standard);
+  }
+  
+  .lost-poster {
+    background: #fff;
+    padding: 2rem;
+    border-radius: 15px;
+    text-align: center;
+    border: 2px dashed var(--primary-color);
+    animation: fadeInUp 0.8s ease-out;
+  }
+  
+  .lost-poster h1 {
+    font-size: 2.5rem;
+    color: var(--text-primary);
+    margin-bottom: 1rem;
+  }
+  
+  .lost-poster p {
+    font-size: 1.2rem;
+    color: var(--text-secondary);
+    margin: 0.5rem 0;
+  }
+  
+  .lost-poster img {
+    max-width: 200px;
+    border-radius: 10px;
+    margin: 1rem 0;
+  }
+  
+  .download-button, .share-button {
+    background: linear-gradient(135deg, var(--primary-color), var(--primary-dark));
+    color: #fff;
+    border: none;
+    padding: 1rem 2rem;
+    border-radius: 50px;
+    cursor: pointer;
+    font-size: 1.2rem;
+    margin: 1rem 0.5rem;
+    box-shadow: 0 8px 20px rgba(110, 159, 31, 0.3);
+  }
+  
+  .download-button:hover, .share-button:hover {
+    background: var(--primary-dark);
+  }
+  
+  .loading, .error, .not-found {
+    text-align: center;
+    padding: 2rem;
+    font-size: 1.2rem;
+  }
+  
+  @keyframes fadeInUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .share-options {
+    position: absolute;
+    top: 100%;
+    right: 0;
+    background-color: white;
+    border-radius: 4px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+    z-index: 10;
+    padding: 10px;
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+  }
+  
+  .share-options button {
+    padding: 8px 15px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    text-align: left;
+  }
+  
+  .whatsapp-button {
+    background-color: #25D366;
+    color: white;
+  }
+  
+  .facebook-button {
+    background-color: #4267B2;
+    color: white;
+  }
+  
+  .twitter-button {
+    background-color: #1DA1F2;
+    color: white;
+  }
+  
+  .copy-button {
+    background-color: #f0f0f0;
+    color: #333;
+  }
+  
+  .poster-qr {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 15px;
+    margin-top: 10px;
+  }
+  
+  .poster-qr img {
+    max-width: 150px;
+    margin-bottom: 10px;
+  }
+  
+  .poster-content {
+    display: flex;
+    flex-direction: column;
+    padding: 20px;
+  }
+  
+  .poster-image {
+    text-align: center;
+    margin-bottom: 20px;
+  }
+  
+  .poster-details {
+    flex: 1;
+  }
+  
+  .detail-row {
+    display: flex;
+    margin-bottom: 10px;
+    font-size: 16px;
+  }
+  
+  .detail-label {
+    font-weight: bold;
+    min-width: 150px;
+  }
+  
+  .contact-info {
+    margin-top: 20px;
+    padding: 15px;
+    background-color: #f0f0f0;
+    border-radius: 4px;
+    text-align: center;
+  }
+  
+  .phone, .email {
+    font-size: 20px;
+    font-weight: bold;
+    margin: 5px 0;
+  }
+  
+  .error-container {
+    color: #D32F2F;
+  }

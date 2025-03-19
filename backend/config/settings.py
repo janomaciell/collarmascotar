@@ -155,3 +155,14 @@ EMAIL_HOST_PASSWORD = 'hcfmtsyiqpntlrkp'  # Contraseña o contraseña de aplicac
 DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
 
 
+# Configuración de Firebase Admin SDK
+FIREBASE_CREDENTIALS_PATH = BASE_DIR / 'credentials' / 'firebase-adminsdk.json'
+
+# Configuración para Web Push
+WEBPUSH_SETTINGS = {
+    "VAPID_PUBLIC_KEY": "BGv-Zb95k8vUG0_p4JHfQoXouhg2PwRP97C2mTWC2jei4zrkP2k48Ui1xYNoSSvfbdcubaCo8q4DALd3kjzABc0",
+    "VAPID_PRIVATE_KEY": "514n-moA8np5wm5HVfhtx3ESytwVqozEkCI1WGqCBNs",
+    "VAPID_ADMIN_EMAIL": "janomaciel1@gmail.com"
+}
+
+REACT_APP_API_URL='http://localhost:8000/api'

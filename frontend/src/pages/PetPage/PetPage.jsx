@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
-import { getPetByUuid, notifyOwner } from '../../services/api';
+import { getPetByUuid, notifyOwner, sendCommunityNotification } from '../../services/api';
 import './PetPage.css';
 
 const PetPage = () => {
@@ -23,14 +23,20 @@ const PetPage = () => {
                 latitude: position.coords.latitude,
                 longitude: position.coords.longitude,
               };
-              await notifyOwner(uuid, location);
+              await notifyOwner(uuid, location); // Notificar al dueño
+              await sendCommunityNotification(uuid, location, 50); // Notificar a la comunidad (50 km)
             },
-            (err) => console.error('Geolocalización denegada:', err),
+            (err) => {
+              console.error('Geolocalización denegada:', err);
+              setError('No se pudo obtener la ubicación del escáner.');
+            },
             { enableHighAccuracy: true, timeout: 5000 }
           );
+        } else {
+          setError('Geolocalización no soportada por el navegador.');
         }
       } catch (err) {
-        setError('No se pudo encontrar la información de esta mascota: ' + (err.detail || err));
+        setError('No se pudo encontrar la información de esta mascota: ' + (err.detail || err.message));
         console.error(err);
       } finally {
         setIsLoading(false);
@@ -43,6 +49,7 @@ const PetPage = () => {
   if (isLoading) return <div className="loading">Cargando información de la mascota...</div>;
   if (error) return <div className="error-container">{error}</div>;
   if (!pet) return <div className="not-found">Mascota no encontrada</div>;
+
   return (
     <div className="pet-page-container">
       <div className="pet-profile">
@@ -85,4 +92,4 @@ const PetPage = () => {
   );
 };
 
-export default PetPage; 
+export default PetPage;
