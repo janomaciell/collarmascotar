@@ -15,6 +15,7 @@
     "@mui/material": "^6.4.4",
     "axios": "^1.7.9",
     "html2canvas": "^1.4.1",
+    "jspdf": "^3.0.1",
     "qrcode.react": "^4.2.0",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
