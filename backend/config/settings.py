@@ -25,7 +25,7 @@ SECRET_KEY = 'django-insecure-$8fp#ptqx_q90cry+5((#6)%avvzozb_%b@pg(nd=gvd1)kbw+
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['collarmascotar.vercel.app', 'localhost', '127.0.0.1']
+ALLOWED_HOSTS = ['collarmascotar.onrender.com', 'localhost', '127.0.0.1']
 
 
 # Application definition
@@ -168,5 +168,5 @@ WEBPUSH_SETTINGS = {
 REACT_APP_API_URL='http://localhost:8000/api'
 
 CORS_ALLOWED_ORIGINS = [
-    "https://collarmascotar.vercel.app",
+    "https://collarmascotar.onrender.com",
 ]
