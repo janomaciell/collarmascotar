@@ -19,17 +19,63 @@ class ScanSerializer(serializers.ModelSerializer):
 class PetSerializer(serializers.ModelSerializer):
     class Meta:
         model = Pet
-        fields = ['id', 'name', 'age', 'breed', 'address', 'phone', 
-                 'notes', 'qr_code', 'qr_uuid', 'created_at', 'is_lost',
-                 'last_seen_date', 'last_location', 'photo']
+        fields = [
+            'id', 
+            'name', 
+            'age', 
+            'breed', 
+            'address', 
+            'phone',
+            'email',
+            'notes', 
+            'qr_code', 
+            'qr_uuid', 
+            'created_at', 
+            'is_lost',
+            'last_seen_date', 
+            'last_location', 
+            'photo',
+            # Campos de salud
+            'allergies',
+            'medical_conditions',
+            'blood_type',
+            'weight',
+            # Información de identificación
+            'microchip_id',
+            'birth_date',
+            'gender',
+            # Estado de esterilización
+            'is_sterilized',
+            'sterilization_date',
+            # Información del veterinario
+            'vet_name',
+            'vet_phone',
+            'vet_address'
+        ]
         read_only_fields = ['id', 'qr_code', 'qr_uuid', 'created_at']
 
 class PetPublicSerializer(serializers.ModelSerializer):
     """Serializer para datos públicos que verá quien escanee el QR"""
     class Meta:
         model = Pet
-        fields = ['name', 'age', 'breed', 'address', 'phone', 'notes', 'is_lost',
-                 'last_seen_date', 'photo']
+        fields = [
+            'name', 
+            'age', 
+            'breed', 
+            'address', 
+            'phone',
+            'email', 
+            'notes', 
+            'is_lost',
+            'last_seen_date', 
+            'photo',
+            'allergies',
+            'medical_conditions',
+            'gender',
+            'is_sterilized',
+            'vet_name',
+            'vet_phone'
+        ]
 
 class UserLocationSerializer(serializers.ModelSerializer):
     class Meta:

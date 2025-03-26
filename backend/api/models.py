@@ -17,6 +17,7 @@ class Pet(models.Model):
     breed = models.CharField(max_length=100, blank=True)
     address = models.TextField()
     phone = models.CharField(max_length=20)
+    email = models.EmailField(blank=True, null=True)
     notes = models.TextField(blank=True)
     qr_code = models.ImageField(upload_to='qr_codes/', blank=True)
     qr_uuid = models.UUIDField(default=uuid.uuid4, editable=False, unique=True)
@@ -24,8 +25,33 @@ class Pet(models.Model):
     is_lost = models.BooleanField(default=False)
     last_seen_date = models.DateTimeField(null=True, blank=True)
     last_location = models.CharField(max_length=255, blank=True, null=True)
-    photo = models.ImageField(upload_to='pet_photos/', blank=True, null=True)
+    photo = models.ImageField(upload_to='pet_photos/', null=True, blank=True)
     
+    # Campos de salud
+    allergies = models.TextField(blank=True, null=True)
+    medical_conditions = models.TextField(blank=True, null=True)
+    blood_type = models.CharField(max_length=10, blank=True, null=True)
+    weight = models.DecimalField(max_digits=5, decimal_places=2, blank=True, null=True)
+    
+    # Información de identificación
+    microchip_id = models.CharField(max_length=50, blank=True, null=True)
+    birth_date = models.DateField(blank=True, null=True)
+    gender = models.CharField(
+        max_length=1, 
+        choices=[('M', 'Macho'), ('F', 'Hembra')],
+        blank=True, 
+        null=True
+    )
+    
+    # Estado de esterilización
+    is_sterilized = models.BooleanField(default=False)
+    sterilization_date = models.DateField(blank=True, null=True)
+    
+    # Información del veterinario
+    vet_name = models.CharField(max_length=100, blank=True, null=True)
+    vet_phone = models.CharField(max_length=20, blank=True, null=True)
+    vet_address = models.TextField(blank=True, null=True)
+
     def save(self, *args, **kwargs):
         if not self.qr_code:
             qr = qrcode.QRCode(
@@ -92,7 +118,7 @@ class UserLocation(models.Model):
 class DeviceRegistration(models.Model):
     """Model to store push notification device registrations"""
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='devices')
-    registration_id = models.TextField(unique=True)  # FCM/Web Push subscription info
+    registration_id = models.CharField(max_length=500)  # Quitamos unique=True
     device_type = models.CharField(max_length=20, choices=[
         ('web', 'Web Browser'),
         ('android', 'Android'),
@@ -100,6 +126,14 @@ class DeviceRegistration(models.Model):
     ])
     created_at = models.DateTimeField(auto_now_add=True)
     last_active = models.DateTimeField(auto_now=True)
+    
+    class Meta:
+        indexes = [
+            models.Index(fields=['registration_id'], name='reg_id_idx')
+        ]
+        constraints = [
+            models.UniqueConstraint(fields=['registration_id'], name='unique_registration')
+        ]
     
     def __str__(self):
         return f"{self.device_type} device for {self.user.username}"

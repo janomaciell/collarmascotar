@@ -180,7 +180,7 @@ body {
   height: 200%;
   background-size: 50px;
   z-index: 0;
-  animation: petPattern 5s infinite linear;
+  animation: 5s infinite linear; /* Falta la propiedad animation-name */
 }
 
 .pet-card-content {

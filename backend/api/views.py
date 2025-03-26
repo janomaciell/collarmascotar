@@ -17,7 +17,7 @@ from rest_framework.views import APIView
 from firebase_admin import credentials, initialize_app, messaging
 from django.conf import settings
 
-# Inicializa Firebase Admin SDK
+# Inicializa Firebase Admin
 cred = credentials.Certificate(str(settings.FIREBASE_CREDENTIALS_PATH))
 default_app = initialize_app(cred, name='petqr')
 
@@ -309,6 +309,9 @@ def generate_lost_poster(request, pet_id):
         share_url = request.build_absolute_uri(reverse('poster-share', args=[poster.id]))
         poster.share_url = share_url
         poster.save()
+        
+        print(f"Ruta de la foto guardada: {pet.photo.path}")
+        print(f"URL de la foto: {pet.photo.url}")
         
         return Response({
             "id": poster.id,

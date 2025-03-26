@@ -11,6 +11,7 @@ https://docs.djangoproject.com/en/5.1/ref/settings/
 """
 
 from pathlib import Path
+from decouple import config
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -20,16 +21,18 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/5.1/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-$8fp#ptqx_q90cry+5((#6)%avvzozb_%b@pg(nd=gvd1)kbw+'
+SECRET_KEY = config('SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['collarmascotar.onrender.com',
-                 'collarmascotar.vercel.app', 
-                 'localhost', 
-                 '127.0.0.1'
-                ]
+ALLOWED_HOSTS = [
+    'collarmascotar.onrender.com',
+    'collarmascotar.vercel.app', 
+    'localhost', 
+    '127.0.0.1',
+    config('ALLOWED_HOST', default='*')
+]
 
                 
 
@@ -86,8 +89,16 @@ WSGI_APPLICATION = 'config.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': 'pet_qr_db',          # Nombre de tu base de datos
+        'USER': 'root',               # Tu usuario de MySQL
+        'PASSWORD': '1234',     # Tu contraseña de MySQL
+        'HOST': 'localhost',          # Host donde está tu MySQL
+        'PORT': '3306',              # Puerto por defecto de MySQL
+        'OPTIONS': {
+            'init_command': "SET sql_mode='STRICT_TRANS_TABLES'",
+            'charset': 'utf8mb4'  # Añade esto para mejor soporte de caracteres
+        }
     }
 }
 
@@ -127,7 +138,13 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/5.1/howto/static-files/
 
 STATIC_URL = 'static/'
+STATIC_ROOT = BASE_DIR / 'staticfiles'
 
+# Media files
+MEDIA_URL = '/media/'
+MEDIA_ROOT = BASE_DIR / 'media'
+print(f"MEDIA_ROOT: {MEDIA_ROOT}")
+print(f"Ruta completa de la foto: {MEDIA_ROOT / 'pet_photos/Captura_de_pantalla_2024-03-09_185327_ByT626l.png'}")
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field
 
@@ -135,9 +152,6 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 # Configuración para desarrollo
 CORS_ALLOW_ALL_ORIGINS = True  # En producción, especificar orígenes
-
-MEDIA_URL = '/media/'
-MEDIA_ROOT = BASE_DIR / 'media'
 
 # Configuración de REST Framework
 REST_FRAMEWORK = {
@@ -171,11 +185,13 @@ WEBPUSH_SETTINGS = {
     "VAPID_ADMIN_EMAIL": "janomaciel1@gmail.com"
 }
 
-REACT_APP_API_URL='http://localhost:8000/api'
+REACT_APP_API_URL = config('API_URL', default='http://localhost:8000/api')
 
 CORS_ALLOWED_ORIGINS = [
     "https://collarmascotar.onrender.com",
     "http://localhost:3000",
     "https://collarmascotar.vercel.app",
-    "http://localhost:8000"  # Añadir URLs de tu proyecto React
+    "http://localhost:8000"
 ]
+
+API_URL=config('API_URL')
