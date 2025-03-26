@@ -9,6 +9,7 @@ from PIL import Image
 import uuid
 from django.utils import timezone
 import math
+from django.conf import settings
 
 class Pet(models.Model):
     owner = models.ForeignKey(User, on_delete=models.CASCADE)
@@ -60,7 +61,7 @@ class Pet(models.Model):
                 box_size=10,
                 border=4,
             )
-            qr.add_data(f'http://localhost:3000/pet/{self.qr_uuid}')
+            qr.add_data(f'{settings.FRONTEND_URL}/pet/{self.qr_uuid}')
             qr.make(fit=True)
             img = qr.make_image(fill_color="black", back_color="white")
             buffer = BytesIO()
@@ -72,6 +73,7 @@ class Pet(models.Model):
             self.last_seen_date = timezone.now()
             
         super().save(*args, **kwargs)
+
 
 class Scan(models.Model):
     pet = models.ForeignKey(Pet, on_delete=models.CASCADE, related_name='scans')

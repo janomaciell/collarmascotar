@@ -31,7 +31,6 @@ ALLOWED_HOSTS = [
     'collarmascotar.vercel.app', 
     'localhost', 
     '127.0.0.1',
-    config('ALLOWED_HOST', default='*')
 ]
 
                 
@@ -143,8 +142,7 @@ STATIC_ROOT = BASE_DIR / 'staticfiles'
 # Media files
 MEDIA_URL = '/media/'
 MEDIA_ROOT = BASE_DIR / 'media'
-print(f"MEDIA_ROOT: {MEDIA_ROOT}")
-print(f"Ruta completa de la foto: {MEDIA_ROOT / 'pet_photos/Captura_de_pantalla_2024-03-09_185327_ByT626l.png'}")
+
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field
 
@@ -195,3 +193,4 @@ CORS_ALLOWED_ORIGINS = [
 ]
 
 API_URL=config('API_URL')
+FRONTEND_URL=config('FRONTEND_URL')
