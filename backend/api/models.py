@@ -118,9 +118,8 @@ class UserLocation(models.Model):
         return distance <= radius_km
 
 class DeviceRegistration(models.Model):
-    """Model to store push notification device registrations"""
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='devices')
-    registration_id = models.CharField(max_length=500)  # Quitamos unique=True
+    registration_id = models.CharField(max_length=500)
     device_type = models.CharField(max_length=20, choices=[
         ('web', 'Web Browser'),
         ('android', 'Android'),
@@ -128,15 +127,10 @@ class DeviceRegistration(models.Model):
     ])
     created_at = models.DateTimeField(auto_now_add=True)
     last_active = models.DateTimeField(auto_now=True)
-    
+
     class Meta:
-        indexes = [
-            models.Index(fields=['registration_id'], name='reg_id_idx')
-        ]
-        constraints = [
-            models.UniqueConstraint(fields=['registration_id'], name='unique_registration')
-        ]
-    
+        unique_together = ('user', 'registration_id')
+
     def __str__(self):
         return f"{self.device_type} device for {self.user.username}"
 
@@ -163,3 +157,23 @@ class LostPetAlert(models.Model):
     
     def __str__(self):
         return f"Alert for {self.pet.name} at {self.sent_at}"
+    
+#RECOMENSAS Y PUNTOS
+
+class Reward(models.Model):
+    pet = models.OneToOneField('Pet', on_delete=models.CASCADE, related_name='reward')
+    amount = models.DecimalField(max_digits=10, decimal_places=2)
+    description = models.TextField(blank=True, null=True)
+    is_active = models.BooleanField(default=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+class UserPoints(models.Model):
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
+    total_points = models.IntegerField(default=0)
+    total_pets_helped = models.IntegerField(default=0)
+
+class PointTransaction(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    points = models.IntegerField()
+    reason = models.CharField(max_length=200)
+    timestamp = models.DateTimeField(auto_now_add=True)

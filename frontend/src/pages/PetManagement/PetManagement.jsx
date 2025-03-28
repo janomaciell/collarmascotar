@@ -1,10 +1,11 @@
 import React, { useState, useEffect } from 'react';
-import { getPets, createPet, updatePetLostStatus, getScanHistory } from '../../services/api';
+import { getPets, createPet, updatePetLostStatus, getScanHistory, updateUserLocation, generateLostPoster } from '../../services/api';
 import PetForm from '../../components/PetForm/PetForm';
 import PetList from '../../components/PetList/PetList';
 import './PetManagement.css';
 import html2canvas from 'html2canvas';
 import jsPDF from 'jspdf';
+import { API_URL } from '../../services/api';
 
 const PetManagement = () => {
   const [pets, setPets] = useState([]);
@@ -14,25 +15,35 @@ const PetManagement = () => {
   const [showForm, setShowForm] = useState(false);
   const [selectedPetId, setSelectedPetId] = useState(null);
   const [scanHistory, setScanHistory] = useState([]);
-  const [userLocation, setUserLocation] = useState(null); // Almacenar ubicación del dueño
-  const [alertRadius, setAlertRadius] = useState(50); // Radio predeterminado de 50km
+  const [userLocation, setUserLocation] = useState(null);
+  const [alertRadius, setAlertRadius] = useState(50);
 
   useEffect(() => {
     fetchPets();
-    getUserLocation(); // Obtener ubicación del usuario
+    updateLocation();
   }, []);
 
-  // Obtener ubicación del dueño
-  const getUserLocation = () => {
+  const updateLocation = () => {
     if (navigator.geolocation) {
       navigator.geolocation.getCurrentPosition(
-        (position) => {
-          setUserLocation({
+        async (position) => {
+          const location = {
             latitude: position.coords.latitude,
             longitude: position.coords.longitude,
-          });
+            radiusKm: alertRadius,
+          };
+          setUserLocation(location);
+          try {
+            await updateUserLocation(location);
+            console.log('User location updated in backend');
+          } catch (err) {
+            setError('Error updating user location: ' + err.message);
+          }
         },
-        (err) => console.error('Error al obtener ubicación:', err),
+        (err) => {
+          setError('Error getting location: ' + err.message);
+          console.error('Error al obtener ubicación:', err);
+        },
         { enableHighAccuracy: true, timeout: 5000 }
       );
     }
@@ -68,15 +79,17 @@ const PetManagement = () => {
       const updatedPet = await updatePetLostStatus(petId, !currentStatus);
       setPets(pets.map((pet) => (pet.id === petId ? updatedPet : pet)));
 
-      // Si se marca como perdida, genera cartel, envía notificaciones y suscribe a alertas
       if (!currentStatus) {
-        const pet = pets.find(p => p.id === petId);
-        await generateLostPoster(pet);
+        const pet = pets.find((p) => p.id === petId);
+        const posterUrl = await generateLostPosterLocal(pet);
         await sendLostNotification(petId);
-        await subscribeToPetAlerts(petId);
+        const posterResponse = await uploadPosterToBackend(petId, posterUrl);
+        if (posterResponse?.id) {
+          viewSharedPoster(posterResponse.id);
+        }
       }
     } catch (err) {
-      setError('Error al actualizar estado: ' + (err.detail || err));
+      setError('Error al actualizar estado: ' + err.message);
       console.error(err);
     }
   };
@@ -92,13 +105,12 @@ const PetManagement = () => {
     }
   };
 
-  // Generar cartel de mascota perdida
-  const generateLostPoster = async (pet) => {
+  const generateLostPosterLocal = async (pet) => {
     const poster = document.createElement('div');
     poster.className = 'lost-poster';
     poster.innerHTML = `
       <h1>¡Mascota Perdida!</h1>
-      <img src="${pet.photo || 'https://via.placeholder.com/200'}"" alt="Foto de ${pet.name}" />
+      <img src="${pet.photo || 'https://via.placeholder.com/200'}" alt="Foto de ${pet.name}" />
       <p><strong>Nombre:</strong> ${pet.name}</p>
       <p><strong>Raza:</strong> ${pet.breed || 'No especificada'}</p>
       <p><strong>Edad:</strong> ${pet.age} años</p>
@@ -108,78 +120,47 @@ const PetManagement = () => {
     `;
 
     document.body.appendChild(poster);
-
     const canvas = await html2canvas(poster);
     const imgData = canvas.toDataURL('image/png');
     const pdf = new jsPDF();
     pdf.addImage(imgData, 'PNG', 10, 10, 180, 0);
+    const pdfData = pdf.output('datauristring');
+    document.body.removeChild(poster);
     pdf.save(`mascota_perdida_${pet.name}.pdf`);
 
-    // Opcional: compartir en redes sociales (simulación)
-    const posterUrl = imgData;
-    console.log('Cartel generado, listo para compartir:', posterUrl);
-
-    document.body.removeChild(poster); // Limpiar después de generar
+    return { imgData, pdfData };
   };
 
-  // Enviar notificación de mascota perdida
+  const uploadPosterToBackend = async (petId, posterUrl) => {
+    try {
+      const { imgData, pdfData } = posterUrl;
+      const response = await generateLostPoster(petId, {
+        posterImage: imgData,
+        posterPdf: pdfData,
+      });
+      setSuccessMessage('Poster subido exitosamente');
+      setTimeout(() => setSuccessMessage(''), 5000);
+      return response; // Retornamos la respuesta para obtener el ID del poster
+    } catch (err) {
+      setError('Error al subir el poster: ' + err.message);
+      console.error(err);
+      throw err;
+    }
+  };
+
   const sendLostNotification = async (petId) => {
     if (!userLocation) {
-      console.error('No se pudo obtener la ubicación del dueño');
       setError('No se pudo obtener tu ubicación para enviar alertas');
       return;
     }
 
     try {
-      // Show loading indicator
       setIsLoading(true);
-      
-      const response = await fetch('/api/notifications/lost-pet', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          petId,
-          ownerLocation: userLocation,
-          radiusKm: 50, // Radio fijo de 50 km
-          petDetails: pets.find(p => p.id === petId) // Enviar detalles completos
-        }),
-      });
-      
-      if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.message || 'Error enviando notificación');
-      }
-      
-      const data = await response.json();
-      console.log(`Notificaciones enviadas a ${data.recipients} usuarios cercanos`);
-      
-      // Show success message
-      setSuccessMessage(`¡Alerta enviada! ${data.recipients} personas en un radio de 50 km han sido notificadas.`);
-      
-      // Clear success message after 5 seconds
-      setTimeout(() => setSuccessMessage(''), 5000);
-    } catch (err) {
-      setError('Error al enviar notificaciones: ' + err.message);
-      console.error(err);
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
-  const subscribeToPetAlerts = async (petId) => {
-    if (!userLocation) {
-      setError('No se pudo obtener tu ubicación para las alertas');
-      return;
-    }
-
-    try {
-      setIsLoading(true);
-      
-      const response = await fetch('/api/pets/lost/', {
+      const response = await fetch(`${API_URL}/pets/lost/`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': `Bearer ${localStorage.getItem('token')}`, // Si usas autenticación
+          'Authorization': `Token ${localStorage.getItem('token')}`,
         },
         body: JSON.stringify({
           pet_id: petId,
@@ -192,25 +173,47 @@ const PetManagement = () => {
       });
 
       if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.message || 'Error al suscribirse a las alertas');
+        let errorMessage = `Error ${response.status}: ${response.statusText}`;
+        try {
+          const errorData = await response.json();
+          errorMessage = errorData.error || errorMessage;
+        } catch (jsonErr) {
+          console.error('No se pudo parsear la respuesta de error:', jsonErr);
+        }
+        throw new Error(errorMessage);
       }
 
       const data = await response.json();
-      setSuccessMessage(`Te has suscrito a las alertas en un radio de ${alertRadius}km`);
-      
+      setSuccessMessage(`¡Alerta enviada! ${data.recipients || 0} personas notificadas.`);
       setTimeout(() => setSuccessMessage(''), 5000);
-      
-      return data;
     } catch (err) {
-      setError('Error al suscribirse a las alertas: ' + err.message);
-      console.error('Error en suscripción:', err);
+      setError('Error al enviar notificaciones: ' + err.message);
+      console.error(err);
     } finally {
       setIsLoading(false);
     }
   };
 
-  // Agregar control de radio en el formulario
+  const viewSharedPoster = async (posterId) => {
+    try {
+      const response = await fetch(`${API_URL}/poster/${posterId}/`, {
+        headers: {
+          'Authorization': `Token ${localStorage.getItem('token')}`,
+        },
+      });
+      
+      if (!response.ok) {
+        throw new Error(`Error ${response.status}: ${response.statusText}`);
+      }
+      
+      const data = await response.json();
+      window.open(data.poster.imageUrl, '_blank');
+    } catch (err) {
+      setError('Error al ver el poster compartido: ' + err.message);
+      console.error(err);
+    }
+  };
+
   const renderAlertRadiusControl = () => (
     <div className="alert-radius-control">
       <label htmlFor="alertRadius">Radio de alertas (km):</label>
@@ -236,7 +239,7 @@ const PetManagement = () => {
         </button>
 
         {showForm && <PetForm onSubmit={handleCreatePet} />}
-        
+
         {isLoading ? (
           <div className="loading-message">
             <i className="fas fa-spinner"></i>
@@ -252,7 +255,8 @@ const PetManagement = () => {
                   <ul>
                     {scanHistory.map((scan, index) => (
                       <li key={index}>
-                        {new Date(scan.timestamp).toLocaleString()} - Lat: {scan.latitude}, Lon: {scan.longitude}
+                        {new Date(scan.timestamp).toLocaleString()} - Lat: {scan.latitude}, Lon:{' '}
+                        {scan.longitude}
                       </li>
                     ))}
                   </ul>
@@ -263,7 +267,7 @@ const PetManagement = () => {
             )}
           </>
         )}
-        
+
         {error && <div className="error-message">{error}</div>}
         {successMessage && <div className="success-message">{successMessage}</div>}
       </div>

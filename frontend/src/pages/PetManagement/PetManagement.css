@@ -1,9 +1,9 @@
 :root {
-  --primary-color: #6E9F1F;     /* Verde principal */
-  --primary-dark: #5a8712;      /* Verde oscuro */
-  --secondary-color: #8b5a2b;   /* Marrón */
-  --accent-color: #d8c4a0;      /* Beige */
-  --text-primary: #4b3d2e;      /* Marrón oscuro para texto */
+  --primary-color: #F4A258;     /* Verde principal */
+  --primary-dark: #F4A261;      /* Verde oscuro */
+  --secondary-color: #F4A258;   /* Marrón */
+  --accent-color: #FCF3E3;      /* Beige */
+  --text-primary: #2e2a26;      /* Marrón oscuro para texto */
   --text-secondary: #5a4e42;    /* Marrón medio para texto */
   --background-light: #f4f7fc;  /* Fondo claro */
   --error-color: #f44336;       /* Rojo para errores */
@@ -63,11 +63,9 @@ body {
   position: relative;
   z-index: 1;
   width: 100%;
-  max-width: 1200px;
   padding: 2rem;
   background: rgba(255, 255, 255, 0.9);
   border-radius: 20px;
-  box-shadow: var(--shadow-standard);
   animation: fadeInUp 0.8s ease-out;
 }
 
@@ -91,13 +89,12 @@ body {
   color: #fff;
   border: none;
   padding: 1rem 2.5rem;
-  border-radius: 50px;
   cursor: pointer;
   font-size: 1.3rem;
   font-weight: 700;
   display: block;
   margin: 0 auto 2rem;
-  box-shadow: 0 8px 20px rgba(110, 159, 31, 0.3);
+  box-shadow: 0 8px 20px rgba(209, 134, 23, 0.3);
 }
 
 /* Mensaje de Carga */

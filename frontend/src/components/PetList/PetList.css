@@ -1,8 +1,8 @@
 .pet-list {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-  gap: 2rem;
   margin-top: 2rem;
+
+
+
 }
 
 .pet-card {
@@ -75,4 +75,57 @@
   .pet-list {
     grid-template-columns: 1fr;
   }
-} 
+}
+
+.pet-actions {
+  gap: 20px;
+  flex-wrap: wrap;
+  margin-top: 15px;
+  display: flex;
+  justify-content: center;
+  padding: 18px;
+  width: 100%;
+  padding-right: 50px; #ojo aca , ::-webkit-meter-suboptimum-value botones
+  border-top: 1px solid #eee;
+
+  
+}
+
+.view-poster-btn {
+  background-color: #4CAF50;
+  color: white;
+  padding: 8px 16px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.view-poster-btn:hover {
+  background-color: #45a049;
+}
+
+.toggle-lost-btn {
+  background-color: #ff4444;
+}
+
+.toggle-lost-btn.is-lost {
+  background-color: #2196F3;
+}
+
+.history-btn {
+  background-color: #9c27b0;
+}
+
+.pet-actions button {
+  color: white;
+  padding: 8px 16px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: opacity 0.3s ease;
+}
+
+.pet-actions button:hover {
+  opacity: 0.9;
+}

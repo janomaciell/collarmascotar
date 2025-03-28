@@ -1,7 +1,7 @@
 import React from 'react';
 import './PetList.css';
 
-const PetList = ({ pets, onToggleLost, onShowHistory }) => {
+const PetList = ({ pets, onToggleLost, onShowHistory, onViewPoster }) => {
   return (
     <div className="pet-list">
       {pets.length === 0 ? (
@@ -32,10 +32,21 @@ const PetList = ({ pets, onToggleLost, onShowHistory }) => {
                   Descargar QR
                 </a>
               </div>
-              <button onClick={() => onToggleLost(pet.id, pet.is_lost)}>
-                {pet.is_lost ? 'Marcar como encontrada' : 'Marcar como perdida'}
-              </button>
-              <button onClick={() => onShowHistory(pet.id)}>Ver Historial</button>
+              <div className="pet-actions">
+                <button 
+                  className={`toggle-lost-btn ${pet.is_lost ? 'is-lost' : ''}`}
+                  onClick={() => onToggleLost(pet.id, pet.is_lost)}
+                >
+                  {pet.is_lost ? 'Marcar como encontrada' : 'Marcar como perdida'}
+                </button>
+                <button 
+                  className="history-btn"
+                  onClick={() => onShowHistory(pet.id)}
+                >
+                  Ver Historial
+                </button>
+
+              </div>
             </div>
           </div>
         ))
@@ -44,4 +55,4 @@ const PetList = ({ pets, onToggleLost, onShowHistory }) => {
   );
 };
 
-export default PetList; 
+export default PetList;

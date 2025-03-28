@@ -1,7 +1,7 @@
 # serializers.py (update)
 
 from rest_framework import serializers
-from .models import Pet, Scan, UserLocation, DeviceRegistration, PosterShare, LostPetAlert
+from .models import *
 from django.contrib.auth.models import User
 
 class UserSerializer(serializers.ModelSerializer):
@@ -102,3 +102,21 @@ class LostPetAlertSerializer(serializers.ModelSerializer):
         fields = ['id', 'pet', 'pet_name', 'owner_latitude', 'owner_longitude',
                  'radius_km', 'recipients_count', 'sent_at']
         read_only_fields = ['id', 'recipients_count', 'sent_at']
+        
+#RECOMPENSAS Y PUNTOS
+
+class RewardSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Reward
+        fields = ['amount', 'description', 'is_active']
+
+class UserPointsSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = UserPoints
+        fields = ['total_points', 'total_pets_helped']
+
+class PointTransactionSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = PointTransaction
+        fields = ['id', 'points', 'reason', 'timestamp']
+        read_only_fields = ['id', 'timestamp']

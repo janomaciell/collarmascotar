@@ -26,14 +26,13 @@ const Header = () => {
         <div className="hamburger" onClick={toggleMenu}>☰</div>
         <nav className={`nav ${menuActive ? 'active' : ''}`}>
           <ul className="nav-list">
-
             {isLoggedIn ? (
               <>
-                {/*<li className="nav-item">
-                  <Link to="/dashboard" className="nav-link">Mi Panel</Link>
-                </li>*/}  
                 <li className="nav-item">
                   <Link to="/pets" className="nav-link">Gestionar Mascotas</Link>
+                </li>
+                <li className="nav-item">
+                  <Link to="/profile" className="nav-link">Mi Perfil</Link>
                 </li>
                 <li className="nav-item">
                   <button onClick={handleLogout} className="logout-button">

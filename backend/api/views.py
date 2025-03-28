@@ -15,11 +15,25 @@ import json
 import base64
 from rest_framework.views import APIView
 from firebase_admin import credentials, initialize_app, messaging
-from django.conf import settings
+from rest_framework.authtoken.views import ObtainAuthToken
+from rest_framework.authtoken.models import Token
 
 # Inicializa Firebase Admin
 cred = credentials.Certificate(str(settings.FIREBASE_CREDENTIALS_PATH))
 default_app = initialize_app(cred, name='petqr')
+
+class CustomAuthToken(ObtainAuthToken):
+    def post(self, request, *args, **kwargs):
+        serializer = self.serializer_class(data=request.data, context={'request': request})
+        serializer.is_valid(raise_exception=True)
+        user = serializer.validated_data['user']
+        token, created = Token.objects.get_or_create(user=user)
+        return Response({
+            'token': token.key,
+            'user_id': user.pk,
+            'email': user.email,
+            'username': user.username
+        })
 
 class PetViewSet(viewsets.ModelViewSet):
     serializer_class = PetSerializer
@@ -38,7 +52,6 @@ class PetViewSet(viewsets.ModelViewSet):
         serializer.is_valid(raise_exception=True)
         updated_pet = serializer.save()
         
-        # If pet status changed to lost, update last_seen_date
         if not was_lost and updated_pet.is_lost:
             updated_pet.last_seen_date = timezone.now()
             updated_pet.save()
@@ -50,28 +63,21 @@ class PetViewSet(viewsets.ModelViewSet):
         pet = self.get_object()
         pet.is_lost = not pet.is_lost
         
-        # If changing to lost status, update last seen date
         if pet.is_lost:
             pet.last_seen_date = timezone.now()
-            
-            # Get owner's location if provided
             latitude = request.data.get('latitude')
             longitude = request.data.get('longitude')
             if latitude and longitude:
                 try:
-                    # Create lost pet alert
                     alert = LostPetAlert.objects.create(
                         pet=pet,
                         owner_latitude=float(latitude),
                         owner_longitude=float(longitude),
                         radius_km=int(request.data.get('radiusKm', 50))
                     )
-                    
-                    # Send notifications to nearby users
                     recipients = send_lost_pet_notifications(pet, alert)
                     alert.recipients_count = recipients
                     alert.save()
-                    
                 except Exception as e:
                     print(f"Error sending lost pet notifications: {str(e)}")
         
@@ -88,7 +94,6 @@ def get_pet_public_info(request, uuid):
 @api_view(['POST'])
 @permission_classes([permissions.AllowAny])
 def record_scan(request, uuid):
-    """Registra un escaneo y envía una notificación mejorada por email al dueño"""
     pet = get_object_or_404(Pet, qr_uuid=uuid)
     latitude = request.data.get('latitude')
     longitude = request.data.get('longitude')
@@ -96,21 +101,16 @@ def record_scan(request, uuid):
     if not latitude or not longitude:
         return Response({"error": "Ubicación requerida"}, status=status.HTTP_400_BAD_REQUEST)
 
-    # Crear registro de escaneo
     scan = Scan.objects.create(
         pet=pet,
         latitude=latitude,
         longitude=longitude
     )
 
-    # Crear enlace de Google Maps
     google_maps_link = f"https://www.google.com/maps?q={latitude},{longitude}"
-
-    # Detalles del escaneo
-    scan_time = timezone.now().strftime('%Y-%m-%d %H:%M:%S')  # Hora local
+    scan_time = timezone.now().strftime('%Y-%m-%d %H:%M:%S')
     pet_name = pet.name
     
-    # Contenido del correo en HTML
     subject = f"¡Alguien escaneó el QR de {pet_name}!"
     html_message = f"""
     <html>
@@ -128,24 +128,14 @@ def record_scan(request, uuid):
       </body>
     </html>
     """
-
-    plain_message = f"""
-    ¡Tu mascota {pet_name} ha sido encontrada!
-    Fecha y hora: {scan_time}
-    Ubicación: {google_maps_link}
-    Revisa el historial de escaneos en tu cuenta para más detalles.
-    """
-
-    # Enviar email al dueño
-    from_email = settings.DEFAULT_FROM_EMAIL
-    recipient_list = [pet.owner.email]
+    plain_message = f"¡Tu mascota {pet_name} ha sido encontrada!\nFecha y hora: {scan_time}\nUbicación: {google_maps_link}\nRevisa el historial de escaneos en tu cuenta."
 
     send_mail(
         subject=subject,
-        message=plain_message,  # Versión en texto plano
-        from_email=from_email,
-        recipient_list=recipient_list,
-        html_message=html_message,  # Versión HTML
+        message=plain_message,
+        from_email=settings.DEFAULT_FROM_EMAIL,
+        recipient_list=[pet.owner.email],
+        html_message=html_message,
         fail_silently=False,
     )
 
@@ -182,34 +172,32 @@ class RegisterUserView(generics.CreateAPIView):
 @api_view(['POST'])
 @permission_classes([permissions.IsAuthenticated])
 def register_device(request):
-    """Register a device for push notifications"""
-    serializer = DeviceRegistrationSerializer(data=request.data)
-    if serializer.is_valid():
-        # Check if the registration_id already exists
-        registration_id = serializer.validated_data['registration_id']
-        device_type = serializer.validated_data['device_type']
-        
-        try:
-            device = DeviceRegistration.objects.get(registration_id=registration_id)
-            # Update the device if it exists
-            device.user = request.user
-            device.device_type = device_type
-            device.save()
-        except DeviceRegistration.DoesNotExist:
-            # Create new device
-            DeviceRegistration.objects.create(
+    try:
+        serializer = DeviceRegistrationSerializer(data=request.data)
+        if serializer.is_valid():
+            # Actualizar o crear el registro
+            device, created = DeviceRegistration.objects.update_or_create(
                 user=request.user,
-                registration_id=registration_id,
-                device_type=device_type
+                registration_id=serializer.validated_data['registration_id'],
+                defaults={
+                    'device_type': serializer.validated_data['device_type']
+                }
             )
+            
+            return Response({
+                'message': 'Device registered successfully',
+                'device_id': device.id
+            }, status=status.HTTP_201_CREATED if created else status.HTTP_200_OK)
         
-        return Response({"message": "Device registered successfully"}, status=status.HTTP_201_CREATED)
-    return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    except Exception as e:
+        return Response({
+            'error': str(e)
+        }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 @api_view(['POST'])
 @permission_classes([permissions.IsAuthenticated])
 def update_user_location(request):
-    """Update user location for notifications"""
     latitude = request.data.get('latitude')
     longitude = request.data.get('longitude')
     radius_km = request.data.get('radiusKm', 50)
@@ -218,7 +206,6 @@ def update_user_location(request):
         return Response({"error": "Latitude and longitude are required"}, status=status.HTTP_400_BAD_REQUEST)
     
     try:
-        # Get or create user location
         user_location, created = UserLocation.objects.get_or_create(
             user=request.user,
             defaults={
@@ -229,7 +216,6 @@ def update_user_location(request):
         )
         
         if not created:
-            # Update existing location
             user_location.latitude = float(latitude)
             user_location.longitude = float(longitude)
             user_location.notification_radius = int(radius_km)
@@ -245,12 +231,8 @@ def update_user_location(request):
 @api_view(['GET'])
 @permission_classes([permissions.IsAuthenticated])
 def notification_status(request):
-    """Get user's notification status and preferences"""
     try:
-        # Check if user has registered devices
         devices = DeviceRegistration.objects.filter(user=request.user)
-        
-        # Check if user has location set
         try:
             location = UserLocation.objects.get(user=request.user)
             location_data = UserLocationSerializer(location).data
@@ -269,49 +251,35 @@ def notification_status(request):
 @api_view(['POST'])
 @permission_classes([permissions.IsAuthenticated])
 def generate_lost_poster(request, pet_id):
-    """Generate and save a lost pet poster"""
     pet = get_object_or_404(Pet, id=pet_id, owner=request.user)
     
     if not pet.is_lost:
         return Response({"error": "La mascota no está marcada como perdida"}, status=status.HTTP_400_BAD_REQUEST)
     
-    # Get poster image from request (should be base64 encoded)
     poster_data = request.data.get('posterImage')
     if not poster_data:
         return Response({"error": "No se proporcionó imagen del cartel"}, status=status.HTTP_400_BAD_REQUEST)
     
     try:
-        # Remove data:image/png;base64, prefix if present
         if 'base64,' in poster_data:
             poster_data = poster_data.split('base64,')[1]
         
-        # Decode base64 to image
         image_data = base64.b64decode(poster_data)
-        
-        # Create poster record
         poster = PosterShare.objects.create(pet=pet)
-        
-        # Save image
         image_name = f"lost_poster_{pet.name}_{timezone.now().strftime('%Y%m%d%H%M%S')}.png"
         poster.image.save(image_name, ContentFile(image_data), save=True)
         
-        # If PDF data provided, save it too
         pdf_data = request.data.get('posterPdf')
         if pdf_data:
             if 'base64,' in pdf_data:
                 pdf_data = pdf_data.split('base64,')[1]
-            
             pdf_binary = base64.b64decode(pdf_data)
             pdf_name = f"lost_poster_{pet.name}_{timezone.now().strftime('%Y%m%d%H%M%S')}.pdf"
             poster.pdf_file.save(pdf_name, ContentFile(pdf_binary), save=True)
         
-        # Generate a shareable URL
-        share_url = request.build_absolute_uri(reverse('poster-share', args=[poster.id]))
+        share_url = request.build_absolute_uri(reverse('view-poster', args=[poster.id]))
         poster.share_url = share_url
         poster.save()
-        
-        print(f"Ruta de la foto guardada: {pet.photo.path}")
-        print(f"URL de la foto: {pet.photo.url}")
         
         return Response({
             "id": poster.id,
@@ -325,17 +293,11 @@ def generate_lost_poster(request, pet_id):
 @api_view(['GET'])
 @permission_classes([permissions.AllowAny])
 def view_shared_poster(request, poster_id):
-    """View a shared lost pet poster"""
     poster = get_object_or_404(PosterShare, id=poster_id)
-    
-    # Increment share count when viewed
     poster.share_count += 1
     poster.save()
     
-    # Get pet details
     pet = poster.pet
-    
-    # Prepare data for the sharing page
     context = {
         "poster": {
             "imageUrl": request.build_absolute_uri(poster.image.url),
@@ -351,54 +313,11 @@ def view_shared_poster(request, poster_id):
             "qrCode": request.build_absolute_uri(pet.qr_code.url) if pet.qr_code else None,
         }
     }
-    
-    # For API view, return JSON
     return Response(context)
-
-@api_view(['POST'])
-@permission_classes([permissions.IsAuthenticated])
-def send_lost_pet_alert(request):
-    """Send lost pet alert to nearby users"""
-    pet_id = request.data.get('petId')
-    owner_location = request.data.get('ownerLocation')
-    radius_km = int(request.data.get('radiusKm', 50))
-    
-    if not pet_id or not owner_location:
-        return Response({"error": "Pet ID and owner location are required"}, status=status.HTTP_400_BAD_REQUEST)
-    
-    pet = get_object_or_404(Pet, id=pet_id, owner=request.user)
-    
-    if not pet.is_lost:
-        return Response({"error": "La mascota no está marcada como perdida"}, status=status.HTTP_400_BAD_REQUEST)
-    
-    try:
-        # Create lost pet alert record
-        alert = LostPetAlert.objects.create(
-            pet=pet,
-            owner_latitude=owner_location['latitude'],
-            owner_longitude=owner_location['longitude'],
-            radius_km=radius_km
-        )
-        
-        # Send notifications to nearby users
-        recipients_count = send_lost_pet_notifications(pet, alert)
-        
-        # Update alert with recipients count
-        alert.recipients_count = recipients_count
-        alert.save()
-        
-        return Response({
-            "message": "Alerta enviada correctamente",
-            "recipients": recipients_count,
-            "alertId": alert.id
-        })
-    except Exception as e:
-        return Response({"error": str(e)}, status=status.HTTP_400_BAD_REQUEST)
 
 @api_view(['POST'])
 @permission_classes([permissions.AllowAny])
 def send_community_notification(request):
-    """Send notification to community when pet is scanned"""
     pet_id = request.data.get('petId')
     scanner_location = request.data.get('scannerLocation')
     radius_km = int(request.data.get('radiusKm', 50))
@@ -406,20 +325,17 @@ def send_community_notification(request):
     if not pet_id or not scanner_location:
         return Response({"error": "Pet ID and scanner location are required"}, status=status.HTTP_400_BAD_REQUEST)
     
-    pet = get_object_or_404(Pet, qr_uuid=pet_id)
-    
+    pet = get_object_or_404(Pet, id=pet_id)  # Cambiado de qr_uuid a id
     if not pet.is_lost:
         return Response({"message": "Pet is not marked as lost, no community notification sent"})
     
     try:
-        # Send notifications to nearby users
         recipients_count = send_community_scan_notification(
             pet, 
             scanner_location['latitude'], 
             scanner_location['longitude'],
             radius_km
         )
-        
         return Response({
             "message": "Community notification sent",
             "recipients": recipients_count
@@ -427,27 +343,91 @@ def send_community_notification(request):
     except Exception as e:
         return Response({"error": str(e)}, status=status.HTTP_400_BAD_REQUEST)
 
+@api_view(['POST'])
+@permission_classes([permissions.IsAuthenticated])
+def create_reward(request, pet_id):
+    pet = get_object_or_404(Pet, id=pet_id, owner=request.user)
+    amount = request.data.get('amount')
+    description = request.data.get('description', '')
+    
+    if not amount:
+        return Response({"error": "Monto de recompensa requerido"}, status=status.HTTP_400_BAD_REQUEST)
+    
+    reward, created = Reward.objects.get_or_create(
+        pet=pet,
+        defaults={
+            'amount': amount,
+            'description': description
+        }
+    )
+    return Response(RewardSerializer(reward).data)
+
+@api_view(['GET'])
+@permission_classes([permissions.IsAuthenticated])
+def get_reward(request, pet_id):
+    reward = get_object_or_404(Reward, pet_id=pet_id)
+    return Response(RewardSerializer(reward).data)
+
+@api_view(['GET'])
+@permission_classes([permissions.IsAuthenticated])
+def get_user_points(request):
+    points, created = UserPoints.objects.get_or_create(user=request.user)
+    return Response(UserPointsSerializer(points).data)
+
+class LostPetView(APIView):
+    def post(self, request, *args, **kwargs):
+        pet_id = request.data.get('pet_id')
+        alert_data = request.data.get('alert_data')
+
+        if not pet_id or not alert_data:
+            return Response({
+                "error": "Se requieren pet_id y alert_data"
+            }, status=status.HTTP_400_BAD_REQUEST)
+
+        try:
+            pet = Pet.objects.get(id=pet_id, owner=request.user)
+            alert = LostPetAlert.objects.create(
+                pet=pet,
+                owner_latitude=float(alert_data['latitude']),
+                owner_longitude=float(alert_data['longitude']),
+                radius_km=int(alert_data.get('radius_km', 50))
+            )
+            pet.is_lost = True
+            pet.last_seen_date = timezone.now()
+            pet.save()
+            recipients_count = send_lost_pet_notifications(pet, alert)
+            alert.recipients_count = recipients_count
+            alert.save()
+            return Response({
+                "message": f"Alerta enviada a {recipients_count} usuarios cercanos",
+                "alert_id": alert.id,
+                "pet_status": "lost"
+            }, status=status.HTTP_200_OK)
+        except Pet.DoesNotExist:
+            return Response({
+                "error": "Mascota no encontrada o no pertenece al usuario"
+            }, status=status.HTTP_404_NOT_FOUND)
+        except Exception as e:
+            return Response({
+                "error": f"Error procesando la alerta: {str(e)}"
+            }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
 # Helper functions for notifications
 
 def send_lost_pet_email(pet, email, alert):
-    """Send an email notification about a lost pet"""
     subject = f"¡Mascota perdida: {pet.name}!"
     message = f"""
     Hola,
-
     Se ha reportado que {pet.name} está perdido cerca de tu área. Por favor, mantén un ojo abierto y si lo ves, escanea su código QR o contacta al dueño.
-
     Detalles de la mascota:
     - Nombre: {pet.name}
     - Raza: {pet.breed}
     - Última ubicación conocida: {alert.owner_latitude}, {alert.owner_longitude}
-
     Gracias por tu ayuda.
     """
     send_mail(subject, message, settings.DEFAULT_FROM_EMAIL, [email])
 
 def send_lost_pet_notifications(pet, alert):
-    """Send notifications to users within a radius using Firebase Admin SDK and Web Push"""
     users_within_radius = []
     all_locations = UserLocation.objects.exclude(user=pet.owner)
     
@@ -455,9 +435,7 @@ def send_lost_pet_notifications(pet, alert):
         if location.is_within_radius(alert.owner_latitude, alert.owner_longitude, alert.radius_km):
             users_within_radius.append(location.user)
     
-    # Get devices for users within radius
     devices = DeviceRegistration.objects.filter(user__in=users_within_radius)
-    
     notification_data = {
         "title": f"¡Mascota perdida cerca de ti!",
         "body": f"{pet.name} se ha perdido. Si lo ves, escanea su código QR o contacta al dueño.",
@@ -472,7 +450,6 @@ def send_lost_pet_notifications(pet, alert):
         }
     }
 
-    # Send web push notifications
     web_devices = devices.filter(device_type='web')
     for device in web_devices:
         try:
@@ -483,7 +460,6 @@ def send_lost_pet_notifications(pet, alert):
         except Exception as e:
             print(f"Error sending web push: {str(e)}")
 
-    # Send FCM notifications using Firebase Admin SDK
     mobile_tokens = list(devices.exclude(device_type='web').values_list('registration_id', flat=True))
     if mobile_tokens:
         try:
@@ -496,7 +472,6 @@ def send_lost_pet_notifications(pet, alert):
         except Exception as e:
             print(f"Error sending FCM notifications: {str(e)}")
 
-    # Send email notifications to users within radius
     for user in users_within_radius:
         try:
             if user.email:
@@ -507,26 +482,18 @@ def send_lost_pet_notifications(pet, alert):
     return len(users_within_radius)
 
 def send_community_scan_notification(pet, latitude, longitude, radius_km=50):
-    """Send notifications to community when a lost pet is scanned using Firebase Admin SDK and Web Push"""
     if not pet.is_lost:
-        return 0  # Skip if pet is not lost
+        return 0
     
-    # Get all user locations within the radius
     users_within_radius = []
-    
     all_locations = UserLocation.objects.exclude(user=pet.owner)
     
     for location in all_locations:
         if location.is_within_radius(latitude, longitude, radius_km):
             users_within_radius.append(location.user)
     
-    # Get devices for users within radius
     devices = DeviceRegistration.objects.filter(user__in=users_within_radius)
-    
-    # Create Google Maps link for the location
     maps_link = f"https://www.google.com/maps?q={latitude},{longitude}"
-    
-    # Prepare notification data
     notification_data = {
         "title": f"¡{pet.name} ha sido visto cerca de ti!",
         "body": f"Alguien acaba de escanear el QR de {pet.name}, una mascota perdida, cerca de tu ubicación.",
@@ -540,7 +507,6 @@ def send_community_scan_notification(pet, latitude, longitude, radius_km=50):
         }
     }
     
-    # Send email notifications
     for user in users_within_radius:
         try:
             if user.email:
@@ -548,7 +514,6 @@ def send_community_scan_notification(pet, latitude, longitude, radius_km=50):
         except Exception as e:
             print(f"Error sending email to {user.email}: {str(e)}")
     
-    # Send web push notifications
     web_devices = devices.filter(device_type='web')
     for device in web_devices:
         try:
@@ -559,7 +524,6 @@ def send_community_scan_notification(pet, latitude, longitude, radius_km=50):
         except Exception as e:
             print(f"Error sending web push: {str(e)}")
 
-    # Send FCM notifications using Firebase Admin SDK
     mobile_tokens = list(devices.exclude(device_type='web').values_list('registration_id', flat=True))
     if mobile_tokens:
         try:
@@ -574,62 +538,7 @@ def send_community_scan_notification(pet, latitude, longitude, radius_km=50):
 
     return len(users_within_radius)
 
-class LostPetView(APIView):
-    """Vista para manejar el reporte de una mascota perdida."""
-
-    def post(self, request, *args, **kwargs):
-        """Recibe la alerta de mascota perdida y envía notificaciones a los usuarios cercanos."""
-        pet_id = request.data.get('pet_id')
-        alert_data = request.data.get('alert_data')
-
-        if not pet_id or not alert_data:
-            return Response({
-                "error": "Se requieren pet_id y alert_data"
-            }, status=status.HTTP_400_BAD_REQUEST)
-
-        try:
-            # Obtener la mascota y validar que pertenezca al usuario
-            pet = Pet.objects.get(id=pet_id, owner=request.user)
-            
-            # Crear alerta
-            alert = LostPetAlert.objects.create(
-                pet=pet,
-                owner_latitude=float(alert_data['latitude']),
-                owner_longitude=float(alert_data['longitude']),
-                radius_km=int(alert_data.get('radius_km', 50))
-            )
-
-            # Actualizar estado de la mascota
-            pet.is_lost = True
-            pet.last_seen_date = timezone.now()
-            pet.save()
-
-            # Enviar notificaciones
-            recipients_count = send_lost_pet_notifications(pet, alert)
-            
-            # Actualizar contador de destinatarios
-            alert.recipients_count = recipients_count
-            alert.save()
-
-            return Response({
-                "message": f"Alerta enviada a {recipients_count} usuarios cercanos",
-                "alert_id": alert.id,
-                "pet_status": "lost"
-            }, status=status.HTTP_200_OK)
-
-        except Pet.DoesNotExist:
-            return Response({
-                "error": "Mascota no encontrada o no pertenece al usuario"
-            }, status=status.HTTP_404_NOT_FOUND)
-        except Exception as e:
-            return Response({
-                "error": f"Error procesando la alerta: {str(e)}"
-            }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-
 def send_web_push_notification(subscription_info, data):
-    """
-    Envía una notificación web push a un navegador
-    """
     try:
         webpush(
             subscription_info=subscription_info,
@@ -645,9 +554,6 @@ def send_web_push_notification(subscription_info, data):
         return False
 
 def send_fcm_notification(tokens, title, body, data=None):
-    """
-    Envía una notificación usando Firebase Cloud Messaging con Firebase Admin SDK
-    """
     try:
         message = messaging.MulticastMessage(
             notification=messaging.Notification(
@@ -657,10 +563,22 @@ def send_fcm_notification(tokens, title, body, data=None):
             data=data or {},
             tokens=tokens,
         )
-        
         response = messaging.send_multicast(message)
         print(f"FCM notifications sent successfully: {response.success_count} successes, {response.failure_count} failures")
         return response
     except Exception as e:
         print(f"Error sending FCM notification: {str(e)}")
         raise
+    
+@api_view(['GET'])
+@permission_classes([permissions.IsAuthenticated])
+def get_user_profile(request):
+    serializer = UserSerializer(request.user)
+    return Response(serializer.data)
+
+@api_view(['GET'])
+@permission_classes([permissions.IsAuthenticated])
+def get_points_history(request):
+    transactions = PointTransaction.objects.filter(user=request.user)
+    serializer = PointTransactionSerializer(transactions, many=True)
+    return Response(serializer.data)
