@@ -12,7 +12,7 @@ const Home = () => {
       {/* Sección Héroe */}
       <section className="hero-section">
         <div className="hero-content">
-          <h1>Tu perro, nuestra prioridad</h1>
+          <h1>Tu mascota, nuestra prioridad</h1>
           <p>CollarMascotaQR: Protección inteligente para tu mejor amigo</p>
           <div className="hero-buttons">
             <Link to="/about" className="secondary-button">Saber más</Link>

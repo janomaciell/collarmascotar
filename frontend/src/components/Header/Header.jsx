@@ -26,7 +26,6 @@ const Header = () => {
         <div className="hamburger" onClick={toggleMenu}>☰</div>
         <nav className={`nav ${menuActive ? 'active' : ''}`}>
           <ul className="nav-list">
-            <li className="nav-item"><Link to="/blog" className="nav-link">Blog</Link></li>
             <li className="nav-item"><Link to="/support" className="nav-link">Soporte</Link></li>
             <li className="nav-item"><Link to="/about" className="nav-link">Nosotros</Link></li>
             {isLoggedIn ? (
