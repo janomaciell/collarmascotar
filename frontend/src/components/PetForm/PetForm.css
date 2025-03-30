@@ -1,62 +1,99 @@
 .pet-form {
-  background-color: #f9f9f9;
-  padding: 2rem;
-  border-radius: 8px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  background-color: #f5f1e9; /* Beige pastel como fondo */
+  padding: 2.5rem;
+  border-radius: 15px;
+  box-shadow: 0 5px 20px rgba(74, 60, 49, 0.1); /* Sombra marrón pastel suave */
+  max-width: 600px; /* Ancho máximo para centrar el formulario */
+  margin: 2rem auto; /* Centrado horizontal y espaciado vertical */
+  position: relative;
+  overflow: hidden;
+}
+
+.pet-form::before {
+  content: '🐾';
+  position: absolute;
+  top: 10px;
+  right: 15px;
+  font-size: 2.5rem;
+  color: #87a8d0; /* Azul pastel para huellitas */
+  opacity: 0.15;
 }
 
 .form-group {
-  margin-bottom: 1.5rem;
+  margin-bottom: 1.75rem;
 }
 
 .form-group label {
   display: block;
   margin-bottom: 0.5rem;
-  color: #555;
-  font-weight: 500;
+  color: #4a3c31; /* Marrón pastel para etiquetas */
+  font-weight: 600;
+  font-size: 1.1rem;
+  letter-spacing: 0.5px;
 }
 
 .form-group input,
 .form-group textarea {
   width: 100%;
-  padding: 0.75rem;
-  border: 1px solid #ddd;
-  border-radius: 4px;
+  padding: 0.9rem;
+  border: 2px solid #d9c6a5; /* Borde marrón pastel claro */
+  border-radius: 10px;
   font-size: 1rem;
-  transition: border-color 0.3s;
-  background-color: #fff;
+  font-family: 'Poppins', sans-serif; /* Fuente coherente */
+  background-color: #ffffff; /* Fondo blanco */
+  transition: all 0.3s ease;
+  box-shadow: inset 0 2px 5px rgba(74, 60, 49, 0.05); /* Sombra interna sutil */
 }
 
 .form-group input:focus,
 .form-group textarea:focus {
   outline: none;
-  border-color: #4CAF50;
+  border-color: #87a8d0; /* Azul pastel al enfocar */
+  box-shadow: 0 0 8px rgba(135, 168, 208, 0.3); /* Resplandor azul pastel */
 }
 
 .form-group textarea {
-  min-height: 100px;
+  min-height: 120px;
   resize: vertical;
 }
 
 .submit-button {
-  background-color: #4CAF50;
+  background-color: #f4b084; /* Naranja pastel */
   color: white;
   border: none;
-  padding: 0.75rem 1.5rem;
-  font-size: 1rem;
-  border-radius: 4px;
+  padding: 1rem 2rem;
+  font-size: 1.1rem;
+  font-weight: 600;
+  border-radius: 50px;
   cursor: pointer;
-  transition: background-color 0.3s;
+  transition: all 0.3s ease;
   width: 100%;
-  margin-top: 1rem;
+  margin-top: 1.5rem;
+  box-shadow: 0 5px 15px rgba(74, 60, 49, 0.2); /* Sombra marrón pastel */
 }
 
 .submit-button:hover {
-  background-color: #388E3C;
+  background-color: #e89b6b; /* Naranja pastel más oscuro */
+  transform: translateY(-3px);
+  box-shadow: 0 8px 20px rgba(74, 60, 49, 0.3);
 }
 
+/* Estilos Responsivos */
 @media (max-width: 768px) {
   .pet-form {
     padding: 1.5rem;
+    margin: 1.5rem auto;
+    max-width: 100%; /* Ajuste para pantallas pequeñas */
   }
-} 
+
+  .form-group input,
+  .form-group textarea {
+    padding: 0.75rem;
+    font-size: 0.95rem;
+  }
+
+  .submit-button {
+    padding: 0.9rem 1.5rem;
+    font-size: 1rem;
+  }
+}

@@ -1,185 +1,281 @@
 .profile-container {
   max-width: 1200px;
   margin: 0 auto;
-  padding: 20px;
-  font-family: 'Arial', sans-serif;
+  padding: 30px 20px;
+  font-family: 'Poppins', sans-serif;
+  background-color: #f5f1e9; /* Beige pastel suave como fondo */
 }
 
 .profile-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  background-color: #4CAF50;
+  background: linear-gradient(135deg, #87a8d0, #7393b8); /* Degradado azul pastel */
   color: white;
-  padding: 15px;
-  border-radius: 8px;
-  margin-bottom: 20px;
+  padding: 20px 30px;
+  border-radius: 15px;
+  margin-bottom: 30px;
+  box-shadow: 0 5px 15px rgba(74, 60, 49, 0.2); /* Sombra marrón pastel */
+  position: relative;
+  overflow: hidden;
+}
+
+.profile-header::before {
+  content: '🐾';
+  position: absolute;
+  right: 15px;
+  bottom: 10px;
+  font-size: 2rem;
+  opacity: 0.2;
+  color: #f4b084; /* Naranja pastel para huellitas */
 }
 
 .profile-header h1 {
   margin: 0;
-  font-size: 2rem;
+  font-size: 2.2rem;
+  font-weight: 700;
+  letter-spacing: 1px;
 }
 
 .logout-btn {
-  background-color: #ff4444;
+  background-color: #f4b084; /* Naranja pastel */
   color: white;
   border: none;
-  padding: 10px 15px;
-  border-radius: 5px;
+  padding: 12px 20px;
+  border-radius: 50px;
   cursor: pointer;
-  transition: background-color 0.3s;
+  transition: all 0.3s ease;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 8px;
 }
 
 .logout-btn:hover {
-  background-color: #cc0000;
+  background-color: #e89b6b; /* Naranja pastel más oscuro */
+  transform: translateY(-2px);
+  box-shadow: 0 5px 15px rgba(74, 60, 49, 0.3); /* Sombra marrón pastel */
 }
 
 .profile-content {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-  gap: 20px;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  gap: 25px;
 }
 
 .card {
-  background-color: white;
-  padding: 20px;
-  border-radius: 8px;
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  background-color: #ffffff; /* Blanco para contraste limpio */
+  padding: 25px;
+  border-radius: 15px;
+  box-shadow: 0 5px 20px rgba(74, 60, 49, 0.08); /* Sombra marrón pastel suave */
+  transition: all 0.3s ease;
+  border-left: 4px solid #f4b084; /* Borde naranja pastel */
+  position: relative;
+}
+
+.card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 25px rgba(74, 60, 49, 0.12); /* Sombra más intensa */
+}
+
+.profile-section.card:nth-child(odd) {
+  border-left-color: #87a8d0; /* Azul pastel para alternar */
 }
 
 .card h2 {
   margin-top: 0;
-  color: #333;
-  font-size: 1.5rem;
+  margin-bottom: 20px;
+  color: #87a8d0; /* Azul pastel para títulos */
+  font-size: 1.6rem;
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 12px;
+  font-weight: 700;
+  padding-bottom: 10px;
+  border-bottom: 1px solid #d9c6a5; /* Separador marrón pastel claro */
+}
+
+.card h2 i {
+  color: #f4b084; /* Naranja pastel para íconos */
 }
 
 .card p {
-  margin: 10px 0;
-  color: #666;
+  margin: 12px 0;
+  color: #4a3c31; /* Marrón pastel para texto */
+  font-size: 1.05rem;
+  line-height: 1.6;
+}
+
+.card p strong {
+  color: #4a3c31; /* Marrón pastel más oscuro */
+  font-weight: 600;
 }
 
 .edit-btn, .add-pet-btn {
-  background-color: #4CAF50;
+  background-color: #87a8d0; /* Azul pastel */
   color: white;
   border: none;
-  padding: 8px 15px;
-  border-radius: 5px;
+  padding: 10px 18px;
+  border-radius: 50px;
   cursor: pointer;
+  transition: all 0.3s ease;
+  font-weight: 600;
+  margin-top: 15px;
+  display: inline-block;
+}
+
+.edit-btn:hover, .add-pet-btn:hover {
+  background-color: #7393b8; /* Azul pastel más oscuro */
+  transform: translateY(-2px);
+  box-shadow: 0 5px 15px rgba(74, 60, 49, 0.2); /* Sombra marrón pastel */
+}
+
+.add-pet-btn {
+  background-color: #f4b084; /* Naranja pastel */
+}
+
+.add-pet-btn:hover {
+  background-color: #e89b6b; /* Naranja pastel más oscuro */
+  box-shadow: 0 5px 15px rgba(74, 60, 49, 0.3); /* Sombra marrón pastel */
 }
 
 .link {
-  color: #1a73e8;
+  color: #87a8d0; /* Azul pastel */
   text-decoration: none;
+  font-weight: 600;
+  transition: all 0.2s ease;
+  display: inline-block;
+  margin-top: 10px;
 }
 
 .link:hover {
-  text-decoration: underline;
+  color: #f4b084; /* Naranja pastel */
+  text-decoration: none;
+  transform: translateX(3px);
 }
 
 .pet-list {
   list-style: none;
   padding: 0;
+  margin-top: 15px;
 }
 
 .pet-list li {
   display: flex;
   align-items: center;
-  gap: 10px;
-  margin: 10px 0;
+  gap: 15px;
+  margin: 15px 0;
+  padding: 12px;
+  background-color: #f5f1e9; /* Beige pastel más claro */
+  border-radius: 10px;
+  transition: all 0.2s ease;
+}
+
+.pet-list li:hover {
+  background-color: #d9c6a5; /* Marrón pastel claro */
+  transform: translateX(5px);
 }
 
 .pet-photo {
-  width: 50px;
-  height: 50px;
+  width: 60px;
+  height: 60px;
   border-radius: 50%;
   object-fit: cover;
+  border: 3px solid #f4b084; /* Borde naranja pastel */
+  box-shadow: 0 3px 10px rgba(74, 60, 49, 0.2); /* Sombra marrón pastel */
 }
 
 .lost-tag {
-  color: #ff4444;
+  color: #e87676; /* Rojo pastel para etiquetas de perdido */
   font-weight: bold;
+  background-color: #f9e9e9; /* Fondo rojo muy suave */
+  padding: 3px 8px;
+  border-radius: 20px;
+  font-size: 0.85rem;
+  margin-left: 5px;
 }
 
 .error-message {
-  background-color: #ffebee;
-  color: #c62828;
-  padding: 10px;
-  border-radius: 5px;
-  margin-bottom: 20px;
+  background-color: #f9e9e9; /* Fondo rojo pastel suave */
+  color: #e87676; /* Rojo pastel */
+  padding: 15px;
+  border-radius: 10px;
+  margin-bottom: 25px;
+  border-left: 4px solid #e87676; /* Borde rojo pastel */
+  font-weight: 500;
 }
 
 .loading {
   text-align: center;
-  font-size: 1.2rem;
-  color: #666;
+  font-size: 1.3rem;
+  color: #4a3c31; /* Marrón pastel */
+  padding: 40px 0;
 }
 
 /* Estilos para la sección de puntos */
-.points-info {
-  margin-top: 15px;
+.points-history {
+  margin-top: 20px;
+  background-color: #f5f1e9; /* Beige pastel */
   padding: 15px;
-  border-radius: 8px;
-  background-color: #f8f9fa;
+  border-radius: 10px;
 }
 
-.points-info h3 {
+.points-history h3 {
   font-size: 1.2rem;
-  color: #4CAF50;
-  margin-bottom: 10px;
+  color: #87a8d0; /* Azul pastel */
+  margin-bottom: 15px;
+  font-weight: 600;
 }
 
-.points-info ul {
+.points-history ul {
   list-style: none;
   padding: 0;
 }
 
-.points-info li {
-  margin: 5px 0;
+.points-history li {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 8px 0;
-  border-bottom: 1px solid #eee;
+  padding: 10px 0;
+  border-bottom: 1px solid #d9c6a5; /* Separador marrón pastel claro */
 }
 
-.points-info button {
-  display: block;
-  margin: 10px 0;
-  background-color: #4CAF50;
-  color: white;
-  border: none;
-  padding: 8px 15px;
-  border-radius: 5px;
-  cursor: pointer;
-  transition: background-color 0.3s ease;
+.points-history li:last-child {
+  border-bottom: none;
 }
 
-.points-info button:hover {
-  background-color: #45a049;
+.points {
+  font-weight: 600;
+  padding: 3px 10px;
+  border-radius: 20px;
 }
 
-.points-info button:disabled {
-  background-color: #cccccc;
-  cursor: not-allowed;
+.points.positive {
+  color: #6ba272; /* Verde pastel */
+  background-color: #e9f5ec; /* Verde muy suave */
+}
+
+.points.negative {
+  color: #e87676; /* Rojo pastel */
+  background-color: #f9e9e9; /* Rojo muy suave */
+}
+
+.date {
+  color: #4a3c31; /* Marrón pastel */
+  font-size: 0.9rem;
 }
 
 .success-message {
-  background-color: #e8f5e9;
-  color: #2e7d32;
-  padding: 10px;
-  border-radius: 5px;
-  margin-bottom: 20px;
+  background-color: #e9f5ec; /* Verde muy suave */
+  color: #6ba272; /* Verde pastel */
+  padding: 15px;
+  border-radius: 10px;
+  margin-bottom: 25px;
   display: flex;
   align-items: center;
-  gap: 10px;
-}
-
-.success-message i {
-  color: #2e7d32;
+  gap: 12px;
+  border-left: 4px solid #6ba272; /* Borde verde pastel */
+  font-weight: 500;
 }
 
 /* Animación para mensajes */
@@ -190,4 +286,13 @@
 
 .success-message, .error-message {
   animation: fadeIn 0.3s ease-in-out;
+}
+
+/* Mejoras para la sección de suscripción */
+.profile-section.card:last-child {
+  background: linear-gradient(135deg, #f5f1e9, #d9c6a5); /* Gradiente beige a marrón pastel claro */
+}
+
+.profile-section.card:last-child h2 i {
+  color: #f4b084; /* Naranja pastel para ícono de corona */
 }

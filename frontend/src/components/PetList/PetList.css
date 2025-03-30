@@ -1,130 +1,200 @@
 .pet-list {
   margin-top: 2rem;
-
-
-
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  gap: 2rem;
+  padding: 1rem;
 }
 
 .pet-card {
-  background-color: #fff;
-  border-radius: 8px;
+  background-color: #ffffff; /* Fondo blanco para contraste limpio */
+  border-radius: 15px;
   overflow: hidden;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-  transition: transform 0.3s;
+  box-shadow: 0 5px 20px rgba(74, 60, 49, 0.1); /* Sombra marrón pastel suave */
+  transition: all 0.3s ease;
+  position: relative;
+  border: 2px solid #f5f1e9; /* Borde beige pastel */
 }
 
 .pet-card:hover {
   transform: translateY(-5px);
+  box-shadow: 0 10px 30px rgba(74, 60, 49, 0.15);
+  border-color: #f4b084; /* Naranja pastel al hover */
+}
+
+.pet-card::before {
+  content: '🐾';
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  font-size: 2rem;
+  color: #87a8d0; /* Azul pastel para huellitas */
+  opacity: 0.2;
 }
 
 .pet-info {
   padding: 1.5rem;
+  background: #f5f1e9; /* Beige pastel para información */
+  border-bottom: 1px solid #d9c6a5; /* Separador marrón pastel claro */
 }
 
 .pet-info h3 {
-  color: #333;
+  color: #87a8d0; /* Azul pastel para títulos */
   margin-bottom: 0.75rem;
-  font-size: 1.3rem;
+  font-size: 1.5rem;
+  font-weight: 700;
+  letter-spacing: 0.5px;
 }
 
 .pet-info p {
-  color: #666;
+  color: #4a3c31; /* Marrón pastel para texto */
   margin-bottom: 0.5rem;
+  font-size: 1.1rem;
 }
 
 .pet-qr {
   padding: 1.5rem;
-  background-color: #f9f9f9;
+  background-color: #ffffff; /* Fondo blanco para QR */
   display: flex;
   flex-direction: column;
   align-items: center;
-  border-top: 1px solid #eee;
+  border-top: 1px solid #d9c6a5; /* Separador marrón pastel claro */
 }
 
 .qr-image {
   width: 150px;
   height: 150px;
   margin-bottom: 1rem;
+  border-radius: 10px;
+  box-shadow: 0 5px 15px rgba(74, 60, 49, 0.1); /* Sombra marrón pastel */
+  border: 2px solid #f4b084; /* Borde naranja pastel */
 }
 
 .download-button {
-  background-color: #4CAF50;
+  background-color: #87a8d0; /* Azul pastel */
   color: white;
-  padding: 0.5rem 1rem;
+  padding: 0.75rem 1.5rem;
   text-decoration: none;
-  border-radius: 4px;
-  font-size: 0.9rem;
-  transition: background-color 0.3s;
+  border-radius: 50px;
+  font-size: 1rem;
+  font-weight: 600;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 12px rgba(74, 60, 49, 0.2);
 }
 
 .download-button:hover {
-  background-color: #388E3C;
+  background-color: #7393b8; /* Azul pastel más oscuro */
+  transform: translateY(-2px);
+  box-shadow: 0 6px 18px rgba(74, 60, 49, 0.3);
 }
 
 .no-pets-message {
   grid-column: 1 / -1;
   text-align: center;
-  color: #666;
-  font-size: 1.1rem;
+  color: #4a3c31; /* Marrón pastel */
+  font-size: 1.2rem;
   padding: 2rem;
-  background-color: #f9f9f9;
-  border-radius: 8px;
-}
-
-@media (max-width: 768px) {
-  .pet-list {
-    grid-template-columns: 1fr;
-  }
+  background-color: #f5f1e9; /* Beige pastel */
+  border-radius: 15px;
+  box-shadow: 0 5px 20px rgba(74, 60, 49, 0.1);
+  font-weight: 500;
 }
 
 .pet-actions {
-  gap: 20px;
-  flex-wrap: wrap;
-  margin-top: 15px;
   display: flex;
   justify-content: center;
-  padding: 18px;
-  width: 100%;
-  padding-right: 50px; #ojo aca 
-
-  
+  align-items: center;
+  gap: 1.5rem; /* Espacio más uniforme */
+  flex-wrap: wrap;
+  margin-top: 1rem;
+  padding: 1.5rem;
+  background: #f5f1e9; /* Beige pastel para fondo de acciones */
+  border-top: 1px solid #d9c6a5; /* Separador marrón pastel claro */
 }
 
 .view-poster-btn {
-  background-color: #4CAF50;
+  background-color: #f4b084; /* Naranja pastel */
   color: white;
-  padding: 8px 16px;
+  padding: 0.75rem 1.5rem;
   border: none;
-  border-radius: 4px;
+  border-radius: 50px;
   cursor: pointer;
-  transition: background-color 0.3s ease;
+  font-size: 1rem;
+  font-weight: 600;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 12px rgba(74, 60, 49, 0.2);
 }
 
 .view-poster-btn:hover {
-  background-color: #45a049;
+  background-color: #e89b6b; /* Naranja pastel más oscuro */
+  transform: translateY(-2px);
+  box-shadow: 0 6px 18px rgba(74, 60, 49, 0.3);
 }
 
 .toggle-lost-btn {
-  background-color: #ff4444;
+  background-color: #e87676; /* Rojo pastel */
+  color: white;
+  padding: 0.75rem 1.5rem;
+  border: none;
+  border-radius: 50px;
+  cursor: pointer;
+  font-size: 1rem;
+  font-weight: 600;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 12px rgba(74, 60, 49, 0.2);
 }
 
 .toggle-lost-btn.is-lost {
-  background-color: #2196F3;
+  background-color: #87a8d0; /* Azul pastel cuando está perdido */
+}
+
+.toggle-lost-btn:hover {
+  opacity: 0.9;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 18px rgba(74, 60, 49, 0.3);
 }
 
 .history-btn {
-  background-color: #9c27b0;
+  background-color: #4a3c31; /* Marrón pastel oscuro */
+  color: white;
+  padding: 0.75rem 1.5rem;
+  border: none;
+  border-radius: 50px;
+  cursor: pointer;
+  font-size: 1rem;
+  font-weight: 600;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 12px rgba(74, 60, 49, 0.2);
+}
+
+.history-btn:hover {
+  background-color: #3b2f27; /* Marrón más oscuro */
+  transform: translateY(-2px);
+  box-shadow: 0 6px 18px rgba(74, 60, 49, 0.3);
 }
 
 .pet-actions button {
-  color: white;
-  padding: 8px 16px;
-  border: none;
-  border-radius: 4px;
-  cursor: pointer;
-  transition: opacity 0.3s ease;
+  transition: all 0.3s ease;
 }
 
-.pet-actions button:hover {
-  opacity: 0.9;
+/* Estilos Responsivos */
+@media (max-width: 768px) {
+  .pet-list {
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+  }
+
+  .pet-info, .pet-qr, .pet-actions {
+    padding: 1rem;
+  }
+
+  .qr-image {
+    width: 120px;
+    height: 120px;
+  }
+
+  .pet-actions {
+    gap: 1rem;
+    padding-right: 1rem; /* Corregido el padding-right */
+  }
 }

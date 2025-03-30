@@ -1,29 +1,30 @@
 .header {
   background-color: #ffffff;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 2px 4px rgba(74, 60, 49, 0.1);
   position: fixed;
   top: 0;
   left: 0;
   width: 100%;
-  z-index: 1000; /* Asegura que el header esté por encima de todo */
-  height: 60px; /* Altura fija para consistencia, ajusta si es necesario */
+  z-index: 1000;
+  height: 70px; /* Altura ajustada para un diseño más moderno */
 }
 
 .header-container {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 0.3rem 5.6rem;
-  max-width: 1200px; /* Ajusta al ancho máximo del contenido */
+  padding: 1rem 2rem;
+  max-width: 1200px;
   margin: 0 auto;
-  height: 100%; /* Asegura que el contenedor use toda la altura del header */
+  height: 100%;
 }
 
 .logo a {
-  font-size: 1.5rem;
-  font-weight: bold;
-  color: #333;
+  font-size: 1.8rem;
+  font-weight: 800;
+  color: #87a8d0; /* Azul pastel */
   text-decoration: none;
+  text-transform: uppercase;
 }
 
 .nav-list {
@@ -34,73 +35,54 @@
 }
 
 .nav-item {
-  margin-left: 1.5rem;
+  margin-left: 2rem;
 }
 
 .nav-link {
-  color: #333;
+  color: #4a3c31; /* Marrón pastel */
   text-decoration: none;
   font-weight: 500;
+  font-size: 1.1rem;
   transition: color 0.3s;
 }
 
 .nav-link:hover {
-  color: #c5953c77;
+  color: #f4b084; /* Naranja pastel */
 }
 
 .register-button {
-  background-color: #2515064d;
-  color: white;
-  padding: 0.5rem 1rem;
-  border-radius: 4px;
+  background-color: #f4b084; /* Naranja pastel */
+  color: #ffffff;
+  padding: 0.5rem 1.5rem;
+  border-radius: 50px;
   transition: background-color 0.3s;
 }
 
 .register-button:hover {
-  background-color: #000000;
-  color: white;
+  background-color: #e89b6b; /* Naranja más oscuro */
+  color: #ffffff;
 }
 
 .logout-button {
   background: none;
   border: none;
-  color: #333;
+  color: #4a3c31;
   font-weight: 500;
   cursor: pointer;
   padding: 0;
   font-family: inherit;
-  font-size: inherit;
+  font-size: 1.1rem;
 }
 
 .logout-button:hover {
-  color: #f44336;
+  color: #f4b084;
 }
 
 .hamburger {
   display: none;
-  font-size: 1.5rem;
+  font-size: 1.8rem;
   cursor: pointer;
-}
-
-.hamburger span {
-  display: block;
-  width: 30px;
-  height: 3px;
-  background: #333;
-  margin: 6px auto;
-  transition: 0.3s;
-}
-
-.hamburger.open span:nth-child(1) {
-  transform: translateY(9px) rotate(45deg);
-}
-
-.hamburger.open span:nth-child(2) {
-  opacity: 0;
-}
-
-.hamburger.open span:nth-child(3) {
-  transform: translateY(-9px) rotate(-45deg);
+  color: #4a3c31;
 }
 
 @media (max-width: 768px) {
@@ -111,25 +93,36 @@
   .nav {
     display: none;
     position: absolute;
-    top: 100%; /* Aparece justo debajo del header */
+    top: 100%;
     left: 0;
     width: 100%;
     background-color: #ffffff;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-    z-index: 999; /* Menor que el header pero mayor que el contenido */
+    box-shadow: 0 2px 4px rgba(74, 60, 49, 0.1);
+    z-index: 999;
   }
 
   .nav.active {
-    display: flex;
+    display: block;
+  }
+
+  .nav-list {
     flex-direction: column;
+    align-items: center;
     padding: 1rem;
   }
 
   .nav-item {
-    margin: 0.5rem 0;
+    margin: 1rem 0;
+    width: 100%;
+    text-align: center;
+  }
+
+  .nav-link {
+    display: block;
+    padding: 0.5rem 0;
   }
 
   .header-container {
-    padding: 0.3rem 1.5rem; /* Menos padding en móvil */
+    padding: 1rem;
   }
 }

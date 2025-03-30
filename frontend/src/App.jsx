@@ -11,6 +11,7 @@ import Subscriptions from './pages/Subscriptions/Subscriptions';
 import Header from './components/Header/Header';
 import Footer from './components/Footer/Footer';
 import PrivateRoute from './components/PrivateRoute/PrivateRoute';
+import About from './pages/About/About';
 import './App.css';
 
 function App() {
@@ -21,6 +22,7 @@ function App() {
         <main className="main-content">
           <Routes>
             <Route path="/" element={<Home />} />
+            <Route path="/about" element={<About />} />
             <Route path="/register" element={<Register />} />
             <Route path="/login" element={<Login />} />
             <Route

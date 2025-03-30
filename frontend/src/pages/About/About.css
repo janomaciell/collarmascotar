@@ -1,0 +1,254 @@
+.about-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 2rem;
+}
+
+/* Hero Section */
+.about-hero {
+  text-align: center;
+  padding: 6rem 2rem;
+  background: linear-gradient(135deg, #f5f1e9, #d9c6a5);
+  border-radius: 20px;
+  margin-bottom: 4rem;
+}
+
+.about-hero h1 {
+  font-size: 3.5rem;
+  color: #87a8d0;
+  margin-bottom: 1rem;
+}
+
+.about-hero p {
+  font-size: 1.5rem;
+  color: #4a3c31;
+}
+
+/* Mission Section */
+.mission-section {
+  display: flex;
+  gap: 4rem;
+  margin-bottom: 4rem;
+}
+
+.mission-content {
+  flex: 1;
+}
+
+.mission-stats {
+  flex: 1;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 2rem;
+}
+
+.stat-item {
+  text-align: center;
+  padding: 2rem;
+  background: #ffffff;
+  border-radius: 15px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+}
+
+.stat-number {
+  font-size: 2.5rem;
+  color: #f4b084;
+  font-weight: 700;
+}
+
+/* Story Section */
+.story-section {
+  margin-bottom: 4rem;
+}
+
+.timeline {
+  position: relative;
+  padding: 2rem 0;
+}
+
+.timeline::before {
+  content: '';
+  position: absolute;
+  left: 50%;
+  top: 0;
+  bottom: 0;
+  width: 2px;
+  background: #f4b084;
+}
+
+.timeline-item {
+  margin-bottom: 2rem;
+  position: relative;
+}
+
+.timeline-content {
+  width: 45%;
+  padding: 1.5rem;
+  background: #ffffff;
+  border-radius: 10px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+}
+
+.timeline-item:nth-child(even) .timeline-content {
+  margin-left: auto;
+}
+
+.story-section p {
+  text-align: center;
+  max-width: 800px;
+  margin: 0 auto 2rem;
+  color: #4a3c31;
+  font-size: 1.2rem;
+}
+
+/* Team Section */
+.team-section {
+  margin-bottom: 4rem;
+}
+
+.team-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 2rem;
+}
+
+.team-member {
+  text-align: center;
+  padding: 2rem;
+  background: #ffffff;
+  border-radius: 15px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+}
+
+.team-member p {
+  color: #666;
+}
+
+.member-photo {
+  width: 120px;
+  height: 120px;
+  margin: 0 auto 1rem;
+  background: #f5f1e9;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 3rem;
+}
+
+/* CTA Section */
+.about-cta {
+  text-align: center;
+  padding: 4rem;
+  background: #87a8d0;
+  border-radius: 20px;
+  color: #ffffff;
+}
+
+.about-cta h2 {
+  font-size: 2.5rem;
+  margin-bottom: 1rem;
+}
+
+.about-cta .cta-button {
+  display: inline-block;
+  padding: 1rem 3rem;
+  margin-top: 2rem;
+  background: #f4b084;
+  color: #ffffff;
+  border-radius: 50px;
+  text-decoration: none;
+  font-weight: 700;
+  transition: all 0.3s ease;
+}
+
+.about-cta .cta-button:hover {
+  transform: translateY(-5px);
+  background: #e89b6b;
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+}
+
+/* Culture Section */
+.culture-section {
+  margin-bottom: 4rem;
+  text-align: center;
+  padding: 2rem;
+  background: #f5f1e9;
+  border-radius: 15px;
+}
+
+.culture-section h2 {
+  color: #87a8d0;
+  margin-bottom: 1rem;
+}
+
+.culture-section p {
+  color: #4a3c31;
+  font-size: 1.2rem;
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+/* Benefits Section */
+.benefits-section {
+  margin-bottom: 4rem;
+}
+
+.benefits-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 2rem;
+}
+
+.benefit-item {
+  text-align: center;
+  padding: 2rem;
+  background: #ffffff;
+  border-radius: 15px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+}
+
+.benefit-item h3 {
+  color: #f4b084;
+  margin-bottom: 1rem;
+}
+
+.benefit-item p {
+  color: #666;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .mission-section {
+    flex-direction: column;
+  }
+
+  .mission-stats {
+    grid-template-columns: 1fr;
+  }
+
+  .timeline::before {
+    left: 0;
+  }
+
+  .timeline-content {
+    width: 90%;
+    margin-left: 10% !important;
+  }
+
+  .team-grid {
+    grid-template-columns: 1fr;
+  }
+  
+  .culture-section {
+    padding: 1.5rem;
+  }
+
+  .benefits-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .story-section p {
+    font-size: 1rem;
+  }
+}

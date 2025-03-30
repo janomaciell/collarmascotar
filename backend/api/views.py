@@ -318,30 +318,54 @@ def view_shared_poster(request, poster_id):
 @api_view(['POST'])
 @permission_classes([permissions.AllowAny])
 def send_community_notification(request):
-    pet_id = request.data.get('petId')
+    pet_uuid = request.data.get('petId')  # Cambiado de pet_id a pet_uuid
     scanner_location = request.data.get('scannerLocation')
     radius_km = int(request.data.get('radiusKm', 50))
     
-    if not pet_id or not scanner_location:
-        return Response({"error": "Pet ID and scanner location are required"}, status=status.HTTP_400_BAD_REQUEST)
-    
-    pet = get_object_or_404(Pet, id=pet_id)  # Cambiado de qr_uuid a id
-    if not pet.is_lost:
-        return Response({"message": "Pet is not marked as lost, no community notification sent"})
+    if not pet_uuid or not scanner_location:
+        return Response({
+            "error": "Se requiere ID de mascota y ubicación del escáner"
+        }, status=status.HTTP_400_BAD_REQUEST)
     
     try:
+        # Buscar por qr_uuid en lugar de id
+        pet = get_object_or_404(Pet, qr_uuid=pet_uuid)
+        
+        if not pet.is_lost:
+            return Response({
+                "message": "La mascota no está marcada como perdida"
+            })
+        
         recipients_count = send_community_scan_notification(
             pet, 
             scanner_location['latitude'], 
             scanner_location['longitude'],
             radius_km
         )
+        
         return Response({
-            "message": "Community notification sent",
-            "recipients": recipients_count
+            "message": "Notificación comunitaria enviada",
+            "recipients": recipients_count,
+            "pet": {
+                "name": pet.name,
+                "breed": pet.breed,
+                "is_lost": pet.is_lost,
+                "last_seen": pet.last_seen_date
+            }
         })
+        
+    except Pet.DoesNotExist:
+        return Response({
+            "error": "Mascota no encontrada"
+        }, status=status.HTTP_404_NOT_FOUND)
+    except ValueError as e:
+        return Response({
+            "error": f"Error de formato: {str(e)}"
+        }, status=status.HTTP_400_BAD_REQUEST)
     except Exception as e:
-        return Response({"error": str(e)}, status=status.HTTP_400_BAD_REQUEST)
+        return Response({
+            "error": f"Error inesperado: {str(e)}"
+        }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 @api_view(['POST'])
 @permission_classes([permissions.IsAuthenticated])

@@ -1,28 +1,30 @@
 /* Estructura principal del contenedor de login */
 .login-container {
-  max-width: 1200px;
+  max-width: 500px; /* Reducido para un diseño más enfocado */
   margin: 4rem auto;
-  padding: 3rem;
-  background: #fff;
-  box-shadow: 0 10px 30px rgba(61, 43, 31, 0.15); /* Sombra marrón suave */
+  padding: 2.5rem;
+  background: #ffffff; /* Fondo blanco para consistencia con ventajas */
+  box-shadow: 0 10px 30px rgba(74, 60, 49, 0.1); /* Sombra suave marrón pastel */
+  border-radius: 15px;
+  border: 2px solid #f4b084; /* Borde naranja pastel */
   transition: all 0.3s ease;
   position: relative;
   overflow: hidden;
-  border: 2px solid #f4c430; /* Borde dorado inspirado en pelaje */
+  animation: fadeInUp 0.8s ease-out;
 }
 
 .login-container:hover {
-  box-shadow: 0 15px 40px rgba(61, 43, 31, 0.25);
-  border-color: #d4a017;
+  box-shadow: 0 15px 40px rgba(74, 60, 49, 0.2);
+  border-color: #e89b6b; /* Naranja más oscuro al hover */
 }
 
 .login-container::before {
-  content: '🐾'; /* Detalle de huella como en las tarjetas de características */
+  content: '🐾'; /* Huella decorativa */
   position: absolute;
   top: 10px;
   right: 10px;
   font-size: 2rem;
-  color: #f88010;
+  color: #87a8d0; /* Azul pastel para la huella */
   opacity: 0.2;
   transform: rotate(15deg);
 }
@@ -31,43 +33,38 @@
 .login-container h2 {
   text-align: center;
   font-size: 2.5rem;
-  color: #3d2b1f; /* Marrón oscuro de la paleta */
+  color: #87a8d0; /* Azul pastel para el título */
   font-weight: 700;
   margin-bottom: 2rem;
   text-transform: uppercase;
-  letter-spacing: 3px;
-  background: linear-gradient(90deg, #d4a017, #fff); /* Gradiente como en hero */
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  text-shadow: 0 0 10px rgba(61, 43, 31, 0.3);
-  animation: fadeInDown 1s ease; /* Animación de entrada */
+  letter-spacing: 2px;
 }
 
 /* Mensaje de error */
 .error-message {
-  color: #fff;
-  background: rgba(244, 67, 54, 0.9); /* Rojo con opacidad */
+  color: #ffffff;
+  background: rgba(232, 155, 107, 0.9); /* Naranja pastel suave para error */
   padding: 1rem;
-  border-radius: 15px;
-  margin-bottom: 2rem;
+  border-radius: 12px;
+  margin-bottom: 1.5rem;
   text-align: center;
-  font-weight: 700;
-  font-size: 1.1rem;
-  box-shadow: 0 5px 15px rgba(61, 43, 31, 0.2);
+  font-weight: 600;
+  font-size: 1rem;
+  box-shadow: 0 5px 15px rgba(74, 60, 49, 0.1);
 }
 
 /* Formulario de login */
 .login-form {
   display: flex;
   flex-direction: column;
-  gap: 1.8rem; /* Espaciado más amplio y elegante */
+  gap: 1.5rem;
 }
 
 /* Estilos para los campos de formulario */
 .form-group label {
   display: block;
   margin-bottom: 0.5rem;
-  color: #5c4033; /* Marrón medio para etiquetas */
+  color: #4a3c31; /* Marrón pastel para etiquetas */
   font-weight: 600;
   font-size: 1.1rem;
 }
@@ -75,44 +72,50 @@
 .form-group input {
   width: 100%;
   padding: 1rem;
-  border: 2px solid #f4c430; /* Borde dorado claro */
+  border: 2px solid #87a8d0; /* Borde azul pastel */
   border-radius: 12px;
   font-size: 1rem;
-  background: #f9e9d5; /* Fondo crema cálido */
-  color: #3d2b1f;
+  background: #f5f1e9; /* Fondo beige pastel */
+  color: #4a3c31;
   transition: all 0.3s ease;
 }
 
 .form-group input:focus {
   outline: none;
-  border-color: #d4a017; /* Dorado más intenso al enfocar */
-  background: #fff;
-  box-shadow: 0 5px 15px rgba(61, 43, 31, 0.2);
+  border-color: #f4b084; /* Naranja pastel al enfocar */
+  background: #ffffff;
+  box-shadow: 0 5px 15px rgba(74, 60, 49, 0.1);
 }
 
 .form-group input::placeholder {
-  color: #8b6f47; /* Tono marrón suave para placeholder */
+  color: #7393b8; /* Azul pastel claro para placeholder */
   opacity: 0.8;
 }
 
 /* Botón de enviar */
 .submit-button {
-  background: linear-gradient(135deg, #d4a017, #f4c430); /* Gradiente dorado */
-  color: #3d2b1f;
+  background: #f4b084; /* Naranja pastel */
+  color: #ffffff;
   border: none;
   padding: 1rem;
   font-size: 1.3rem;
   font-weight: 700;
-  border-radius: 50px; /* Bordes más redondeados */
+  border-radius: 50px;
   cursor: pointer;
   transition: all 0.3s ease;
-  box-shadow: 0 5px 20px rgba(61, 43, 31, 0.3);
+  box-shadow: 0 5px 20px rgba(74, 60, 49, 0.2);
   position: relative;
   overflow: hidden;
 }
 
+.submit-button:hover {
+  background: #e89b6b; /* Naranja más oscuro */
+  transform: translateY(-5px);
+  box-shadow: 0 10px 30px rgba(74, 60, 49, 0.3);
+}
+
 .submit-button::after {
-  content: '🐾'; /* Huella como en el botón CTA */
+  content: '🐾';
   position: absolute;
   right: 10px;
   top: 50%;
@@ -120,11 +123,6 @@
   font-size: 1.2rem;
   opacity: 0;
   transition: opacity 0.3s ease;
-}
-
-.submit-button:hover {
-  transform: translateY(-5px);
-  box-shadow: 0 10px 30px rgba(61, 43, 31, 0.4);
 }
 
 .submit-button:hover::after {
@@ -135,22 +133,21 @@
 .register-link {
   text-align: center;
   margin-top: 1.5rem;
-  color: #5c4033;
+  color: #4a3c31; /* Marrón pastel */
   font-size: 1.1rem;
   font-weight: 500;
 }
 
 .register-link a {
-  color: #d4a017; /* Dorado para el enlace */
+  color: #87a8d0; /* Azul pastel para el enlace */
   text-decoration: none;
   font-weight: 700;
   transition: all 0.3s ease;
 }
 
 .register-link a:hover {
-  color: #f4c430;
+  color: #f4b084; /* Naranja pastel al hover */
   text-decoration: underline;
-  text-shadow: 0 0 5px rgba(61, 43, 31, 0.2);
 }
 
 /* Animaciones */
@@ -164,16 +161,12 @@
   to { opacity: 1; transform: translateY(0); }
 }
 
-.login-container {
-  animation: fadeInUp 0.8s ease-out; /* Animación más suave */
-}
-
 /* Estilos responsivos */
 @media (max-width: 768px) {
   .login-container {
-    padding: 2rem;
+    padding-top: 5rem;
     width: 90%;
-    margin: 2rem auto;
+    margin: 4rem auto;
   }
 
   .login-container h2 {
@@ -196,7 +189,7 @@
   }
 
   .error-message {
-    font-size: 1rem;
+    font-size: 0.9rem;
   }
 
   .form-group label {

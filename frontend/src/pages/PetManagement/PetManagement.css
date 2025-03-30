@@ -1,16 +1,3 @@
-:root {
-  --primary-color: #F4A258;     /* Verde principal */
-  --primary-dark: #F4A261;      /* Verde oscuro */
-  --secondary-color: #F4A258;   /* Marrón */
-  --accent-color: #FCF3E3;      /* Beige */
-  --text-primary: #2e2a26;      /* Marrón oscuro para texto */
-  --text-secondary: #5a4e42;    /* Marrón medio para texto */
-  --background-light: #f4f7fc;  /* Fondo claro */
-  --error-color: #f44336;       /* Rojo para errores */
-  --success-color: #4CAF50;     /* Verde para éxito */
-  --shadow-standard: 0 8px 20px rgba(0, 0, 0, 0.1);
-}
-
 /* Estilos Generales */
 * {
   margin: 0;
@@ -20,8 +7,8 @@
 
 body {
   font-family: 'Arial', sans-serif;
-  background: var(--background-light);
-  color: var(--text-primary);
+  background: #f5f1e9; /* Beige pastel como fondo */
+  color: #4a3c31; /* Marrón pastel para texto */
   line-height: 1.6;
   overflow-x: hidden;
 }
@@ -33,7 +20,7 @@ body {
   left: 0;
   width: 100vw;
   height: calc(100vh - 60px); /* Resta la altura del header */
-  background: linear-gradient(135deg, var(--background-light) 0%, var(--accent-color) 100%);
+  background: linear-gradient(135deg, #f5f1e9 0%, #d9c6a5 100%); /* Gradiente beige a marrón pastel claro */
   overflow-y: auto;
   display: flex;
   justify-content: center;
@@ -50,8 +37,8 @@ body {
   left: 0;
   width: 100%;
   height: 100%;
-  background: url('data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 320"%3E%3Cpath fill="%238b5a2b" fill-opacity="0.2" d="M0,224L60,213.3C120,203,240,181,360,170.7C480,160,600,160,720,165.3C840,171,960,181,1080,186.7C1200,192,1320,192,1380,192L1440,192L1440,320L1380,320C1320,320,1200,320,1080,320C960,320,840,320,720,320C600,320,480,320,360,320C240,320,120,320,60,320L0,320Z"%3E%3C/path%3E%3C/svg%3E'),
-              url('data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 50 50"%3E%3Cpath d="M25 10c5 5 10 0 15 5s5 10 0 15-10 5-15 0-5-10 0-15z" fill="%236E9F1F" opacity="0.1"/%3E%3C/svg%3E');
+  background: url('data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 320"%3E%3Cpath fill="%234a3c31" fill-opacity="0.2" d="M0,224L60,213.3C120,203,240,181,360,170.7C480,160,600,160,720,165.3C840,171,960,181,1080,186.7C1200,192,1320,192,1380,192L1440,192L1440,320L1380,320C1320,320,1200,320,1080,320C960,320,840,320,720,320C600,320,480,320,360,320C240,320,120,320,60,320L0,320Z"%3E%3C/path%3E%3C/svg%3E'),
+              url('data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 50 50"%3E%3Cpath d="M25 10c5 5 10 0 15 5s5 10 0 15-10 5-15 0-5-10 0-15z" fill="%23f4b084" opacity="0.1"/%3E%3C/svg%3E');
   background-repeat: repeat-x, repeat;
   background-position: bottom, center;
   z-index: 0;
@@ -64,7 +51,7 @@ body {
   z-index: 1;
   width: 100%;
   padding: 2rem;
-  background: rgba(255, 255, 255, 0.9);
+  background: rgba(255, 255, 255, 0.9); /* Blanco con transparencia */
   border-radius: 20px;
   animation: fadeInUp 0.8s ease-out;
 }
@@ -74,18 +61,15 @@ body {
   font-size: 3rem;
   font-weight: 800;
   text-align: center;
-  color: var(--text-primary);
+  color: #87a8d0; /* Azul pastel */
   margin-bottom: 2rem;
   text-transform: uppercase;
   letter-spacing: 2px;
-  background: linear-gradient(90deg, var(--primary-color), var(--secondary-color));
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
 }
 
 /* Botón */
 .add-pet-button {
-  background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-dark) 100%);
+  background: linear-gradient(135deg, #f4b084 0%, #e89b6b 100%); /* Gradiente naranja pastel */
   color: #fff;
   border: none;
   padding: 1rem 2.5rem;
@@ -94,7 +78,15 @@ body {
   font-weight: 700;
   display: block;
   margin: 0 auto 2rem;
-  box-shadow: 0 8px 20px rgba(209, 134, 23, 0.3);
+  box-shadow: 0 8px 20px rgba(74, 60, 49, 0.3); /* Sombra marrón pastel */
+  border-radius: 50px;
+  transition: all 0.3s ease;
+}
+
+.add-pet-button:hover {
+  background: linear-gradient(135deg, #e89b6b 0%, #d98652 100%); /* Naranja más oscuro */
+  transform: translateY(-5px);
+  box-shadow: 0 10px 30px rgba(74, 60, 49, 0.4);
 }
 
 /* Mensaje de Carga */
@@ -104,14 +96,14 @@ body {
   background: rgba(255, 255, 255, 0.95);
   border-radius: 15px;
   font-size: 1.2rem;
-  color: var(--text-secondary);
-  box-shadow: var(--shadow-standard);
+  color: #4a3c31; /* Marrón pastel */
+  box-shadow: 0 8px 20px rgba(74, 60, 49, 0.1); /* Sombra suave */
   backdrop-filter: blur(5px);
 }
 
 .loading-message i {
   font-size: 3rem;
-  color: var(--primary-color);
+  color: #87a8d0; /* Azul pastel */
   margin-bottom: 1rem;
   display: block;
   animation: spin 2s infinite linear;
@@ -126,22 +118,22 @@ body {
   font-weight: 700;
   padding: 1.5rem;
   border-radius: 15px;
-  background: linear-gradient(135deg, var(--error-color) 0%, rgba(244, 67, 54, 0.8) 100%);
-  box-shadow: 0 8px 20px rgba(244, 67, 54, 0.3);
+  background: linear-gradient(135deg, #e87676 0%, rgba(232, 118, 118, 0.8) 100%); /* Rojo pastel */
+  box-shadow: 0 8px 20px rgba(74, 60, 49, 0.3); /* Sombra marrón pastel */
 }
 
 /* Historial de Escaneo */
 .scan-history {
   margin-top: 2rem;
   padding: 1.5rem;
-  background: var(--accent-color);
+  background: #f5f1e9; /* Beige pastel */
   border-radius: 15px;
-  border: 2px dashed var(--secondary-color);
+  border: 2px dashed #87a8d0; /* Borde azul pastel */
 }
 
 .scan-history h3 {
   font-size: 1.5rem;
-  color: var(--text-primary);
+  color: #4a3c31; /* Marrón pastel */
   margin-bottom: 1rem;
 }
 
@@ -152,32 +144,30 @@ body {
 
 .scan-history li {
   padding: 0.5rem 0;
-  border-bottom: 1px solid rgba(139, 90, 43, 0.2);
+  border-bottom: 1px solid rgba(74, 60, 49, 0.2); /* Marrón pastel claro */
 }
 
 /* Tarjeta de Mascota (Pet Card) */
 .pet-card {
-  background: #fff;
   padding: 1.5rem;
   border-radius: 15px;
-  box-shadow: var(--shadow-standard);
+  box-shadow: 0 8px 20px rgba(74, 60, 49, 0.1); /* Sombra marrón pastel */
   margin: 1rem;
-  border-left: 4px solid var(--primary-color);
+  border-left: 4px solid #f4b084; /* Borde naranja pastel */
   position: relative;
   overflow: hidden;
   animation: slideIn 0.8s ease-out;
+  background: #ffffff; /* Fondo blanco */
 }
 
 .pet-card::before {
-  content: '';
+  content: '🐾';
   position: absolute;
-  top: -50%;
-  left: -50%;
-  width: 200%;
-  height: 200%;
-  background-size: 50px;
-  z-index: 0;
-  animation: 5s infinite linear; /* Falta la propiedad animation-name */
+  top: 10px;
+  right: 10px;
+  font-size: 2rem;
+  color: #87a8d0; /* Azul pastel para huellitas */
+  opacity: 0.2;
 }
 
 .pet-card-content {
@@ -187,12 +177,12 @@ body {
 
 .pet-card h3 {
   font-size: 1.5rem;
-  color: var(--text-primary);
+  color: #87a8d0; /* Azul pastel */
   margin-bottom: 0.5rem;
 }
 
 .pet-card p {
-  color: var(--text-secondary);
+  color: #4a3c31; /* Marrón pastel */
   margin: 0.5rem 0;
 }
 
@@ -201,13 +191,13 @@ body {
   margin: 1rem auto;
   max-width: 150px;
   padding: 1rem;
-  background: linear-gradient(135deg, var(--background-light), var(--accent-color));
+  background: linear-gradient(135deg, #f5f1e9, #d9c6a5); /* Gradiente beige a marrón pastel */
   border-radius: 10px;
-  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 5px 15px rgba(74, 60, 49, 0.1); /* Sombra marrón pastel */
 }
 
 .pet-card button {
-  background: var(--primary-color);
+  background: #87a8d0; /* Azul pastel */
   color: #fff;
   border: none;
   padding: 0.8rem 1.5rem;
@@ -215,12 +205,20 @@ body {
   cursor: pointer;
   font-size: 1rem;
   margin: 0.5rem 0;
-  box-shadow: 0 4px 12px rgba(110, 159, 31, 0.3);
+  box-shadow: 0 4px 12px rgba(74, 60, 49, 0.3); /* Sombra marrón pastel */
+  transition: all 0.3s ease;
+}
+
+.pet-card button:hover {
+  background: #7393b8; /* Azul pastel más oscuro */
+  transform: translateY(-2px);
+  box-shadow: 0 6px 18px rgba(74, 60, 49, 0.4);
 }
 
 .pet-card button:disabled {
-  background: #ccc;
+  background: #d9c6a5; /* Marrón pastel claro */
   cursor: not-allowed;
+  box-shadow: none;
 }
 
 /* Animaciones */
@@ -237,17 +235,6 @@ body {
 @keyframes spin {
   0% { transform: rotate(0deg); }
   100% { transform: rotate(360deg); }
-}
-
-@keyframes petPattern {
-  0% { transform: translate(0, 0); }
-  100% { transform: translate(50px, 50px); }
-}
-
-@keyframes qrGlow {
-  0% { box-shadow: 0 5px 15px rgba(110, 159, 31, 0.1); }
-  50% { box-shadow: 0 5px 15px rgba(110, 159, 31, 0.4); }
-  100% { box-shadow: 0 5px 15px rgba(110, 159, 31, 0.1); }
 }
 
 @keyframes slideIn {
