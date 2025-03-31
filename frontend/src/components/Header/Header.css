@@ -6,21 +6,21 @@
   left: 0;
   width: 100%;
   z-index: 1000;
-  height: 70px; /* Altura ajustada para un diseño más moderno */
+  height: 70px; /* Altura fija del header */
 }
 
 .header-container {
   display: flex;
   justify-content: space-between;
-  align-items: center;
-  padding: 1rem 2rem;
+  align-items: center; /* Centrado vertical */
+  padding: 0 2rem; /* Eliminado padding vertical */
   max-width: 1200px;
   margin: 0 auto;
-  height: 100%;
+  height: 100%; /* Usa toda la altura del header */
 }
 
 .logo a {
-  font-size: 1.8rem;
+  font-size: 1.6rem; /* Reducido para móviles */
   font-weight: 800;
   color: #87a8d0; /* Azul pastel */
   text-decoration: none;
@@ -83,17 +83,23 @@
   font-size: 1.8rem;
   cursor: pointer;
   color: #4a3c31;
+  padding: 0.5rem;
+  z-index: 1001; /* Asegura que esté por encima */
 }
 
 @media (max-width: 768px) {
   .hamburger {
-    display: block;
+    display: flex;
+    align-items: center; /* Centra el icono verticalmente */
+    height: 100%;
+    font-size: 1.8rem;
+    margin-left: auto; /* Empuja el hamburger a la derecha */
   }
 
   .nav {
     display: none;
     position: absolute;
-    top: 100%;
+    top: 70px; /* Se alinea con la altura del header */
     left: 0;
     width: 100%;
     background-color: #ffffff;
@@ -112,7 +118,7 @@
   }
 
   .nav-item {
-    margin: 1rem 0;
+    margin: 0.5rem 0;
     width: 100%;
     text-align: center;
   }
@@ -123,6 +129,16 @@
   }
 
   .header-container {
-    padding: 1rem;
+    padding: 0 1rem; /* Eliminado padding vertical en móvil */
+    justify-content: space-between;
+    width: 100%;
+    height: 70px; /* Mantiene la altura en móvil */
+  }
+
+  .logo a {
+    display: flex;
+    align-items: center;
+    height: 100%;
+    font-size: 1.2rem; /* Más pequeño en móviles */
   }
 }

@@ -53,6 +53,13 @@ class PetSerializer(serializers.ModelSerializer):
             'vet_address'
         ]
         read_only_fields = ['id', 'qr_code', 'qr_uuid', 'created_at']
+    def validate_photo(self, value):
+        if value and len(value.name) > 100:
+            extension = value.name.split('.')[-1]
+            base_name = value.name[:95 - len(extension)]
+            value.name = f"{base_name}.{extension}"
+            print(f"Nombre de archivo truncado a: {value.name}")
+        return value
 
 class PetPublicSerializer(serializers.ModelSerializer):
     """Serializer para datos públicos que verá quien escanee el QR"""

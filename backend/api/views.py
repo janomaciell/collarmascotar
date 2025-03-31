@@ -44,7 +44,7 @@ class PetViewSet(viewsets.ModelViewSet):
     
     def perform_create(self, serializer):
         serializer.save(owner=self.request.user)
-
+    
     def partial_update(self, request, *args, **kwargs):
         pet = self.get_object()
         was_lost = pet.is_lost
@@ -175,7 +175,6 @@ def register_device(request):
     try:
         serializer = DeviceRegistrationSerializer(data=request.data)
         if serializer.is_valid():
-            # Actualizar o crear el registro
             device, created = DeviceRegistration.objects.update_or_create(
                 user=request.user,
                 registration_id=serializer.validated_data['registration_id'],
@@ -183,17 +182,13 @@ def register_device(request):
                     'device_type': serializer.validated_data['device_type']
                 }
             )
-            
             return Response({
                 'message': 'Device registered successfully',
                 'device_id': device.id
             }, status=status.HTTP_201_CREATED if created else status.HTTP_200_OK)
-        
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
     except Exception as e:
-        return Response({
-            'error': str(e)
-        }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+        return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 @api_view(['POST'])
 @permission_classes([permissions.IsAuthenticated])
@@ -258,7 +253,8 @@ def generate_lost_poster(request, pet_id):
     
     poster_data = request.data.get('posterImage')
     if not poster_data:
-        return Response({"error": "No se proporcionó imagen del cartel"}, status=status.HTTP_400_BAD_REQUEST)
+        print("Datos recibidos:", request.data)
+        return Response({"error": "No se proporcionó imagen del cartel", "received_data": dict(request.data)}, status=status.HTTP_400_BAD_REQUEST)
     
     try:
         if 'base64,' in poster_data:
@@ -288,7 +284,7 @@ def generate_lost_poster(request, pet_id):
             "shareUrl": share_url
         })
     except Exception as e:
-        return Response({"error": str(e)}, status=status.HTTP_400_BAD_REQUEST)
+        return Response({"error": f"Error al procesar el poster: {str(e)}"}, status=status.HTTP_400_BAD_REQUEST)
 
 @api_view(['GET'])
 @permission_classes([permissions.AllowAny])
@@ -318,7 +314,7 @@ def view_shared_poster(request, poster_id):
 @api_view(['POST'])
 @permission_classes([permissions.AllowAny])
 def send_community_notification(request):
-    pet_uuid = request.data.get('petId')  # Cambiado de pet_id a pet_uuid
+    pet_uuid = request.data.get('petId')
     scanner_location = request.data.get('scannerLocation')
     radius_km = int(request.data.get('radiusKm', 50))
     
@@ -328,7 +324,6 @@ def send_community_notification(request):
         }, status=status.HTTP_400_BAD_REQUEST)
     
     try:
-        # Buscar por qr_uuid en lugar de id
         pet = get_object_or_404(Pet, qr_uuid=pet_uuid)
         
         if not pet.is_lost:
@@ -353,19 +348,12 @@ def send_community_notification(request):
                 "last_seen": pet.last_seen_date
             }
         })
-        
     except Pet.DoesNotExist:
-        return Response({
-            "error": "Mascota no encontrada"
-        }, status=status.HTTP_404_NOT_FOUND)
+        return Response({"error": "Mascota no encontrada"}, status=status.HTTP_404_NOT_FOUND)
     except ValueError as e:
-        return Response({
-            "error": f"Error de formato: {str(e)}"
-        }, status=status.HTTP_400_BAD_REQUEST)
+        return Response({"error": f"Error de formato: {str(e)}"}, status=status.HTTP_400_BAD_REQUEST)
     except Exception as e:
-        return Response({
-            "error": f"Error inesperado: {str(e)}"
-        }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+        return Response({"error": f"Error inesperado: {str(e)}"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 @api_view(['POST'])
 @permission_classes([permissions.IsAuthenticated])
@@ -399,13 +387,18 @@ def get_user_points(request):
     return Response(UserPointsSerializer(points).data)
 
 class LostPetView(APIView):
+    permission_classes = [permissions.IsAuthenticated]  # Añadimos permisos explícitos
+
     def post(self, request, *args, **kwargs):
+        print("Solicitud POST recibida en LostPetView")  # Depuración
+        print("Datos recibidos:", request.data)  # Mostrar datos enviados
         pet_id = request.data.get('pet_id')
         alert_data = request.data.get('alert_data')
 
         if not pet_id or not alert_data:
             return Response({
-                "error": "Se requieren pet_id y alert_data"
+                "error": "Se requieren pet_id y alert_data",
+                "received_data": dict(request.data)
             }, status=status.HTTP_400_BAD_REQUEST)
 
         try:
@@ -414,7 +407,7 @@ class LostPetView(APIView):
                 pet=pet,
                 owner_latitude=float(alert_data['latitude']),
                 owner_longitude=float(alert_data['longitude']),
-                radius_km=int(alert_data.get('radius_km', 50))
+                radius_km=int(alert_data.get('radius_km', 3))
             )
             pet.is_lost = True
             pet.last_seen_date = timezone.now()
@@ -436,20 +429,98 @@ class LostPetView(APIView):
                 "error": f"Error procesando la alerta: {str(e)}"
             }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
-# Helper functions for notifications
-
 def send_lost_pet_email(pet, email, alert):
-    subject = f"¡Mascota perdida: {pet.name}!"
-    message = f"""
-    Hola,
-    Se ha reportado que {pet.name} está perdido cerca de tu área. Por favor, mantén un ojo abierto y si lo ves, escanea su código QR o contacta al dueño.
-    Detalles de la mascota:
-    - Nombre: {pet.name}
-    - Raza: {pet.breed}
-    - Última ubicación conocida: {alert.owner_latitude}, {alert.owner_longitude}
-    Gracias por tu ayuda.
+    subject = f"¡Ayúdanos a encontrar a {pet.name}! - Mascota perdida cerca de ti"
+    
+    # Enlace a Google Maps con la última ubicación
+    maps_link = f"https://www.google.com/maps?q={alert.owner_latitude},{alert.owner_longitude}"
+    
+    # Construcción del mensaje HTML
+    html_message = f"""
+    <html>
+      <body style="font-family: Arial, sans-serif; color: #333; margin: 0; padding: 0;">
+        <div style="max-width: 600px; margin: 20px auto; border: 1px solid #e0e0e0; border-radius: 10px; overflow: hidden;">
+          <!-- Encabezado -->
+          <div style="background: linear-gradient(135deg, #87a8d0, #f4b084); padding: 20px; text-align: center;">
+            <h1 style="color: #ffffff; margin: 0; font-size: 28px;">¡Mascota Perdida!</h1>
+            <p style="color: #ffffff; font-size: 16px; margin: 5px 0;">CollarMascotaQR necesita tu ayuda</p>
+          </div>
+          <!-- Contenido -->
+          <div style="padding: 20px; background: #ffffff;">
+            <h2 style="color: #4a3c31; font-size: 22px; margin-bottom: 15px;">¡{pet.name} se ha perdido!</h2>
+            <p style="font-size: 16px; line-height: 1.5; color: #666;">
+              Hola,<br>
+              Una mascota llamada <strong>{pet.name}</strong> se ha perdido cerca de tu área. Te pedimos que estés atento/a y nos ayudes a reunirla con su dueño.
+            </p>
+            <table style="width: 100%; margin: 20px 0; border-collapse: collapse;">
+              <tr style="background: #f5f1e9;">
+                <td style="padding: 10px; font-weight: bold; color: #4a3c31;">Nombre:</td>
+                <td style="padding: 10px; color: #333;">{pet.name}</td>
+              </tr>
+              <tr>
+                <td style="padding: 10px; font-weight: bold; color: #4a3c31;">Raza:</td>
+                <td style="padding: 10px; color: #333;">{pet.breed or 'No especificada'}</td>
+              </tr>
+              <tr style="background: #f5f1e9;">
+                <td style="padding: 10px; font-weight: bold; color: #4a3c31;">Última ubicación:</td>
+                <td style="padding: 10px; color: #333;">
+                  <a href="{maps_link}" style="color: #87a8d0; text-decoration: none;">Ver en Google Maps</a>
+                </td>
+              </tr>
+              <tr>
+                <td style="padding: 10px; font-weight: bold; color: #4a3c31;">Contacto:</td>
+                <td style="padding: 10px; color: #333;">{pet.phone or 'No disponible'}</td>
+              </tr>
+            </table>
+            <!-- Foto de la mascota -->
+            {f'<img src="{pet.photo.url}" alt="Foto de {pet.name}" style="max-width: 100%; height: auto; border-radius: 5px; margin: 10px 0;" />' if pet.photo else '<p style="color: #777;">No hay foto disponible</p>'}
+            <!-- QR -->
+            {f'<img src="{pet.qr_code.url}" alt="QR de {pet.name}" style="width: 150px; height: 150px; margin: 10px auto; display: block;" />' if pet.qr_code else ''}
+            <p style="font-size: 14px; color: #666; text-align: center;">Escanea el QR para más información</p>
+            <!-- Botones -->
+            <div style="text-align: center; margin: 20px 0;">
+              <a href="{maps_link}" style="background: #87a8d0; color: #fff; padding: 10px 20px; text-decoration: none; border-radius: 5px; display: inline-block; margin: 5px;">Ver mapa</a>
+              <a href="tel:{pet.phone}" style="background: #f4b084; color: #fff; padding: 10px 20px; text-decoration: none; border-radius: 5px; display: inline-block; margin: 5px;">Llamar al dueño</a>
+            </div>
+            <p style="font-size: 14px; color: #666; line-height: 1.5;">
+              Si ves a {pet.name}, por favor escanea su QR o contacta al dueño directamente. ¡Tu ayuda puede hacer la diferencia!
+            </p>
+          </div>
+          <!-- Pie de página -->
+          <div style="background: #f5f1e9; padding: 15px; text-align: center; font-size: 12px; color: #777;">
+            <p style="margin: 0;">© 2025 CollarMascotaQR - Juntos encontramos a {pet.name}</p>
+            <p style="margin: 5px 0;">
+              <a href="https://www.instagram.com/collarmascotaqr" style="color: #f4b084; text-decoration: none;">Síguenos en Instagram</a>
+            </p>
+          </div>
+        </div>
+      </body>
+    </html>
     """
-    send_mail(subject, message, settings.DEFAULT_FROM_EMAIL, [email])
+
+    # Mensaje plano como respaldo
+    plain_message = f"""
+    ¡Mascota perdida cerca de ti!
+    Nombre: {pet.name}
+    Raza: {pet.breed or 'No especificada'}
+    Última ubicación: {maps_link}
+    Contacto: {pet.phone or 'No disponible'}
+    Si la ves, escanea su QR o contacta al dueño.
+    Gracias por tu ayuda,
+    CollarMascotaQR
+    """
+
+    try:
+        send_mail(
+            subject=subject,
+            message=plain_message,
+            from_email=settings.DEFAULT_FROM_EMAIL,
+            recipient_list=[email],
+            html_message=html_message,
+            fail_silently=False,
+        )
+    except Exception as e:
+        print(f"Error enviando correo a {email}: {str(e)}")
 
 def send_lost_pet_notifications(pet, alert):
     users_within_radius = []
@@ -464,7 +535,7 @@ def send_lost_pet_notifications(pet, alert):
         "title": f"¡Mascota perdida cerca de ti!",
         "body": f"{pet.name} se ha perdido. Si lo ves, escanea su código QR o contacta al dueño.",
         "icon": pet.photo.url if pet.photo else None,
-        "click_action": f"/lost-pet/{pet.id}",
+        "click_action": f"{settings.FRONTEND_URL}/lost-pet/{pet.id}",
         "data": {
             "petId": str(pet.id),
             "petName": pet.name,
@@ -499,7 +570,7 @@ def send_lost_pet_notifications(pet, alert):
     for user in users_within_radius:
         try:
             if user.email:
-                send_lost_pet_email(pet, user.email, alert)
+                send_lost_pet_email(pet, user.email, alert)  # Usamos la versión mejorada
         except Exception as e:
             print(f"Error sending email to {user.email}: {str(e)}")
 
@@ -522,7 +593,7 @@ def send_community_scan_notification(pet, latitude, longitude, radius_km=50):
         "title": f"¡{pet.name} ha sido visto cerca de ti!",
         "body": f"Alguien acaba de escanear el QR de {pet.name}, una mascota perdida, cerca de tu ubicación.",
         "icon": pet.photo.url if pet.photo else None,
-        "click_action": f"/found-pet/{pet.qr_uuid}",
+        "click_action": f"{settings.FRONTEND_URL}/found-pet/{pet.qr_uuid}",
         "data": {
             "petId": str(pet.id),
             "petName": pet.name,
@@ -634,7 +705,6 @@ def send_support_email(request):
             <h1 style="color: #ffffff; margin: 0; font-size: 28px;">Solicitud de Soporte</h1>
             <p style="color: #ffffff; font-size: 16px; margin: 5px 0;">CollarMascotaQR</p>
           </div>
-
           <!-- Contenido -->
           <div style="padding: 20px; background: #ffffff;">
             <h2 style="color: #4a3c31; font-size: 22px; margin-bottom: 15px;">¡Hola, equipo de CollarMascotaQR!</h2>
@@ -661,7 +731,6 @@ def send_support_email(request):
               Por favor, responde a este mensaje lo antes posible para asistir a {name}.
             </p>
           </div>
-
           <!-- Pie de página -->
           <div style="background: #f5f1e9; padding: 15px; text-align: center; font-size: 12px; color: #777;">
             <p style="margin: 0;">© 2025 CollarMascotaQR - Todos los derechos reservados</p>
@@ -677,10 +746,10 @@ def send_support_email(request):
     try:
         send_mail(
             subject=subject,
-            message=plain_message,  # Versión de texto plano como respaldo
-            from_email=email,  # Email del usuario como remitente
-            recipient_list=[settings.EMAIL_HOST_USER],  # Tu email (janomaciel1@gmail.com)
-            html_message=html_message,  # Versión HTML estilizada
+            message=plain_message,
+            from_email=email,
+            recipient_list=[settings.EMAIL_HOST_USER],
+            html_message=html_message,
             fail_silently=False,
         )
         return Response({"message": "Correo enviado exitosamente"}, status=status.HTTP_200_OK)

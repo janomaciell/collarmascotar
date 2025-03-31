@@ -1,7 +1,7 @@
 /* Estructura principal del contenedor de login */
 .login-container {
-  max-width: 500px; /* Reducido para un diseño más enfocado */
-  margin: 4rem auto;
+  max-width: 900px; /* Reducido para un diseño más enfocado */
+  margin: 8rem auto;
   padding: 2.5rem;
   background: #ffffff; /* Fondo blanco para consistencia con ventajas */
   box-shadow: 0 10px 30px rgba(74, 60, 49, 0.1); /* Sombra suave marrón pastel */
@@ -166,7 +166,7 @@
   .login-container {
     padding-top: 5rem;
     width: 90%;
-    margin: 4rem auto;
+    margin: 5rem auto;
   }
 
   .login-container h2 {

@@ -1,203 +1,288 @@
-/* Estructura principal del contenedor de registro */
-.register-container {
-  max-width: 500px; /* Igual que Login para consistencia */
-  margin: 4rem auto;
-  padding: 2.5rem;
-  background: #ffffff; /* Fondo blanco como en Ventajas y Login */
-  box-shadow: 0 10px 30px rgba(74, 60, 49, 0.1); /* Sombra marrón pastel suave */
-  border-radius: 15px;
-  border: 2px solid #f4b084; /* Borde naranja pastel */
-  transition: all 0.3s ease;
+/* Página completa */
+.register-page {
+  margin: 0;
+  background: linear-gradient(135deg, #f5f1e9 30%, #d9c6a5 100%);
+  font-family: 'Roboto', sans-serif;
+  min-height: 100vh;
   position: relative;
-  overflow: hidden;
-  animation: fadeInUp 0.8s ease-out;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding-top: 70px; /* Espacio para el título */
 }
 
-.register-container:hover {
-  box-shadow: 0 15px 40px rgba(74, 60, 49, 0.2);
-  border-color: #e89b6b; /* Naranja más oscuro al hover */
-}
-
-/* Detalle decorativo */
-.register-container::before {
-  content: '🐾'; /* Huella como en Login y Home */
-  position: absolute;
-  top: 10px;
-  right: 10px;
-  font-size: 2rem;
-  color: #87a8d0; /* Azul pastel */
-  opacity: 0.2;
-  transform: rotate(15deg);
-}
-
-/* Título de la página */
-.register-container h2 {
-  text-align: center;
-  font-size: 2.5rem;
-  color: #87a8d0; /* Azul pastel como en Login */
+/* Título de registro - ARREGLADO */
+.register-title {
+  padding: 8rem 5rem;
+  color: #4a3c31;
   font-weight: 700;
-  margin-bottom: 2rem;
+  text-align: center;
+  width: 100%;
   text-transform: uppercase;
-  letter-spacing: 2px;
+  position: relative;
+  z-index: 10; /* Asegura que esté por encima de otros elementos */
+  text-shadow: 1px 1px 2px rgba(0,0,0,0.1);
+}
+.register-subtitle {
+  color: #000000;
+  padding: 10px;
+  border-radius: 3px;
+  background-color: #d9c6a5;
+  font-size: 1.2rem;
+  margin-top: 10px;
+  text-align: center;
+  font-weight: 500;
+}
+
+/* Barra de progreso */
+#progress {
+  position: absolute;
+  background: #87a8d0;
+  height: 100vh;
+  width: 0;
+  transition: width 0.2s ease-in-out;
+  top: 0;
+  left: 0;
+  z-index: 1;
+}
+
+/* Contenedor central */
+.center {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  gap: 1rem;
+  width: 100%;
+  position: relative;
+  z-index: 5;
+  margin-top: 2rem;
+}
+
+/* Formulario de registro */
+#register {
+  background: #ffffff;
+  position: relative;
+  width: 410px;
+  padding: 25px 20px 25px 20px;
+  box-shadow: 0 10px 30px rgba(74, 60, 49, 0.1);
+  border-radius: 15px;
+  border: 2px solid #f4b084;
+  transition: transform 0.1s ease-in-out, width 0.8s ease-in-out, padding 0.8s ease-in-out;
+}
+
+#register.close {
+  width: 0;
+  padding: 0;
+  overflow: hidden;
+  box-shadow: 0 16px 24px 2px rgba(0, 0, 0, 0);
+}
+
+#register.wrong {
+  animation: shake 0.7s ease-in-out;
+  border-color: #ff2d26;
+}
+
+/* Botón de siguiente */
+.next {
+  position: absolute;
+  right: 20px;
+  bottom: 10px;
+  font-size: 40px;
+  color: #f4b084;
+  cursor: pointer;
+  transition: color 0.3s ease;
+}
+
+.next:hover {
+  color: #e89b6b;
+  transform: scale(1.1);
+}
+
+.wrong .next {
+  color: #ff2d26;
+}
+
+.close .next {
+  color: #fff;
+}
+
+/* Contenedor del input */
+#inputContainer {
+  position: relative;
+  opacity: 0;
+  width: 350px;
+  margin-top: 25px;
+  transition: opacity 0.3s ease-in-out;
+}
+
+#inputContainer.active {
+  opacity: 1;
+}
+
+/* Campo de entrada */
+#inputField {
+  width: 100%;
+  padding: 0 5px;
+  border: none;
+  font-size: 20px;
+  font-weight: bold;
+  outline: 0;
+  background: transparent;
+  box-shadow: none;
+  color: #4a3c31;
+  padding-bottom: 5px;
+}
+
+/* Etiqueta del input */
+#inputLabel {
+  position: absolute;
+  pointer-events: none;
+  top: 0;
+  left: 0;
+  font-size: 20px;
+  font-weight: bold;
+  padding: 0 5px;
+  color: #87a8d0;
+  transition: 0.2s ease-in-out;
+}
+
+#inputField:valid + #inputLabel,
+#inputField:focus + #inputLabel {
+  top: -15px;
+  font-size: 11px;
+  font-weight: normal;
+  color: #7393b8;
+}
+
+/* Barra de progreso del input */
+#inputProgress {
+  position: absolute;
+  border-bottom: 2px solid #f4b084;
+  padding: 3px 0;
+  width: 0;
+  transition: width 0.6s ease-in-out;
+}
+
+#inputField:valid ~ #inputProgress,
+#inputField:focus ~ #inputProgress {
+  width: 100%;
+}
+
+.wrong #inputProgress {
+  border-color: #ff2d26;
+}
+
+/* Texto de bienvenida */
+.welcome-text {
+  color: #87a8d0;
+  opacity: 0;
+  transition: opacity 0.8s ease-in-out;
+  font-size: 2rem;
+  text-align: center;
+}
+
+.welcome-text.visible {
+  opacity: 1;
 }
 
 /* Mensaje de error */
 .error-message {
   color: #ffffff;
-  background: rgba(232, 155, 107, 0.9); /* Naranja pastel suave para error */
+  background: rgba(232, 155, 107, 0.9);
   padding: 1rem;
   border-radius: 12px;
-  margin-bottom: 1.5rem;
   text-align: center;
   font-weight: 600;
   font-size: 1rem;
-  box-shadow: 0 5px 15px rgba(74, 60, 49, 0.1);
-}
-
-/* Formulario de registro */
-.register-form {
-  display: flex;
-  flex-direction: column;
-  gap: 1.5rem; /* Espaciado consistente con Login */
-}
-
-/* Estilos para los campos de formulario */
-.form-group label {
-  display: block;
-  margin-bottom: 0.5rem;
-  color: #4a3c31; /* Marrón pastel para etiquetas */
-  font-weight: 600;
-  font-size: 1.1rem;
-}
-
-.form-group input {
-  width: 100%;
-  padding: 1rem;
-  border: 2px solid #87a8d0; /* Borde azul pastel */
-  border-radius: 12px;
-  font-size: 1rem;
-  background: #f5f1e9; /* Fondo beige pastel */
-  color: #4a3c31;
-  transition: all 0.3s ease;
-}
-
-.form-group input:focus {
-  outline: none;
-  border-color: #f4b084; /* Naranja pastel al enfocar */
-  background: #ffffff;
-  box-shadow: 0 5px 15px rgba(74, 60, 49, 0.1);
-}
-
-.form-group input::placeholder {
-  color: #7393b8; /* Azul pastel claro para placeholder */
-  opacity: 0.8;
-}
-
-/* Botón de enviar */
-.submit-button {
-  background: #f4b084; /* Naranja pastel */
-  color: #ffffff;
-  border: none;
-  padding: 1rem;
-  font-size: 1.3rem;
-  font-weight: 700;
-  border-radius: 50px;
-  cursor: pointer;
-  transition: all 0.3s ease;
-  box-shadow: 0 5px 20px rgba(74, 60, 49, 0.2);
-  position: relative;
-  overflow: hidden;
-}
-
-.submit-button:hover {
-  background: #e89b6b; /* Naranja más oscuro */
-  transform: translateY(-5px);
-  box-shadow: 0 10px 30px rgba(74, 60, 49, 0.3);
-}
-
-.submit-button::after {
-  content: '🐾'; /* Huella decorativa */
-  position: absolute;
-  right: 10px;
-  top: 50%;
-  transform: translateY(-50%);
-  font-size: 1.2rem;
-  opacity: 0;
-  transition: opacity 0.3s ease;
-}
-
-.submit-button:hover::after {
-  opacity: 1;
+  max-width: 410px;
+  margin: 1rem auto;
 }
 
 /* Enlace para login */
 .login-link {
   text-align: center;
-  margin-top: 1.5rem;
-  color: #4a3c31; /* Marrón pastel */
+  color: #4a3c31;
   font-size: 1.1rem;
   font-weight: 500;
+  margin-top: 1.5rem;
+  background: rgba(255, 255, 255, 0.7);
+  padding: 10px 20px;
+  border-radius: 10px;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
 }
 
 .login-link a {
-  color: #87a8d0; /* Azul pastel para el enlace */
+  color: #87a8d0;
   text-decoration: none;
   font-weight: 700;
   transition: all 0.3s ease;
 }
 
 .login-link a:hover {
-  color: #f4b084; /* Naranja pastel al hover */
+  color: #f4b084;
   text-decoration: underline;
 }
 
-/* Animaciones */
-@keyframes fadeInDown {
-  from { opacity: 0; transform: translateY(-20px); }
-  to { opacity: 1; transform: translateY(0); }
+/* Animación de sacudida */
+@keyframes shake {
+  0%, 100% { transform: translateX(0); }
+  20%, 60% { transform: translateX(-20px); }
+  40%, 80% { transform: translateX(20px); }
 }
 
-@keyframes fadeInUp {
-  from { opacity: 0; transform: translateY(20px); }
-  to { opacity: 1; transform: translateY(0); }
-}
-
-/* Estilos responsivos */
+/* Estilos responsivos MEJORADOS */
 @media (max-width: 768px) {
-  .register-container {
-    padding: 2rem;
-    width: 90%;
-    margin: 2rem auto;
+  .register-page {
+    padding-top: 50px;
   }
-
-  .register-container h2 {
+  
+  .register-title {
     font-size: 2rem;
+    margin-bottom: 1.5rem;
+    padding: 0 15px;
+  }
+  
+  #register {
+    width: 90%;
+    max-width: 350px;
+    padding: 20px 15px 20px 15px;
   }
 
-  .form-group input {
-    padding: 0.9rem;
-  }
-
-  .submit-button {
-    padding: 0.9rem;
-    font-size: 1.2rem;
+  #inputContainer {
+    width: 100%;
+    max-width: 320px;
   }
 }
 
 @media (max-width: 480px) {
-  .register-container h2 {
-    font-size: 1.8rem;
+  .register-page {
+    padding-top: 30px;
   }
-
+  
+  .register-title {
+    font-size: 1.7rem;
+    margin-bottom: 1rem;
+  }
+  
+  #inputField {
+    font-size: 18px;
+  }
+  
+  #inputLabel {
+    font-size: 18px;
+  }
+  
+  .welcome-text {
+    font-size: 1.7rem;
+  }
+  
   .error-message {
     font-size: 0.9rem;
-  }
-
-  .form-group label {
-    font-size: 1rem;
-  }
-
-  .submit-button {
     padding: 0.8rem;
   }
-}
+  
+  .login-link {
+    font-size: 1rem;
+  }
+} 

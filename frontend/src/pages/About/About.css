@@ -3,12 +3,13 @@
   position: relative;
   overflow: hidden;
   background-color: #ffffff;
+  margin-top: 70px; /* Añadido para dar espacio al nav fijo */
 }
 
 /* Hero Section */
 .about-hero {
   text-align: center;
-  padding: 10rem 2rem;
+  padding: 6rem 2rem; /* Reducido de 10rem */
   background: linear-gradient(135deg, #f5f1e9 30%, #d9c6a5 100%);
   position: relative;
   margin-bottom: 5rem;
@@ -397,10 +398,28 @@
 }
 
 @media (max-width: 768px) {
-  .about-hero {
-    padding: 6rem 1rem;
+  .about-container {
+    margin-top: 60px; /* Ajustado para nav más pequeño en móvil */
   }
 
+  .about-hero {
+    padding: 4rem 1rem;
+    margin-top: 0;
+  }
+
+  .about-hero h1 {
+    font-size: 2.2rem;
+    padding-top: 1rem;
+  }
+
+  .about-hero p {
+    font-size: 1.1rem;
+    padding: 0 1rem;
+  }
+
+  .about-hero {
+    padding: 6rem 2rem;
+  }
   .about-hero h1 {
     font-size: 2.8rem;
   }

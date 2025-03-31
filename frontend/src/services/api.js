@@ -136,12 +136,21 @@ export const updateUserLocation = async (locationData) => {
 };
 
 export const generateLostPoster = async (petId, posterData) => {
-  try {
-    const response = await axios.post(`${API_URL}/pets/${petId}/poster/`, posterData);
-    return response.data;
-  } catch (error) {
-    throw error.response?.data || error.message;
+  const response = await fetch(`${API_URL}/pets/${petId}/poster/`, {
+    method: 'POST',
+    headers: {
+      'Authorization': `Token ${localStorage.getItem('token')}`,
+      'Content-Type': 'application/json',  // Ajustado para JSON
+    },
+    body: JSON.stringify(posterData),
+  });
+
+  if (!response.ok) {
+    const errorData = await response.json();
+    throw errorData;
   }
+
+  return response.json();
 };
 
 export const getReward = async (petId) => {
