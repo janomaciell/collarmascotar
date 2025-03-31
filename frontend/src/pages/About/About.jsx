@@ -1,104 +1,77 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import './About.css';
+import { FaPaw, FaBell, FaHeart } from 'react-icons/fa';
 
 const About = () => {
   return (
     <div className="about-container">
-      {/* Sección Hero */}
+      {/* Sección Hero con fondo de huellas */}
       <section className="about-hero">
+        <div className="hero-shapes">
+          <div className="shape shape-1"></div>
+          <div className="shape shape-2"></div>
+        </div>
         <h1>CollarMascotaQR</h1>
-        <p>Tu aliado en el cuidado y la seguridad de tus mascotas</p>
+        <p>Porque cada minuto cuenta cuando tu mejor amigo se pierde</p>
       </section>
 
-      {/* Sección Misión */}
-      <section className="mission-section">
-        <div className="mission-content">
-          <h2>Nuestra Misión</h2>
+      {/* Sección Historia Personal - Más emotiva */}
+      <section className="story-section">
+        <h2>Mi Historia</h2>
+        <div className="story-card">
           <p>
-            En CollarMascotaQR, nuestra misión es simple pero poderosa: proteger a cada mascota como si fuera parte de nuestra propia familia. Somos un emprendimiento nuevo, apasionado por los animales, y estamos aquí para ofrecer una solución innovadora que combine tecnología y amor por las mascotas. Queremos que cada collar QR sea una promesa de seguridad y tranquilidad para ti y tu compañero peludo.
+            Soy <strong>Jano Maciel</strong>, programador y fundador de CollarMascotaQR. Como amante de los animales, sufrí en carne propia la angustia de perder a una mascota. 
+            La incertidumbre, la desesperación y la impotencia fueron emociones que nunca quiero que nadie más experimente.
+          </p>
+          <p>
+          Fue entonces cuando decidí crear 
+          una solución real, accesible y efectiva: un collar con un código QR que pueda reunir de lo antes posible a una mascota perdida con su familia.
           </p>
         </div>
-        <div className="mission-stats">
-          <div className="stat-item">
-            <span className="stat-number">100%</span>
-            <p>Compromiso con los animales</p>
-          </div>
-          <div className="stat-item">
-            <span className="stat-number">24/7</span>
-            <p>Conexión con tu mascota</p>
-          </div>
-          <div className="stat-item">
-            <span className="stat-number">∞</span>
-            <p>Amor por lo que hacemos</p>
-          </div>
+      </section>
+
+      {/* Sección Misión - Más impactante */}
+      <section className="mission-section">
+        <div className="mission-shape"></div>
+        <div className="mission-content">
+          <h2>Una misión que nace del corazón</h2>
+          <p>
+            <strong>CollarMascotaQR nace de una necesidad real: </strong>reducir la cantidad de mascotas perdidas y ayudar a sus dueños a reencontrarse con ellas en tiempo récord. 
+            La tecnología nos permite estar conectados, y ahora también puede ser el puente que traiga de vuelta a nuestros compañeros peludos.
+          </p>
         </div>
       </section>
 
-      {/* Sección Cultura */}
-      <section className="culture-section">
-        <h2>Nuestra Cultura</h2>
-        <p>
-          Somos más que una empresa; somos una comunidad de amantes de los animales. Nuestra cultura se basa en el respeto, el cuidado y la dedicación hacia cada mascota. Creemos que los animales merecen lo mejor, y por eso cada decisión que tomamos está guiada por su bienestar. Desde el diseño de nuestros collares hasta el soporte que ofrecemos, todo lo hacemos con el corazón puesto en ayudar a que las mascotas perdidas regresen a casa.
-        </p>
-      </section>
-
-      {/* Sección Beneficios */}
+      {/* Sección Beneficios - Con iconos y más visual */}
       <section className="benefits-section">
-        <h2>Beneficios de CollarMascotaQR</h2>
+        <h2>¿Por qué las familias eligen CollarMascotaQR?</h2>
         <div className="benefits-grid">
           <div className="benefit-item">
-            <h3>Localización Instantánea</h3>
-            <p>Un escaneo del QR y sabrás dónde está tu mascota en tiempo real.</p>
+            <div className="benefit-icon"><FaPaw /></div>
+            <h3>Reencuentros rápidos y simples</h3>
+            <p>Un escaneo del QR conecta directamente a quien encuentra a tu mascota contigo, sin complicaciones.</p>
           </div>
           <div className="benefit-item">
-            <h3>Comunidad Solidaria</h3>
-            <p>Notificaciones a vecinos cercanos para encontrar a tu mascota más rápido.</p>
+            <div className="benefit-icon"><FaBell /></div>
+            <h3>Apoyo de una comunidad cercana</h3>
+            <p>Al escanear el collar, se notifica a personas dispuestas a ayudar en tu área, aumentando las chances de traer a tu mascota de vuelta.</p>
           </div>
           <div className="benefit-item">
-            <h3>Tranquilidad Garantizada</h3>
-            <p>Información vital accesible con un solo toque, incluso sin conexión.</p>
+            <div className="benefit-icon"><FaHeart /></div>
+            <h3>Tranquilidad en cada aventura</h3>
+            <p>Siente la seguridad de saber que tu mejor amigo lleva consigo una solución para volver a casa, estés donde estés.</p>
           </div>
         </div>
       </section>
 
-      {/* Sección Historia */}
-      <section className="story-section">
-        <h2>Nuestra Historia</h2>
-        <p>
-          CollarMascotaQR nació en 2025 como un emprendimiento fresco y lleno de ilusión. No tenemos miles de clientes aún, pero estamos trabajando duro para ganarnos la confianza de cada persona que ama a sus mascotas tanto como nosotros. Todo comenzó con una idea simple: usar la tecnología para evitar el dolor de perder a un compañero de cuatro patas. Hoy, estamos dando nuestros primeros pasos, buscando ser el apoyo que los dueños de mascotas necesitan.
-        </p>
-      </section>
-
-      {/* Sección Equipo */}
-      <section className="team-section">
-        <h2>Nuestro Equipo</h2>
-        <div className="team-grid">
-          <div className="team-member">
-            <div className="member-photo">🐾</div>
-            <h3>Ana García</h3>
-            <p>Fundadora & Amante de los Animales</p>
-          </div>
-          <div className="team-member">
-            <div className="member-photo">🐾</div>
-            <h3>Carlos Ruiz</h3>
-            <p>Tecnólogo & Cuidador de Mascotas</p>
-          </div>
-          <div className="team-member">
-            <div className="member-photo">🐾</div>
-            <h3>Laura Torres</h3>
-            <p>Veterinaria & Defensora Animal</p>
-          </div>
-        </div>
-      </section>
-
-      {/* Sección CTA */}
+      {/* Sección CTA - Más urgente y emocional */}
       <section className="about-cta">
-        <h2>Confía en Nosotros</h2>
+        <h2>No esperes a vivir lo que yo viví</h2>
         <p>
-          Somos nuevos, pero nuestro compromiso es enorme. Únete a CollarMascotaQR y juntos construyamos una comunidad donde ninguna mascota se pierda para siempre.
+          El miedo, la angustia y la desesperación de perder a tu mascota son emociones que no le deseo a nadie. Por solo el precio de una cena, puedes darle a tu familia la tranquilidad de saber que tu mascota siempre encontrará el camino a casa.
         </p>
-        <Link to="/register" className="cta-button">Prueba CollarMascotaQR</Link>
+        <Link to="/register" className="cta-button">Protege a tu mascota ahora</Link>
       </section>
     </div>
   );

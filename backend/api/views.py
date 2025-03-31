@@ -606,3 +606,83 @@ def get_points_history(request):
     transactions = PointTransaction.objects.filter(user=request.user)
     serializer = PointTransactionSerializer(transactions, many=True)
     return Response(serializer.data)
+
+@api_view(['POST'])
+@permission_classes([permissions.AllowAny])
+def send_support_email(request):
+    name = request.data.get('name')
+    email = request.data.get('email')
+    message = request.data.get('message')
+
+    if not all([name, email, message]):
+        return Response({"error": "Todos los campos son requeridos"}, status=status.HTTP_400_BAD_REQUEST)
+
+    subject = f"Solicitud de Soporte - CollarMascotaQR de {name}"
+    plain_message = f"""
+    Nombre: {name}
+    Email: {email}
+    Mensaje: 
+    {message}
+    """
+
+    html_message = f"""
+    <html>
+      <body style="font-family: Arial, sans-serif; color: #333; margin: 0; padding: 0;">
+        <div style="max-width: 600px; margin: 20px auto; border: 1px solid #e0e0e0; border-radius: 10px; overflow: hidden;">
+          <!-- Encabezado -->
+          <div style="background: linear-gradient(135deg, #87a8d0, #f4b084); padding: 20px; text-align: center;">
+            <h1 style="color: #ffffff; margin: 0; font-size: 28px;">Solicitud de Soporte</h1>
+            <p style="color: #ffffff; font-size: 16px; margin: 5px 0;">CollarMascotaQR</p>
+          </div>
+
+          <!-- Contenido -->
+          <div style="padding: 20px; background: #ffffff;">
+            <h2 style="color: #4a3c31; font-size: 22px; margin-bottom: 15px;">¡Hola, equipo de CollarMascotaQR!</h2>
+            <p style="font-size: 16px; line-height: 1.5; color: #666;">
+              Hemos recibido una nueva solicitud de soporte. Aquí están los detalles:
+            </p>
+            <table style="width: 100%; margin: 20px 0; border-collapse: collapse;">
+              <tr style="background: #f5f1e9;">
+                <td style="padding: 10px; font-weight: bold; color: #4a3c31; border: 1px solid #e0e0e0;">Nombre:</td>
+                <td style="padding: 10px; color: #333; border: 1px solid #e0e0e0;">{name}</td>
+              </tr>
+              <tr>
+                <td style="padding: 10px; font-weight: bold; color: #4a3c31; border: 1px solid #e0e0e0;">Email:</td>
+                <td style="padding: 10px; color: #333; border: 1px solid #e0e0e0;">
+                  <a href="mailto:{email}" style="color: #87a8d0; text-decoration: none;">{email}</a>
+                </td>
+              </tr>
+              <tr style="background: #f5f1e9;">
+                <td style="padding: 10px; font-weight: bold; color: #4a3c31; border: 1px solid #e0e0e0;">Mensaje:</td>
+                <td style="padding: 10px; color: #333; border: 1px solid #e0e0e0;">{message}</td>
+              </tr>
+            </table>
+            <p style="font-size: 14px; color: #666; line-height: 1.5;">
+              Por favor, responde a este mensaje lo antes posible para asistir a {name}.
+            </p>
+          </div>
+
+          <!-- Pie de página -->
+          <div style="background: #f5f1e9; padding: 15px; text-align: center; font-size: 12px; color: #777;">
+            <p style="margin: 0;">© 2025 CollarMascotaQR - Todos los derechos reservados</p>
+            <p style="margin: 5px 0;">
+              <a href="https://www.instagram.com/collarmascotaqr" style="color: #f4b084; text-decoration: none;">Síguenos en Instagram</a>
+            </p>
+          </div>
+        </div>
+      </body>
+    </html>
+    """
+
+    try:
+        send_mail(
+            subject=subject,
+            message=plain_message,  # Versión de texto plano como respaldo
+            from_email=email,  # Email del usuario como remitente
+            recipient_list=[settings.EMAIL_HOST_USER],  # Tu email (janomaciel1@gmail.com)
+            html_message=html_message,  # Versión HTML estilizada
+            fail_silently=False,
+        )
+        return Response({"message": "Correo enviado exitosamente"}, status=status.HTTP_200_OK)
+    except Exception as e:
+        return Response({"error": f"Error al enviar el correo: {str(e)}"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)

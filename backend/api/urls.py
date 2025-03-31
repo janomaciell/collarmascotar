@@ -23,4 +23,5 @@ urlpatterns = [
     path('user/points/', views.get_user_points, name='user-points'),  # Ajustado
     path('users/me/', views.get_user_profile, name='user-profile'),
     path('users/points-history/', views.get_points_history, name='points-history'),
+    path('support/send-email/', views.send_support_email, name='send-support-email'),  # Nueva ruta
 ]
