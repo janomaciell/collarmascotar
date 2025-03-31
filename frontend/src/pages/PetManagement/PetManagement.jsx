@@ -16,11 +16,49 @@ const PetManagement = () => {
   const [selectedPetId, setSelectedPetId] = useState(null);
   const [scanHistory, setScanHistory] = useState([]);
   const [userLocation, setUserLocation] = useState(null);
+  const [locationPermission, setLocationPermission] = useState('prompt'); // 'granted', 'denied', 'prompt'
+  const [showLocationPrompt, setShowLocationPrompt] = useState(false); // Mostrar un mensaje para solicitar ubicación
+  const alertRadius = 5; // Radio de alerta en kilómetros
 
   useEffect(() => {
     fetchPets();
-    updateLocation();
+    checkLocationPermission();
   }, []);
+
+  // Verificar el estado del permiso de geolocalización
+  const checkLocationPermission = async () => {
+    if (navigator.permissions) {
+      try {
+        const permissionStatus = await navigator.permissions.query({ name: 'geolocation' });
+        setLocationPermission(permissionStatus.state);
+        if (permissionStatus.state === 'granted') {
+          updateLocation(); // Si ya tiene permiso, obtenemos la ubicación
+        } else if (permissionStatus.state === 'prompt') {
+          setShowLocationPrompt(true); // Mostrar un mensaje para solicitar permiso
+        } else if (permissionStatus.state === 'denied') {
+          setError('El permiso de ubicación está denegado. Habilítalo en la configuración de tu navegador para enviar alertas.');
+        }
+
+        // Escuchar cambios en el estado del permiso
+        permissionStatus.onchange = () => {
+          setLocationPermission(permissionStatus.state);
+          if (permissionStatus.state === 'granted') {
+            updateLocation();
+            setShowLocationPrompt(false);
+          } else if (permissionStatus.state === 'denied') {
+            setError('El permiso de ubicación fue denegado. Habilítalo en la configuración de tu navegador para enviar alertas.');
+            setShowLocationPrompt(false);
+          }
+        };
+      } catch (err) {
+        console.error('Error al verificar permisos de geolocalización:', err);
+        setShowLocationPrompt(true); // Si hay un error, pedimos la ubicación manualmente
+      }
+    } else {
+      // Si navigator.permissions no está disponible, intentamos obtener la ubicación directamente
+      setShowLocationPrompt(true);
+    }
+  };
 
   const updateLocation = () => {
     if (navigator.geolocation) {
@@ -32,19 +70,40 @@ const PetManagement = () => {
             radiusKm: alertRadius,
           };
           setUserLocation(location);
+          setShowLocationPrompt(false);
+          setError(''); // Limpiar cualquier error previo
           try {
             await updateUserLocation(location);
             console.log('User location updated in backend');
+            // Registrar evento de analítica
+            window.gtag('event', 'location_permission_granted', {
+              event_category: 'Engagement',
+              event_label: 'User granted location permission',
+            });
           } catch (err) {
-            setError('Error updating user location: ' + err.message);
+            setError('Error al actualizar la ubicación en el backend: ' + err.message);
           }
         },
         (err) => {
-          setError('Error getting location: ' + err.message);
+          if (err.code === err.PERMISSION_DENIED) {
+            setLocationPermission('denied');
+            setError('El permiso de ubicación fue denegado. Habilítalo en la configuración de tu navegador para enviar alertas.');
+            // Registrar evento de analítica
+            window.gtag('event', 'location_permission_denied', {
+              event_category: 'Engagement',
+              event_label: 'User denied location permission',
+            });
+          } else {
+            setError('Error al obtener la ubicación: ' + err.message);
+          }
+          setShowLocationPrompt(true); // Mostrar el mensaje para reintentar
           console.error('Error al obtener ubicación:', err);
         },
         { enableHighAccuracy: true, timeout: 5000 }
       );
+    } else {
+      setError('La geolocalización no es compatible con este navegador.');
+      setShowLocationPrompt(false);
     }
   };
 
@@ -64,16 +123,12 @@ const PetManagement = () => {
 
   const handleCreatePet = async (petData) => {
     try {
-      // Validar y truncar el nombre del archivo si es necesario
       if (petData.photo instanceof File) {
         const originalName = petData.photo.name;
         const extension = originalName.split('.').pop();
         const baseName = originalName.substring(0, originalName.lastIndexOf('.'));
-        // Truncar a 90 caracteres máximo para el nombre base (dejando espacio para '.' y extensión)
-        const maxBaseLength = 95 - extension.length; // 100 - (1 para '.' + longitud de extensión)
+        const maxBaseLength = 95 - extension.length;
         const truncatedBaseName = baseName.length > maxBaseLength ? baseName.substring(0, maxBaseLength) : baseName;
-
-        // Crear un nuevo objeto File con el nombre truncado
         const truncatedName = `${truncatedBaseName}.${extension}`;
         const newFile = new File([petData.photo], truncatedName, { type: petData.photo.type });
         petData.photo = newFile;
@@ -95,6 +150,12 @@ const PetManagement = () => {
   };
 
   const handleToggleLost = async (petId, currentStatus) => {
+    if (!currentStatus && !userLocation) {
+      setError('Se necesita tu ubicación para enviar alertas. Por favor, otorga permiso de geolocalización.');
+      setShowLocationPrompt(true);
+      return;
+    }
+
     try {
       const updatedPet = await updatePetLostStatus(petId, !currentStatus);
       setPets(pets.map((pet) => (pet.id === petId ? updatedPet : pet)));
@@ -127,18 +188,18 @@ const PetManagement = () => {
 
   const generateLostPosterLocal = async (pet) => {
     const poster = document.createElement('div');
-    poster.style.width = '210mm';  // Tamaño A4
+    poster.style.width = '210mm';
     poster.style.height = '297mm';
     poster.style.background = '#fff';
     poster.style.fontFamily = 'Arial, sans-serif';
     poster.style.padding = '10mm';
     poster.style.boxSizing = 'border-box';
     poster.style.border = '2px solid #f4b084';
-  
+
     poster.innerHTML = `
       <div style="text-align: center; background: linear-gradient(135deg, #87a8d0, #f4b084); padding: 10mm; color: white;">
         <h1 style="margin: 0; font-size: 36px; text-transform: uppercase;">¡Mascota Perdida!</h1>
-        <div style="height: 40px; margin-top: 10px;"> <!-- Espacio para logo futuro -->
+        <div style="height: 40px; margin-top: 10px;">
           <span style="font-size: 14px; opacity: 0.8;">[CollarMascotaQR - Próximamente Logo]</span>
         </div>
       </div>
@@ -160,16 +221,16 @@ const PetManagement = () => {
         <p>© 2025 CollarMascotaQR - Ayúdanos a encontrar a ${pet.name}</p>
       </div>
     `;
-  
+
     document.body.appendChild(poster);
-    const canvas = await html2canvas(poster, { scale: 2 });  // Mayor resolución
+    const canvas = await html2canvas(poster, { scale: 2 });
     const imgData = canvas.toDataURL('image/png');
     const pdf = new jsPDF('p', 'mm', 'a4');
-    pdf.addImage(imgData, 'PNG', 0, 0, 210, 297);  // Ajustado a A4
+    pdf.addImage(imgData, 'PNG', 0, 0, 210, 297);
     const pdfData = pdf.output('datauristring');
     document.body.removeChild(poster);
     pdf.save(`mascota_perdida_${pet.name}.pdf`);
-  
+
     return { imgData, pdfData };
   };
 
@@ -182,7 +243,7 @@ const PetManagement = () => {
       });
       setSuccessMessage('Poster subido exitosamente');
       setTimeout(() => setSuccessMessage(''), 5000);
-      return response; // Retornamos la respuesta para obtener el ID del poster
+      return response;
     } catch (err) {
       setError('Error al subir el poster: ' + err.message);
       console.error(err);
@@ -192,7 +253,8 @@ const PetManagement = () => {
 
   const sendLostNotification = async (petId) => {
     if (!userLocation) {
-      setError('No se pudo obtener tu ubicación para enviar alertas');
+      setError('Se necesita tu ubicación para enviar alertas. Por favor, otorga permiso de geolocalización.');
+      setShowLocationPrompt(true);
       return;
     }
 
@@ -209,7 +271,7 @@ const PetManagement = () => {
           alert_data: {
             latitude: userLocation.latitude,
             longitude: userLocation.longitude,
-            radius_km: 5,  
+            radius_km: alertRadius,
           },
         }),
       });
@@ -256,12 +318,35 @@ const PetManagement = () => {
     }
   };
 
-
-
   return (
     <div className="pet-management-container">
       <div className="pet-management-content">
         <h2>Gestión de Mascotas</h2>
+
+        {/* Mostrar un mensaje para solicitar la ubicación si no se ha otorgado el permiso */}
+        {showLocationPrompt && (
+          <div className="location-prompt bg-yellow-100 border border-yellow-400 text-yellow-700 px-4 py-3 rounded mb-4">
+            <p className="mb-2">
+              Necesitamos tu ubicación para enviar alertas sobre mascotas perdidas. ¿Nos das permiso?
+            </p>
+            <div className="flex gap-2">
+              <button
+                onClick={updateLocation}
+                className="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600"
+                aria-label="Otorgar permiso de ubicación"
+              >
+                Otorgar Permiso
+              </button>
+              <button
+                onClick={() => setShowLocationPrompt(false)}
+                className="px-4 py-2 bg-gray-200 text-gray-800 rounded-md hover:bg-gray-300"
+                aria-label="Rechazar permiso de ubicación"
+              >
+                No, gracias
+              </button>
+            </div>
+          </div>
+        )}
 
         <button className="add-pet-button" onClick={() => setShowForm(!showForm)}>
           {showForm ? 'Cancelar' : 'Añadir Nueva Mascota'}
@@ -297,8 +382,16 @@ const PetManagement = () => {
           </>
         )}
 
-        {error && <div className="error-message">{error}</div>}
-        {successMessage && <div className="success-message">{successMessage}</div>}
+        {error && (
+          <div className="error-message bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">
+            {error}
+          </div>
+        )}
+        {successMessage && (
+          <div className="success-message bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded mb-4">
+            {successMessage}
+          </div>
+        )}
       </div>
     </div>
   );

@@ -1,27 +1,40 @@
 .support-container {
-    max-width: 1200px;
-    margin: 0 auto;
-    padding: 2rem;
+  margin: 0 auto;
+  position: relative;
+  overflow: hidden;
+  background-color: #ffffff;
+  margin-top: 70px; 
   }
   
   /* Hero Section */
   .support-hero {
     text-align: center;
-    padding: 4rem 2rem;
-    background: linear-gradient(135deg, #f5f1e9, #d9c6a5);
-    border-radius: 20px;
-    margin-bottom: 4rem;
+    padding: 6rem 2rem; /* Reducido de 10rem */
+    background: linear-gradient(135deg, #f5f1e9 30%, #d9c6a5 100%);
+    position: relative;
+    margin-bottom: 5rem;
+    box-shadow: 0 15px 30px rgba(0, 0, 0, 0.1);
+    overflow: hidden;   
   }
   
   .support-hero h1 {
-    font-size: 3rem;
+    font-size: 4.5rem;
     color: #87a8d0;
     margin-bottom: 1rem;
+    position: relative;
+    z-index: 1;
+    text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
+    font-weight: 800;
   }
   
   .support-hero p {
-    font-size: 1.3rem;
+    font-size: 1.8rem;
     color: #4a3c31;
+    font-style: italic;
+    position: relative;
+    z-index: 1;
+    max-width: 650px;
+    margin: 0 auto;
   }
   
   /* Contact Section */
@@ -151,7 +164,6 @@
     text-align: center;
     padding: 4rem;
     background: #87a8d0;
-    border-radius: 20px;
     color: #ffffff;
   }
   
@@ -184,19 +196,110 @@
   
   /* Responsive Design */
   @media (max-width: 768px) {
+
     .support-hero {
-      padding: 3rem 1rem;
+      padding: 2rem 1rem;
+      margin-bottom: 2rem;
     }
   
     .support-hero h1 {
-      font-size: 2.5rem;
+      font-size: 2rem;
+      line-height: 1.3;
+      padding: 0 1rem;
+      margin-bottom: 1rem;
     }
   
-    .support-form {
-      padding: 1.5rem;
+    .support-hero p {
+      font-size: 1.1rem;
+      line-height: 1.5;
+      padding: 0 1rem;
+      max-width: 100%;
+    }
+
+  
+    .contact-content h2 {
+      font-size: 1.8rem;
+      margin-bottom: 0.8rem;
+    }
+  
+    .contact-content p {
+      font-size: 1rem;
+      line-height: 1.5;
+      margin-bottom: 1.5rem;
+    }
+  
+    .form-group label {
+      font-size: 1rem;
+    }
+  
+    .form-group input,
+    .form-group textarea {
+      padding: 0.7rem;
+      font-size: 0.9rem;
+    }
+  
+    .submit-button {
+      width: 100%;
+      padding: 0.8rem;
+      font-size: 1rem;
+    }
+  
+    .social-contact {
+      margin-top: 2rem;
+      padding: 0 1rem;
+    }
+  
+    .social-contact h3 {
+      font-size: 1.5rem;
+    }
+  
+    .social-contact p {
+      font-size: 0.9rem;
+    }
+  
+    .instagram-button {
+      width: 100%;
+      justify-content: center;
+      padding: 0.8rem;
+      font-size: 0.9rem;
+    }
+  
+    .support-cta {
+      padding: 2rem 1rem;
+    }
+  
+    .support-cta h2 {
+      font-size: 1.8rem;
+      line-height: 1.3;
+      margin-bottom: 0.8rem;
+    }
+  
+    .support-cta p {
+      font-size: 1rem;
+      line-height: 1.5;
+      margin-bottom: 1.5rem;
+      padding: 0 1rem;
+    }
+  
+    .support-cta .cta-button {
+      width: 90%;
+      padding: 0.8rem 2rem;
+      font-size: 1rem;
+    }
+  }
+  
+  /* Ajustes adicionales para pantallas muy pequeñas */
+  @media (max-width: 360px) {
+    .support-hero p {
+      font-size: 1rem;
     }
   
     .contact-content h2 {
-      font-size: 2rem;
+      font-size: 1.5rem;
+    }
+  
+    .form-group input,
+    .form-group textarea {
+      font-size: 0.85rem;
     }
   }

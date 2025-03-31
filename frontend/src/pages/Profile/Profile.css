@@ -1,23 +1,21 @@
 .profile-container {
-  max-width: 1200px;
+  padding: 1rem;
+  max-width: 100%;
   margin: 0 auto;
-  padding: 30px 20px;
   font-family: 'Poppins', sans-serif;
-  background-color: #f5f1e9; /* Beige pastel suave como fondo */
+  background-color: #f5f1e9;
 }
 
 .profile-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  background: linear-gradient(135deg, #87a8d0, #7393b8); /* Degradado azul pastel */
-  color: white;
-  padding: 20px 30px;
+  margin-bottom: 1.5rem;
+  background: linear-gradient(135deg, #87a8d0, #7393b8);
+  padding: 1.5rem;
   border-radius: 15px;
-  margin-bottom: 30px;
-  box-shadow: 0 5px 15px rgba(74, 60, 49, 0.2); /* Sombra marrón pastel */
-  position: relative;
-  overflow: hidden;
+  box-shadow: 0 5px 15px rgba(74, 60, 49, 0.2);
+  color: white;
 }
 
 .profile-header::before {
@@ -31,41 +29,39 @@
 }
 
 .profile-header h1 {
-  margin: 0;
-  font-size: 2.2rem;
+  font-size: 1.5rem;
   font-weight: 700;
   letter-spacing: 1px;
+  margin: 0;
 }
 
 .logout-btn {
-  background-color: #f4b084; /* Naranja pastel */
-  color: white;
-  border: none;
-  padding: 12px 20px;
-  border-radius: 50px;
-  cursor: pointer;
-  transition: all 0.3s ease;
-  font-weight: 600;
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 0.5rem;
+  padding: 0.75rem 1.25rem;
+  background-color: #f4b084;
+  color: white;
+  border-radius: 50px;
+  font-size: 0.875rem;
+  font-weight: 600;
+  transition: all 0.3s ease;
 }
 
 .logout-btn:hover {
-  background-color: #e89b6b; /* Naranja pastel más oscuro */
+  background-color: #e89b6b;
   transform: translateY(-2px);
-  box-shadow: 0 5px 15px rgba(74, 60, 49, 0.3); /* Sombra marrón pastel */
+  box-shadow: 0 5px 15px rgba(74, 60, 49, 0.3);
 }
 
 .profile-content {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
-  gap: 25px;
+  gap: 1.5rem;
 }
 
 .card {
   background-color: #ffffff; /* Blanco para contraste limpio */
-  padding: 25px;
+  padding: 1.5rem;
   border-radius: 15px;
   box-shadow: 0 5px 20px rgba(74, 60, 49, 0.08); /* Sombra marrón pastel suave */
   transition: all 0.3s ease;
@@ -112,19 +108,22 @@
 }
 
 .edit-btn, .add-pet-btn {
-  background-color: #87a8d0; /* Azul pastel */
-  color: white;
-  border: none;
   padding: 10px 18px;
   border-radius: 50px;
-  cursor: pointer;
+  font-size: 0.875rem;
   transition: all 0.3s ease;
   font-weight: 600;
-  margin-top: 15px;
-  display: inline-block;
+  width: 100%;
+  text-align: center;
+  color: white;
+  border: none;
 }
 
-.edit-btn:hover, .add-pet-btn:hover {
+.edit-btn {
+  background-color: #87a8d0; /* Azul pastel */
+}
+
+.edit-btn:hover {
   background-color: #7393b8; /* Azul pastel más oscuro */
   transform: translateY(-2px);
   box-shadow: 0 5px 15px rgba(74, 60, 49, 0.2); /* Sombra marrón pastel */
@@ -136,6 +135,7 @@
 
 .add-pet-btn:hover {
   background-color: #e89b6b; /* Naranja pastel más oscuro */
+  transform: translateY(-2px);
   box-shadow: 0 5px 15px rgba(74, 60, 49, 0.3); /* Sombra marrón pastel */
 }
 
@@ -143,6 +143,7 @@
   color: #87a8d0; /* Azul pastel */
   text-decoration: none;
   font-weight: 600;
+  font-size: 0.875rem;
   transition: all 0.2s ease;
   display: inline-block;
   margin-top: 10px;
@@ -157,7 +158,9 @@
 .pet-list {
   list-style: none;
   padding: 0;
-  margin-top: 15px;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
 }
 
 .pet-list li {
@@ -198,18 +201,22 @@
 .error-message {
   background-color: #f9e9e9; /* Fondo rojo pastel suave */
   color: #e87676; /* Rojo pastel */
-  padding: 15px;
+  padding: 1rem;
   border-radius: 10px;
-  margin-bottom: 25px;
+  margin-bottom: 1.5rem;
   border-left: 4px solid #e87676; /* Borde rojo pastel */
   font-weight: 500;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
 }
 
 .loading {
-  text-align: center;
-  font-size: 1.3rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
   color: #4a3c31; /* Marrón pastel */
-  padding: 40px 0;
 }
 
 /* Estilos para la sección de puntos */
@@ -295,4 +302,23 @@
 
 .profile-section.card:last-child h2 i {
   color: #f4b084; /* Naranja pastel para ícono de corona */
+}
+
+@media (min-width: 640px) {
+  .profile-container {
+    padding: 2rem;
+  }
+
+  .profile-header h1 {
+    font-size: 2.2rem;
+  }
+
+  .edit-btn,
+  .add-pet-btn {
+    width: auto;
+  }
+  
+  .profile-content {
+    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  }
 }

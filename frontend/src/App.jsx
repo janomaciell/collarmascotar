@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import Home from './pages/Home/Home';
 import Register from './pages/Register/Register';
@@ -12,10 +12,28 @@ import Header from './components/Header/Header';
 import Footer from './components/Footer/Footer';
 import PrivateRoute from './components/PrivateRoute/PrivateRoute';
 import About from './pages/About/About';
-import Support from './pages/Support/Support'; 
+import Support from './pages/Support/Support';
+import NotificationPromptModal from './components/NotificationPromptModal/NotificationPromptModal'; // Importamos el modal
 import './App.css';
 
 function App() {
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+
+  // Verificar si el usuario está autenticado al cargar la app
+  useEffect(() => {
+    const token = localStorage.getItem('token');
+    setIsAuthenticated(!!token); // Si hay token, el usuario está autenticado
+
+    // Escuchar cambios en el token (por ejemplo, al iniciar/cerrar sesión)
+    const handleStorageChange = () => {
+      const newToken = localStorage.getItem('token');
+      setIsAuthenticated(!!newToken);
+    };
+
+    window.addEventListener('storage', handleStorageChange);
+    return () => window.removeEventListener('storage', handleStorageChange);
+  }, []);
+
   return (
     <Router>
       <div className="App">
@@ -51,7 +69,7 @@ function App() {
                 </PrivateRoute>
               }
             />
-            <Route path="/pet/:uuid" element={<PetPage />} /> {/* Pública */}
+            <Route path="/pet/:uuid" element={<PetPage />} />
             <Route
               path="/subscriptions"
               element={
@@ -63,6 +81,8 @@ function App() {
           </Routes>
         </main>
         <Footer />
+        {/* Mostrar el modal solo si el usuario está autenticado */}
+        {isAuthenticated && <NotificationPromptModal />}
       </div>
     </Router>
   );

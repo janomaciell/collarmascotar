@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import { API_URL } from '../services/api'; // Importa API_URL
+import { API_URL } from '../services/api';
 
 const NotificationSubscription = () => {
   const [isSubscribed, setIsSubscribed] = useState(false);
@@ -20,41 +20,6 @@ const NotificationSubscription = () => {
     } catch (err) {
       setError('Error al verificar el estado de suscripción');
       console.error('Error checking subscription status:', err);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const subscribeToNotifications = async () => {
-    if (!('serviceWorker' in navigator) || !('PushManager' in window)) {
-      setError('Las notificaciones push no son compatibles con este navegador');
-      return;
-    }
-
-    try {
-      setLoading(true);
-      const registration = await navigator.serviceWorker.ready;
-      const subscription = await registration.pushManager.subscribe({
-        userVisibleOnly: true,
-        applicationServerKey: import.meta.env.VITE_VAPID_PUBLIC_KEY, // Usa VITE_ en lugar de REACT_APP_
-      });
-
-      await axios.post(
-        `${API_URL}/register_device/`,
-        {
-          registration_id: JSON.stringify(subscription),
-          device_type: 'web',
-        },
-        {
-          headers: { Authorization: `Token ${localStorage.getItem('token')}` },
-        }
-      );
-      setError(null);
-      setIsSubscribed(true);
-      setError(null);
-    } catch (err) {
-      setError(null);
-      console.error('Error subscribing to notifications:', err);
     } finally {
       setLoading(false);
     }
@@ -105,15 +70,15 @@ const NotificationSubscription = () => {
               : 'No estás suscrito a las notificaciones push'}
           </p>
         </div>
-        <button
-          onClick={isSubscribed ? unsubscribeFromNotifications : subscribeToNotifications}
-          className={`px-4 py-2 rounded-md text-white font-medium ${
-            isSubscribed ? 'bg-red-500 hover:bg-red-600' : 'bg-blue-500 hover:bg-blue-600'
-          }`}
-          disabled={loading}
-        >
-          {isSubscribed ? 'Cancelar Suscripción' : 'Activar Notificaciones'}
-        </button>
+        {isSubscribed && (
+          <button
+            onClick={unsubscribeFromNotifications}
+            className="px-4 py-2 rounded-md text-white font-medium bg-red-500 hover:bg-red-600"
+            disabled={loading}
+          >
+            Cancelar Suscripción
+          </button>
+        )}
       </div>
 
       <div className="mt-4">
