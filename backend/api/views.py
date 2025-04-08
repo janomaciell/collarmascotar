@@ -665,11 +665,18 @@ def send_fcm_notification(tokens, title, body, data=None):
         print(f"Error sending FCM notification: {str(e)}")
         raise
     
-@api_view(['GET'])
+@api_view(['GET', 'PUT'])
 @permission_classes([permissions.IsAuthenticated])
 def get_user_profile(request):
-    serializer = UserSerializer(request.user)
-    return Response(serializer.data)
+    if request.method == 'GET':
+        serializer = UserSerializer(request.user)
+        return Response(serializer.data)
+    elif request.method == 'PUT':
+        serializer = UserSerializer(request.user, data=request.data, partial=True)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 @api_view(['GET'])
 @permission_classes([permissions.IsAuthenticated])

@@ -1,7 +1,7 @@
 import React from 'react';
 import './PetList.css';
 
-const PetList = ({ pets, onToggleLost, onShowHistory, onViewPoster }) => {
+const PetList = ({ pets, onToggleLost, onShowHistory }) => {
   return (
     <div className="pet-list">
       {pets.length === 0 ? (
@@ -41,11 +41,13 @@ const PetList = ({ pets, onToggleLost, onShowHistory, onViewPoster }) => {
                 </button>
                 <button 
                   className="history-btn"
-                  onClick={() => onShowHistory(pet.id)}
+                  onClick={() => {
+                    console.log('Clic en Ver Historial para petId:', pet.id); // Depuración
+                    onShowHistory(pet.id);
+                  }}
                 >
                   Ver Historial
                 </button>
-
               </div>
             </div>
           </div>

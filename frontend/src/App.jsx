@@ -15,6 +15,8 @@ import About from './pages/About/About';
 import Support from './pages/Support/Support';
 import NotificationPromptModal from './components/NotificationPromptModal/NotificationPromptModal'; // Importamos el modal
 import './App.css';
+import Analytics from "./components/Analytics";
+import EditProfile from './pages/EditProfile/EditProfile';
 
 function App() {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
@@ -36,6 +38,7 @@ function App() {
 
   return (
     <Router>
+      <Analytics />
       <div className="App">
         <Header />
         <main className="main-content">
@@ -78,6 +81,7 @@ function App() {
                 </PrivateRoute>
               }
             />
+            <Route path="/edit-profile" element={<EditProfile />} />
           </Routes>
         </main>
         <Footer />

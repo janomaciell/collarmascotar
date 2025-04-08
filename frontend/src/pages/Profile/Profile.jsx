@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import NotificationSettings from '../../components/NotificationSettings';
 import { getUserPoints, getPets, updateUserLocation, logout } from '../../services/api';
+import EditProfileModal from '../EditProfile/EditProfile';
 import './Profile.css';
 import { API_URL } from '../../services/api';
 
@@ -13,6 +14,7 @@ const Profile = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const [pointsHistory, setPointsHistory] = useState([]);
+  const [isModalOpen, setIsModalOpen] = useState(false); // Estado para controlar el modal
 
   useEffect(() => {
     const token = localStorage.getItem('token');
@@ -99,6 +101,12 @@ const Profile = () => {
     updateLocation();
   };
 
+  const openModal = () => setIsModalOpen(true);
+  const closeModal = () => {
+    setIsModalOpen(false);
+    fetchUserData(); // Actualizar los datos del usuario después de cerrar el modal
+  };
+
   if (loading) {
     return (
       <div className="loading flex justify-center items-center h-screen">
@@ -147,12 +155,15 @@ const Profile = () => {
               <p className="text-gray-600 mb-2">
                 <strong>Email:</strong> {userData.email}
               </p>
-              <p className="text-gray-600 mb-4">
+              <p className="text-gray-600 mb-2">
                 <strong>Nombre:</strong> {userData.first_name} {userData.last_name}
+              </p>
+              <p className="text-gray-600 mb-4">
+                <strong>Teléfono:</strong> {userData.phone || 'No especificado'}
               </p>
               <button
                 className="edit-btn px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 w-full sm:w-auto"
-                onClick={() => navigate('/edit-profile')}
+                onClick={openModal}
                 aria-label="Editar perfil"
               >
                 Editar Perfil
@@ -221,6 +232,9 @@ const Profile = () => {
           </Link>
         </div>
       </div>
+
+      {/* Modal para editar perfil */}
+      {isModalOpen && <EditProfileModal onClose={closeModal} />}
     </div>
   );
 };

@@ -1,132 +1,324 @@
-.pet-page-container {
-  max-width: 800px;
-  margin: 0 auto;
-  padding: 20px;
+/* Estilos Generales */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
 }
 
+body {
+  font-family: 'Poppins', sans-serif;
+  background: #f5f1e9; /* Fondo beige cálido */
+  color: #4a3c31; /* Marrón oscuro */
+  line-height: 1.6;
+  overflow-x: hidden;
+}
+
+.pet-page-container {
+  width: 100%;
+  margin: 0 auto;
+}
+
+/* Header */
+.pet-page-header {
+  background: #87a8d0; /* Azul pastel */
+  padding: 1rem 2rem;
+  text-align: center;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+.pet-page-header .logo h1 {
+  font-size: 2rem;
+  color: #ffffff;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+}
+
+/* Sección Principal */
 .pet-profile {
-  background: white;
-  border-radius: 8px;
-  padding: 20px;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  max-width: 900px;
+  margin: 2rem auto;
+  padding: 0 1rem;
+}
+
+/* Alerta de mascota perdida */
+.lost-alert {
+  background: #ff4444; /* Rojo para destacar */
+  color: #ffffff;
+  padding: 1rem;
+  border-radius: 10px;
+  text-align: center;
+  margin-bottom: 2rem;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+}
+
+.lost-alert h2 {
+  font-size: 1.5rem;
+  font-weight: 700;
+}
+
+/* Sección Héroe (Foto y mensaje principal) */
+.pet-hero {
+  text-align: center;
+  margin-bottom: 3rem;
 }
 
 .pet-photo {
-  margin: 20px 0;
-  text-align: center;
+  margin-bottom: 1.5rem;
 }
 
-.pet-image {
+.pet-photo img {
+  width: 100%;
   max-width: 300px;
-  border-radius: 8px;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  height: 300px;
+  object-fit: cover;
+  border-radius: 50%;
+  border: 5px solid #f4b084; /* Borde naranja pastel */
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
 }
 
-.lost-alert {
-  background-color: #ff4444;
-  color: white;
-  padding: 10px;
-  border-radius: 4px;
-  margin-bottom: 20px;
-  text-align: center;
+.pet-hero h1 {
+  font-size: 2.5rem;
+  color: #4a3c31;
+  font-weight: 700;
+  margin-bottom: 1rem;
 }
 
-.detail-group {
-  margin-bottom: 30px;
-  padding: 15px;
-  background: #f8f9fa;
-  border-radius: 4px;
+.pet-hero .intro-text {
+  font-size: 1.2rem;
+  color: #4a3c31;
+  max-width: 600px;
+  margin: 0 auto;
 }
 
-.detail-group h2 {
-  color: #2c3e50;
-  margin-bottom: 15px;
-  border-bottom: 2px solid #e9ecef;
-  padding-bottom: 8px;
+/* Sección de Detalles (Tarjetas) */
+.pet-details {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 2rem;
+  margin-bottom: 3rem;
 }
 
-.detail-group h3 {
-  color: #34495e;
-  margin: 10px 0;
+.detail-card {
+  background: #ffffff;
+  padding: 1.5rem;
+  border-radius: 15px;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+  border: 2px solid #87a8d0; /* Borde azul pastel */
+  transition: transform 0.3s ease;
 }
 
-.health-info {
-  margin: 10px 0;
-  padding: 10px;
-  background: white;
-  border-radius: 4px;
+.detail-card:hover {
+  transform: translateY(-5px);
+  border-color: #f4b084;
 }
 
+.detail-card h2 {
+  font-size: 1.5rem;
+  color: #4a3c31;
+  font-weight: 700;
+  margin-bottom: 1rem;
+  border-bottom: 2px solid #f4b084;
+  padding-bottom: 0.5rem;
+}
+
+.detail-card ul {
+  list-style: none;
+  padding: 0;
+}
+
+.detail-card ul li {
+  font-size: 1.1rem;
+  margin-bottom: 0.5rem;
+  color: #4a3c31;
+}
+
+.detail-card ul li strong {
+  color: #87a8d0;
+}
+
+.detail-card p {
+  font-size: 1.1rem;
+  color: #4a3c31;
+}
+
+/* Botones de Contacto */
 .contact-buttons {
   display: flex;
-  gap: 10px;
+  justify-content: center;
+  gap: 1rem;
   flex-wrap: wrap;
-  margin-top: 20px;
+  margin-bottom: 3rem;
 }
 
-.call-button, .email-button {
-  padding: 12px 24px;
-  border-radius: 4px;
+.call-button,
+.email-button {
+  padding: 1rem 2rem;
+  border-radius: 50px;
   text-decoration: none;
-  font-weight: bold;
+  font-size: 1.2rem;
+  font-weight: 700;
   text-align: center;
+  transition: all 0.3s ease;
   flex: 1;
   min-width: 200px;
+  max-width: 300px;
 }
 
 .call-button.primary {
-  background-color: #4CAF50;
-  color: white;
+  background: #4CAF50; /* Verde para el dueño */
+  color: #ffffff;
 }
 
 .call-button.secondary {
-  background-color: #2196F3;
-  color: white;
+  background: #2196F3; /* Azul para el veterinario */
+  color: #ffffff;
 }
 
 .email-button {
-  background-color: #607D8B;
-  color: white;
+  background: #f4b084; /* Naranja pastel para el email */
+  color: #ffffff;
 }
 
-.call-button:hover, .email-button:hover {
-  opacity: 0.9;
+.call-button:hover,
+.email-button:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
 }
 
-@media (max-width: 600px) {
-  .pet-page-container {
-    padding: 10px;
+/* Banner de Marketing */
+.marketing-banner {
+  background: linear-gradient(135deg, #f4b084, #e89b6b); /* Gradiente naranja */
+  padding: 2rem;
+  border-radius: 15px;
+  text-align: center;
+  color: #ffffff;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+}
+
+.marketing-banner h2 {
+  font-size: 2rem;
+  font-weight: 700;
+  margin-bottom: 1rem;
+}
+
+.marketing-banner p {
+  font-size: 1.2rem;
+  margin-bottom: 1.5rem;
+}
+
+.marketing-banner .cta-button {
+  display: inline-block;
+  padding: 1rem 2.5rem;
+  background: #ffffff;
+  color: #f4b084;
+  font-size: 1.2rem;
+  font-weight: 700;
+  border-radius: 50px;
+  text-decoration: none;
+  transition: all 0.3s ease;
+}
+
+.marketing-banner .cta-button:hover {
+  background: #87a8d0;
+  color: #ffffff;
+  transform: translateY(-5px);
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+}
+
+/* Footer */
+.pet-page-footer {
+  background: #4a3c31;
+  color: #ffffff;
+  text-align: center;
+  padding: 1rem;
+  margin-top: 2rem;
+}
+
+.pet-page-footer p {
+  font-size: 1rem;
+}
+
+/* Loading y Error */
+.loading,
+.error-container,
+.not-found {
+  text-align: center;
+  padding: 2rem;
+  font-size: 1.2rem;
+  color: #4a3c31;
+}
+
+.error-container {
+  color: #ff4444;
+}
+
+/* Responsividad */
+@media (max-width: 768px) {
+  .pet-hero h1 {
+    font-size: 2rem;
   }
-  
+
+  .pet-hero .intro-text {
+    font-size: 1rem;
+  }
+
+  .pet-photo img {
+    max-width: 200px;
+    height: 200px;
+  }
+
+  .detail-card {
+    padding: 1rem;
+  }
+
+  .detail-card h2 {
+    font-size: 1.3rem;
+  }
+
+  .detail-card ul li,
+  .detail-card p {
+    font-size: 1rem;
+  }
+
   .contact-buttons {
     flex-direction: column;
   }
-  
-  .call-button, .email-button {
-    width: 100%;
+
+  .call-button,
+  .email-button {
+    max-width: 100%;
+  }
+
+  .marketing-banner h2 {
+    font-size: 1.5rem;
+  }
+
+  .marketing-banner p {
+    font-size: 1rem;
   }
 }
 
-.pet-qr {
-  margin: 20px 0;
-  text-align: center;
-}
+@media (max-width: 480px) {
+  .pet-page-header .logo h1 {
+    font-size: 1.5rem;
+  }
 
-.qr-image {
-  max-width: 200px;
-  margin-bottom: 10px;
-}
+  .pet-hero h1 {
+    font-size: 1.8rem;
+  }
 
-.download-button {
-  display: inline-block;
-  padding: 8px 16px;
-  background-color: #fca979;
-  color: white;
-  text-decoration: none;
-  border-radius: 4px;
-  margin-top: 10px;
-}
+  .pet-hero .intro-text {
+    font-size: 0.9rem;
+  }
 
-.download-button:hover {
-  background-color: #0056b3;
+  .pet-photo img {
+    max-width: 150px;
+    height: 150px;
+  }
+
+  .marketing-banner .cta-button {
+    padding: 0.8rem 1.5rem;
+    font-size: 1rem;
+  }
 }

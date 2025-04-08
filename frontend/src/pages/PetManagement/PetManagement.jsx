@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { getPets, createPet, updatePetLostStatus, getScanHistory, updateUserLocation, generateLostPoster } from '../../services/api';
 import PetForm from '../../components/PetForm/PetForm';
 import PetList from '../../components/PetList/PetList';
@@ -6,6 +6,160 @@ import './PetManagement.css';
 import html2canvas from 'html2canvas';
 import jsPDF from 'jspdf';
 import { API_URL } from '../../services/api';
+
+// Función para calcular distancia entre dos puntos
+const calculateDistance = (lat1, lon1, lat2, lon2) => {
+  const R = 6371; // Radio de la Tierra en km
+  const dLat = (lat2 - lat1) * Math.PI / 180;
+  const dLon = (lon2 - lon1) * Math.PI / 180;
+  const a = 
+    Math.sin(dLat/2) * Math.sin(dLat/2) +
+    Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) * 
+    Math.sin(dLon/2) * Math.sin(dLon/2);
+  const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+  return R * c; // Distancia en km
+};
+
+// Componente para mostrar el historial de escaneos
+const ScanHistoryDetail = ({ scanHistory, userLocation, pet }) => {
+  const mapRef = useRef(null);
+  const [frequentLocations, setFrequentLocations] = useState([]);
+  const [pattern, setPattern] = useState(null);
+  
+  useEffect(() => {
+    if (scanHistory.length > 0) {
+      analyzeScans();
+    } else {
+      setFrequentLocations([]);
+      setPattern(null);
+    }
+  }, [scanHistory]);
+
+  // Función para analizar los escaneos y detectar patrones
+  const analyzeScans = () => {
+    // Agrupar ubicaciones similares (dentro de un radio de 100m)
+    const locationClusters = [];
+    
+    scanHistory.forEach(scan => {
+      const lat = parseFloat(scan.latitude);
+      const lng = parseFloat(scan.longitude);
+      if (isNaN(lat) || isNaN(lng)) return; // Ignorar coordenadas inválidas
+
+      const existingCluster = locationClusters.find(cluster => {
+        return calculateDistance(
+          cluster.center.lat, 
+          cluster.center.lng, 
+          lat, 
+          lng
+        ) < 0.1; // 100 metros
+      });
+      
+      if (existingCluster) {
+        existingCluster.scans.push(scan);
+      } else {
+        locationClusters.push({
+          center: { lat, lng },
+          scans: [scan]
+        });
+      }
+    });
+    
+    // Ordenar clusters por frecuencia
+    const sortedLocations = locationClusters.sort((a, b) => b.scans.length - a.scans.length);
+    setFrequentLocations(sortedLocations.slice(0, 3)); // Top 3 ubicaciones
+    
+    // Analizar patrones temporales
+    if (scanHistory.length >= 3) {
+      const hourFrequency = {};
+      const dayFrequency = {};
+      
+      scanHistory.forEach(scan => {
+        const date = new Date(scan.timestamp);
+        const hour = date.getHours();
+        const day = date.getDay();
+        
+        hourFrequency[hour] = (hourFrequency[hour] || 0) + 1;
+        dayFrequency[day] = (dayFrequency[day] || 0) + 1;
+      });
+      
+      let maxHour = 0, maxHourCount = 0;
+      let maxDay = 0, maxDayCount = 0;
+      
+      Object.entries(hourFrequency).forEach(([hour, count]) => {
+        if (count > maxHourCount) {
+          maxHour = parseInt(hour);
+          maxHourCount = count;
+        }
+      });
+      
+      Object.entries(dayFrequency).forEach(([day, count]) => {
+        if (count > maxDayCount) {
+          maxDay = parseInt(day);
+          maxDayCount = count;
+        }
+      });
+      
+      const days = ['domingo', 'lunes', 'martes', 'miércoles', 'jueves', 'viernes', 'sábado'];
+      
+      if (maxHourCount >= 2) {
+        setPattern({
+          hour: maxHour,
+          day: days[maxDay],
+          message: `${pet.name} tiende a ser encontrado/a los ${days[maxDay]}s alrededor de las ${maxHour}:00 horas.`
+        });
+      }
+    }
+  };
+
+  return (
+    <div className="scan-history-detail">
+      {scanHistory.length > 0 ? (
+        <>
+          <ul className="space-y-2">
+            {scanHistory.map((scan, index) => (
+              <li key={index} className="flex justify-between items-center p-2 bg-gray-50 rounded">
+                <span>{new Date(scan.timestamp).toLocaleString()}</span>
+                <a 
+                  href={`https://www.google.com/maps?q=${scan.latitude},${scan.longitude}`} 
+                  target="_blank" 
+                  rel="noopener noreferrer" 
+                  className="text-blue-500 hover:underline"
+                >
+                  Ver en Google Maps
+                </a>
+              </li>
+            ))}
+          </ul>
+          {frequentLocations.length > 0 && (
+            <div className="mt-4">
+              <h4 className="font-semibold">Ubicaciones Frecuentes:</h4>
+              <ul className="space-y-1">
+                {frequentLocations.map((loc, idx) => (
+                  <li key={idx}>
+                    Visto {loc.scans.length} veces cerca de:{' '}
+                    <a 
+                      href={`https://www.google.com/maps?q=${loc.center.lat},${loc.center.lng}`} 
+                      target="_blank" 
+                      rel="noopener noreferrer" 
+                      className="text-blue-500 hover:underline"
+                    >
+                      Lat: {loc.center.lat.toFixed(4)}, Lng: {loc.center.lng.toFixed(4)}
+                    </a>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          )}
+          {pattern && (
+            <p className="mt-4 italic text-gray-600">{pattern.message}</p>
+          )}
+        </>
+      ) : (
+        <p>No hay escaneos registrados para {pet.name}.</p>
+      )}
+    </div>
+  );
+};
 
 const PetManagement = () => {
   const [pets, setPets] = useState([]);
@@ -16,30 +170,28 @@ const PetManagement = () => {
   const [selectedPetId, setSelectedPetId] = useState(null);
   const [scanHistory, setScanHistory] = useState([]);
   const [userLocation, setUserLocation] = useState(null);
-  const [locationPermission, setLocationPermission] = useState('prompt'); // 'granted', 'denied', 'prompt'
-  const [showLocationPrompt, setShowLocationPrompt] = useState(false); // Mostrar un mensaje para solicitar ubicación
-  const alertRadius = 5; // Radio de alerta en kilómetros
+  const [locationPermission, setLocationPermission] = useState('prompt');
+  const [showLocationPrompt, setShowLocationPrompt] = useState(false);
+  const alertRadius = 5;
 
   useEffect(() => {
     fetchPets();
     checkLocationPermission();
   }, []);
 
-  // Verificar el estado del permiso de geolocalización
   const checkLocationPermission = async () => {
     if (navigator.permissions) {
       try {
         const permissionStatus = await navigator.permissions.query({ name: 'geolocation' });
         setLocationPermission(permissionStatus.state);
         if (permissionStatus.state === 'granted') {
-          updateLocation(); // Si ya tiene permiso, obtenemos la ubicación
+          updateLocation();
         } else if (permissionStatus.state === 'prompt') {
-          setShowLocationPrompt(true); // Mostrar un mensaje para solicitar permiso
+          setShowLocationPrompt(true);
         } else if (permissionStatus.state === 'denied') {
           setError('El permiso de ubicación está denegado. Habilítalo en la configuración de tu navegador para enviar alertas.');
         }
 
-        // Escuchar cambios en el estado del permiso
         permissionStatus.onchange = () => {
           setLocationPermission(permissionStatus.state);
           if (permissionStatus.state === 'granted') {
@@ -52,10 +204,9 @@ const PetManagement = () => {
         };
       } catch (err) {
         console.error('Error al verificar permisos de geolocalización:', err);
-        setShowLocationPrompt(true); // Si hay un error, pedimos la ubicación manualmente
+        setShowLocationPrompt(true);
       }
     } else {
-      // Si navigator.permissions no está disponible, intentamos obtener la ubicación directamente
       setShowLocationPrompt(true);
     }
   };
@@ -71,11 +222,10 @@ const PetManagement = () => {
           };
           setUserLocation(location);
           setShowLocationPrompt(false);
-          setError(''); // Limpiar cualquier error previo
+          setError('');
           try {
             await updateUserLocation(location);
             console.log('User location updated in backend');
-            // Registrar evento de analítica
             window.gtag('event', 'location_permission_granted', {
               event_category: 'Engagement',
               event_label: 'User granted location permission',
@@ -88,7 +238,6 @@ const PetManagement = () => {
           if (err.code === err.PERMISSION_DENIED) {
             setLocationPermission('denied');
             setError('El permiso de ubicación fue denegado. Habilítalo en la configuración de tu navegador para enviar alertas.');
-            // Registrar evento de analítica
             window.gtag('event', 'location_permission_denied', {
               event_category: 'Engagement',
               event_label: 'User denied location permission',
@@ -96,7 +245,7 @@ const PetManagement = () => {
           } else {
             setError('Error al obtener la ubicación: ' + err.message);
           }
-          setShowLocationPrompt(true); // Mostrar el mensaje para reintentar
+          setShowLocationPrompt(true);
           console.error('Error al obtener ubicación:', err);
         },
         { enableHighAccuracy: true, timeout: 5000 }
@@ -114,8 +263,8 @@ const PetManagement = () => {
       setPets(data);
       setError('');
     } catch (err) {
-      setError('Error al cargar las mascotas: ' + (err.detail || err));
-      console.error(err);
+      setError('Error al cargar las mascotas: ' + (err.detail || err.message || err));
+      console.error('Error en fetchPets:', err);
     } finally {
       setIsLoading(false);
     }
@@ -132,10 +281,6 @@ const PetManagement = () => {
         const truncatedName = `${truncatedBaseName}.${extension}`;
         const newFile = new File([petData.photo], truncatedName, { type: petData.photo.type });
         petData.photo = newFile;
-
-        console.log('Nombre original:', originalName);
-        console.log('Nombre truncado:', truncatedName);
-        console.log('Longitud del nombre truncado:', truncatedName.length);
       }
 
       const newPet = await createPet(petData);
@@ -145,7 +290,7 @@ const PetManagement = () => {
       setTimeout(() => setSuccessMessage(''), 3000);
     } catch (err) {
       setError('Error al crear la mascota: ' + (err.photo?.[0] || err.detail || err.message || err));
-      console.error('Error detallado:', err);
+      console.error('Error en handleCreatePet:', err);
     }
   };
 
@@ -170,19 +315,28 @@ const PetManagement = () => {
         }
       }
     } catch (err) {
-      setError('Error al actualizar estado: ' + err.message);
-      console.error(err);
+      setError('Error al actualizar estado: ' + (err.message || err));
+      console.error('Error en handleToggleLost:', err);
     }
   };
 
   const fetchScanHistory = async (petId) => {
+    console.log('fetchScanHistory llamado con petId:', petId); // Depuración
     try {
       const history = await getScanHistory(petId);
-      setScanHistory(history);
+      console.log('Historial recibido:', history); // Depuración
+      const sortedHistory = Array.isArray(history) 
+        ? history.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp))
+        : [];
+      setScanHistory(sortedHistory);
       setSelectedPetId(petId);
+      console.log('Estados actualizados - scanHistory:', sortedHistory, 'selectedPetId:', petId); // Depuración
+      if (sortedHistory.length === 0) {
+        setError('No hay escaneos registrados para esta mascota.');
+      }
     } catch (err) {
-      setError('Error al cargar historial: ' + (err.detail || err));
-      console.error(err);
+      setError('Error al cargar historial: ' + (err.detail || err.message || err));
+      console.error('Error en fetchScanHistory:', err);
     }
   };
 
@@ -245,8 +399,8 @@ const PetManagement = () => {
       setTimeout(() => setSuccessMessage(''), 5000);
       return response;
     } catch (err) {
-      setError('Error al subir el poster: ' + err.message);
-      console.error(err);
+      setError('Error al subir el poster: ' + (err.message || err));
+      console.error('Error en uploadPosterToBackend:', err);
       throw err;
     }
   };
@@ -291,8 +445,8 @@ const PetManagement = () => {
       setSuccessMessage(`¡Alerta enviada! ${data.recipients || 0} personas notificadas.`);
       setTimeout(() => setSuccessMessage(''), 5000);
     } catch (err) {
-      setError('Error al enviar notificaciones: ' + err.message);
-      console.error(err);
+      setError('Error al enviar notificaciones: ' + (err.message || err));
+      console.error('Error en sendLostNotification:', err);
     } finally {
       setIsLoading(false);
     }
@@ -313,8 +467,8 @@ const PetManagement = () => {
       const data = await response.json();
       window.open(data.poster.imageUrl, '_blank');
     } catch (err) {
-      setError('Error al ver el poster compartido: ' + err.message);
-      console.error(err);
+      setError('Error al ver el poster compartido: ' + (err.message || err));
+      console.error('Error en viewSharedPoster:', err);
     }
   };
 
@@ -323,7 +477,6 @@ const PetManagement = () => {
       <div className="pet-management-content">
         <h2>Gestión de Mascotas</h2>
 
-        {/* Mostrar un mensaje para solicitar la ubicación si no se ha otorgado el permiso */}
         {showLocationPrompt && (
           <div className="location-prompt bg-yellow-100 border border-yellow-400 text-yellow-700 px-4 py-3 rounded mb-4">
             <p className="mb-2">
@@ -361,22 +514,31 @@ const PetManagement = () => {
           </div>
         ) : (
           <>
-            <PetList pets={pets} onToggleLost={handleToggleLost} onShowHistory={fetchScanHistory} />
+            <PetList 
+              pets={pets} 
+              onToggleLost={handleToggleLost} 
+              onShowHistory={fetchScanHistory} 
+            />
             {selectedPetId && (
-              <div className="scan-history">
-                <h3>Historial de Escaneos</h3>
-                {scanHistory.length > 0 ? (
-                  <ul>
-                    {scanHistory.map((scan, index) => (
-                      <li key={index}>
-                        {new Date(scan.timestamp).toLocaleString()} - Lat: {scan.latitude}, Lon:{' '}
-                        {scan.longitude}
-                      </li>
-                    ))}
-                  </ul>
-                ) : (
-                  <p>No hay escaneos registrados.</p>
-                )}
+              <div className="scan-history bg-white p-4 rounded-lg shadow mt-4">
+                <div className="flex justify-between items-center">
+                  <h3 className="text-xl font-semibold mb-2">Historial de Escaneos</h3>
+                  <button 
+                    onClick={() => {
+                      setSelectedPetId(null);
+                      setScanHistory([]);
+                      setError('');
+                    }}
+                    className="text-gray-500 hover:text-gray-700"
+                  >
+                    Cerrar
+                  </button>
+                </div>
+                <ScanHistoryDetail 
+                  scanHistory={scanHistory} 
+                  userLocation={userLocation}
+                  pet={pets.find(p => p.id === selectedPetId) || {}}
+                />
               </div>
             )}
           </>
