@@ -172,6 +172,10 @@ body {
 .call-button.primary {
   background: #4CAF50; /* Verde para el dueño */
   color: #ffffff;
+  text-align: center;
+  align-items: center;
+  display: flex;
+  justify-content: center;
 }
 
 .call-button.secondary {

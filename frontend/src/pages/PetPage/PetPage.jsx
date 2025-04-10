@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import { getPetByUuid, notifyOwner, sendCommunityNotification } from '../../services/api';
 import './PetPage.css';
+import { API_URL } from '../../services/api';
 
 const BASE_URL = import.meta.env.VITE_BASE_URL;
 
@@ -10,13 +11,22 @@ const PetPage = () => {
   const [pet, setPet] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState('');
+  const [userData, setUserData] = useState(null);
 
   useEffect(() => {
     const fetchPetAndNotify = async () => {
       try {
         setIsLoading(true);
-        const data = await getPetByUuid(uuid);
-        setPet(data);
+        const response = await fetch(`${API_URL}/users/me/`, {
+          headers: { Authorization: `Token ${localStorage.getItem('token')}` },
+        });
+        const data = await response.json();
+        setUserData(data);
+
+        const petData = await getPetByUuid(uuid);
+        setPet(petData);
+        setError('');
+        console.log("Datos del dueño:", data.user); // Agregar este log
         console.log("Imagen de la mascota:", data.photo);
 
         if (navigator.geolocation) {
@@ -173,6 +183,18 @@ const PetPage = () => {
           {pet.email && (
             <a href={`mailto:${pet.email}`} className="email-button">
               ✉️ Enviar email
+            </a>
+          )}
+          {pet.phone && userData && (
+            <a
+              href={`https://wa.me/549${pet.phone.replace(/^0/, '').replace(/\D/g, '')}?text=${encodeURIComponent(
+                `Hola ${userData.first_name}, encontré a ${pet.name} y me gustaría ayudarte a que vuelva a casa. ¿Cómo puedo ayudarte?`
+              )}`}
+              className="call-button primary"              
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              💬 Enviar WhatsApp al dueño
             </a>
           )}
         </section>
