@@ -9,6 +9,9 @@ const Compra = () => {
   const [successMessage, setSuccessMessage] = useState('');
   const [selectedPetId, setSelectedPetId] = useState(null);
   const [userPhone, setUserPhone] = useState('');
+  const [selectedOption, setSelectedOption] = useState(null);
+  const [color, setColor] = useState('');
+  const [size, setSize] = useState('');
   const [additionalInfo, setAdditionalInfo] = useState('');
 
   useEffect(() => {
@@ -22,178 +25,174 @@ const Compra = () => {
       setPets(data);
       setError('');
     } catch (err) {
-      setError('Error al cargar las mascotas: ' + (err.detail || err));
+      setError('No pudimos cargar las mascotas. Intenta de nuevo.');
       console.error(err);
     } finally {
       setIsLoading(false);
     }
   };
 
+  const purchaseOptions = [
+    { id: 'chapita', name: 'Solo Chapita QR', price: 20000 },
+    { id: 'collar-simple', name: 'Collar Básico + QR', price: 27000 },
+    { id: 'collar-premium', name: 'Collar Premium + QR', price: 32000 },
+  ];
+
+  const colors = ['Negro', 'Azul', 'Rojo', 'Verde', 'Rosa'];
+  const sizes = ['Pequeño', 'Mediano', 'Grande'];
+
+  const isCollarSelected = selectedOption && selectedOption !== 'chapita';
+
   const handleSubmit = async (e) => {
     e.preventDefault();
-    
+
     if (!selectedPetId) {
-      setError('Por favor selecciona una mascota');
+      setError('Selecciona una mascota.');
       return;
     }
-
+    if (!selectedOption) {
+      setError('Selecciona una opción de compra.');
+      return;
+    }
     if (!userPhone) {
-      setError('Por favor ingresa tu número de WhatsApp');
+      setError('Ingresa tu número de WhatsApp.');
       return;
     }
 
     try {
-      const selectedPet = pets.find(pet => pet.id === selectedPetId);
-      
-      // Formato para mensaje de WhatsApp (URL encoded)
+      const selectedPet = pets.find((pet) => pet.id === selectedPetId);
+      const option = purchaseOptions.find((opt) => opt.id === selectedOption);
       const message = encodeURIComponent(
-        `Hola, quiero comprar un collar QR para mi mascota *${selectedPet.name}*.\n` +
+        `¡Hola! Quiero comprar un *${option.name}* para mi mascota *${selectedPet.name}*.\n` +
+        `Precio: $${option.price} ARS\n` +
         `Raza: ${selectedPet.breed || 'No especificada'}\n` +
         `Edad: ${selectedPet.age} años\n` +
-        `Información adicional: ${additionalInfo || 'No hay información adicional'}`
+        (isCollarSelected ? `Color: ${color || 'Sin especificar'}\n` : '') +
+        (isCollarSelected ? `Tamaño: ${size || 'Sin especificar'}\n` : '') +
+        `Detalles: ${additionalInfo || 'Sin detalles adicionales'}\n` +
+        `¡Espero tu respuesta para coordinar!`
       );
-      
-      // Formateamos el número de teléfono del usuario
-      const formattedPhone = userPhone.replace(/\D/g, ''); // Elimina todo lo que no sea número
-      
-      // Abrir WhatsApp con el número del usuario
+
+      const formattedPhone = userPhone.replace(/\D/g, '');
       window.open(`https://wa.me/54${formattedPhone}?text=${message}`, '_blank');
-      
-      setSuccessMessage('¡Te estamos redirigiendo a WhatsApp!');
+
+      setSuccessMessage('¡Redirigiéndote a WhatsApp para coordinar tu pedido!');
       setTimeout(() => setSuccessMessage(''), 5000);
-      
-      // Limpiar formulario
+
       setSelectedPetId(null);
+      setSelectedOption(null);
+      setColor('');
+      setSize('');
       setUserPhone('');
       setAdditionalInfo('');
-      
     } catch (err) {
-      setError('Error al procesar la solicitud: ' + err.message);
+      setError('Error al procesar tu solicitud. Intenta de nuevo.');
       console.error(err);
     }
   };
 
   return (
     <div className="compra-container">
-      <h1>Compra tu CollarMascotaQR</h1>
+      <h1>Personaliza tu Collar QR</h1>
       <div className="compra-content">
-        <h2>Solicita un Collar QR para tu mascota</h2>
-        
-        <div className="compra-info">
-          <p>Con nuestros collares QR, podrás:</p>
-          <ul>
-            <li>Identificar a tu mascota de manera moderna y segura</li>
-            <li>Recibir alertas si alguien escanea el QR de tu mascota</li>
-            <li>Facilitar que cualquier persona que encuentre a tu mascota pueda contactarte</li>
-            <li>Activar alertas en caso de pérdida</li>
-          </ul>
-          
-          <div className="collar-tipos">
-            <h3>Disponemos de varios modelos</h3>
-            <div className="collar-opciones">
-              <div className="collar-tipo">
-                <h4>Collar Básico</h4>
-                <p>Collar resistente con placa QR impresa</p>
-                <p className="precio">$2,500</p>
-              </div>
-              <div className="collar-tipo">
-                <h4>Collar Premium</h4>
-                <p>Material de alta calidad y QR grabado láser</p>
-                <p className="precio">$3,500</p>
-              </div>
-              <div className="collar-tipo">
-                <h4>Placa QR</h4>
-                <p>Solo la placa QR para añadir a tu collar actual</p>
-                <p className="precio">$1,200</p>
-              </div>
-            </div>
-          </div>
-        </div>
-        
+        <h2>Elige y Personaliza</h2>
+
         {isLoading ? (
-          <div className="loading-message">
-            <i className="fas fa-spinner"></i>
-            <p>Cargando mascotas...</p>
-          </div>
+          <div className="loading-message">Cargando...</div>
         ) : (
           <form onSubmit={handleSubmit} className="compra-form">
+            {/* Selección de Mascota */}
             <div className="form-group">
-              <label>Selecciona la mascota para el collar QR:</label>
-              
+              <label>1. ¿Para qué mascota es?</label>
               {pets.length === 0 ? (
-                <p className="no-pets-message">No tienes mascotas registradas. Primero debes registrar una mascota.</p>
+                <p>No tienes mascotas registradas. <a href="/register-pet">Registra una aquí</a>.</p>
               ) : (
                 <div className="pet-selection">
-                  {pets.map(pet => (
-                    <div 
-                      key={pet.id} 
+                  {pets.map((pet) => (
+                    <div
+                      key={pet.id}
                       className={`pet-option ${selectedPetId === pet.id ? 'selected' : ''}`}
                       onClick={() => setSelectedPetId(pet.id)}
                     >
-                      <div className="pet-option-content">
-                        {pet.photo && (
-                          <img 
-                            src={pet.photo} 
-                            alt={pet.name}
-                            className="pet-thumbnail"
-                          />
-                        )}
-                        <div className="pet-details">
-                          <h4>{pet.name}</h4>
-                          <p>{pet.breed || 'Sin raza especificada'}, {pet.age} años</p>
-                        </div>
-                        <div className="select-indicator">
-                          {selectedPetId === pet.id && <i className="fas fa-check-circle"></i>}
-                        </div>
+                      <img src={pet.photo} alt={pet.name} className="pet-thumbnail" />
+                      <div className="pet-details">
+                        <h4>{pet.name}</h4>
+                        <p>{pet.breed || 'Sin raza'}, {pet.age} años</p>
                       </div>
                     </div>
                   ))}
                 </div>
               )}
             </div>
-            
+
+            {/* Selección de Opción de Compra */}
             <div className="form-group">
-              <label htmlFor="userPhone">Tu número de WhatsApp:</label>
+              <label>2. Elige tu opción</label>
+              <div className="options-grid">
+                {purchaseOptions.map((option) => (
+                  <div
+                    key={option.id}
+                    className={`option-card ${selectedOption === option.id ? 'selected' : ''}`}
+                    onClick={() => setSelectedOption(option.id)}
+                  >
+                    <h4>{option.name}</h4>
+                    <p className="price">${option.price.toLocaleString('es-AR')} ARS</p>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* Personalización (solo si es collar) */}
+            {isCollarSelected && (
+              <div className="form-group">
+                <label>3. Personaliza tu collar</label>
+                <div className="customization-options">
+                  <select value={color} onChange={(e) => setColor(e.target.value)}>
+                    <option value="">Selecciona un color</option>
+                    {colors.map((c) => (
+                      <option key={c} value={c}>{c}</option>
+                    ))}
+                  </select>
+                  <select value={size} onChange={(e) => setSize(e.target.value)}>
+                    <option value="">Selecciona un tamaño</option>
+                    {sizes.map((s) => (
+                      <option key={s} value={s}>{s}</option>
+                    ))}
+                  </select>
+                </div>
+              </div>
+            )}
+
+            {/* Teléfono y Detalles */}
+            <div className="form-group">
+              <label>{isCollarSelected ? '4.' : '3.'} Tu WhatsApp</label>
               <input
                 type="tel"
-                id="userPhone"
                 value={userPhone}
                 onChange={(e) => setUserPhone(e.target.value)}
                 placeholder="Ej: 1123456789"
                 required
               />
-              <small>Te contactaremos por WhatsApp para confirmar los detalles del pedido</small>
             </div>
-            
+
             <div className="form-group">
-              <label htmlFor="additionalInfo">Información adicional (opcional):</label>
+              <label>{isCollarSelected ? '5.' : '4.'} Detalles adicionales (opcional)</label>
               <textarea
-                id="additionalInfo"
                 value={additionalInfo}
                 onChange={(e) => setAdditionalInfo(e.target.value)}
-                placeholder="Tamaño del collar, color preferido, etc."
-                rows={3}
+                placeholder="Ej: 'Quiero un diseño especial'"
               />
             </div>
-            
-            {error && (
-              <div className="error-message bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">
-                {error}
-              </div>
-            )}
-            
-            {successMessage && (
-              <div className="success-message bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded mb-4">
-                {successMessage}
-              </div>
-            )}
-            
-            <button 
-              type="submit" 
+
+            {error && <div className="error-message">{error}</div>}
+            {successMessage && <div className="success-message">{successMessage}</div>}
+
+            <button
+              type="submit"
               className="submit-button"
-              disabled={!selectedPetId || !userPhone || pets.length === 0}
+              disabled={!selectedPetId || !selectedOption || !userPhone}
             >
-              Solicitar por WhatsApp
+              Enviar Pedido por WhatsApp
             </button>
           </form>
         )}
