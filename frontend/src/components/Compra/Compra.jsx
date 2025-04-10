@@ -50,17 +50,16 @@ const Compra = () => {
         `Hola, quiero comprar un collar QR para mi mascota *${selectedPet.name}*.\n` +
         `Raza: ${selectedPet.breed || 'No especificada'}\n` +
         `Edad: ${selectedPet.age} años\n` +
-        `Información adicional: ${additionalInfo || 'No hay información adicional'}\n\n` +
-        `Mi número de contacto es: ${userPhone}`
+        `Información adicional: ${additionalInfo || 'No hay información adicional'}`
       );
       
-      // Número de WhatsApp del administrador (reemplaza con el número real)
-      const adminPhone = '5491112345678';
+      // Formateamos el número de teléfono del usuario
+      const formattedPhone = userPhone.replace(/\D/g, ''); // Elimina todo lo que no sea número
       
-      // Abrir WhatsApp
-      window.open(`https://wa.me/${adminPhone}?text=${message}`, '_blank');
+      // Abrir WhatsApp con el número del usuario
+      window.open(`https://wa.me/54${formattedPhone}?text=${message}`, '_blank');
       
-      setSuccessMessage('¡Te estamos redirigiendo a WhatsApp para completar tu pedido!');
+      setSuccessMessage('¡Te estamos redirigiendo a WhatsApp!');
       setTimeout(() => setSuccessMessage(''), 5000);
       
       // Limpiar formulario
@@ -76,6 +75,7 @@ const Compra = () => {
 
   return (
     <div className="compra-container">
+      <h1>Compra tu CollarMascotaQR</h1>
       <div className="compra-content">
         <h2>Solicita un Collar QR para tu mascota</h2>
         
@@ -202,4 +202,4 @@ const Compra = () => {
   );
 };
 
-export default Compra; 
+export default Compra;

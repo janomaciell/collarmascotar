@@ -473,10 +473,7 @@ def send_lost_pet_email(pet, email, alert):
               </tr>
             </table>
             <!-- Foto de la mascota -->
-            {f'<img src="{pet.photo.url}" alt="Foto de {pet.name}" style="max-width: 100%; height: auto; border-radius: 5px; margin: 10px 0;" />' if pet.photo else '<p style="color: #777;">No hay foto disponible</p>'}
-            <!-- QR -->
-            {f'<img src="{pet.qr_code.url}" alt="QR de {pet.name}" style="width: 150px; height: 150px; margin: 10px auto; display: block;" />' if pet.qr_code else ''}
-            <p style="font-size: 14px; color: #666; text-align: center;">Escanea el QR para más información</p>
+            {f'<img src="{pet.photo}" alt="Foto de {pet.name}" style="max-width: 100%; height: auto; border-radius: 5px; margin: 10px 0;" />' if pet.photo else '<p style="color: #777;">No hay foto disponible</p>'}
             <!-- Botones -->
             <div style="text-align: center; margin: 20px 0;">
               <a href="{maps_link}" style="background: #87a8d0; color: #fff; padding: 10px 20px; text-decoration: none; border-radius: 5px; display: inline-block; margin: 5px;">Ver mapa</a>

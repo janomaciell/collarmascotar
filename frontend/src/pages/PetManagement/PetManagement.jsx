@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { getPets, createPet, updatePetLostStatus, getScanHistory, updateUserLocation, generateLostPoster } from '../../services/api';
 import PetForm from '../../components/PetForm/PetForm';
 import PetList from '../../components/PetList/PetList';
+import HeatMapComponent from '../../components/HeatMapComponent/HeatMapComponent';
 import './PetManagement.css';
 import html2canvas from 'html2canvas';
 import jsPDF from 'jspdf';
@@ -22,7 +23,6 @@ const calculateDistance = (lat1, lon1, lat2, lon2) => {
 
 // Componente para mostrar el historial de escaneos
 const ScanHistoryDetail = ({ scanHistory, userLocation, pet }) => {
-  const mapRef = useRef(null);
   const [frequentLocations, setFrequentLocations] = useState([]);
   const [pattern, setPattern] = useState(null);
   
@@ -35,15 +35,13 @@ const ScanHistoryDetail = ({ scanHistory, userLocation, pet }) => {
     }
   }, [scanHistory]);
 
-  // Función para analizar los escaneos y detectar patrones
   const analyzeScans = () => {
-    // Agrupar ubicaciones similares (dentro de un radio de 100m)
     const locationClusters = [];
     
     scanHistory.forEach(scan => {
       const lat = parseFloat(scan.latitude);
       const lng = parseFloat(scan.longitude);
-      if (isNaN(lat) || isNaN(lng)) return; // Ignorar coordenadas inválidas
+      if (isNaN(lat) || isNaN(lng)) return;
 
       const existingCluster = locationClusters.find(cluster => {
         return calculateDistance(
@@ -64,11 +62,9 @@ const ScanHistoryDetail = ({ scanHistory, userLocation, pet }) => {
       }
     });
     
-    // Ordenar clusters por frecuencia
     const sortedLocations = locationClusters.sort((a, b) => b.scans.length - a.scans.length);
-    setFrequentLocations(sortedLocations.slice(0, 3)); // Top 3 ubicaciones
+    setFrequentLocations(sortedLocations.slice(0, 3));
     
-    // Analizar patrones temporales
     if (scanHistory.length >= 3) {
       const hourFrequency = {};
       const dayFrequency = {};
@@ -130,6 +126,12 @@ const ScanHistoryDetail = ({ scanHistory, userLocation, pet }) => {
               </li>
             ))}
           </ul>
+
+          <div className="mt-6">
+            <h3 className="text-xl font-semibold mb-4">Mapa de Calor de Escaneos</h3>
+            <HeatMapComponent scanHistory={scanHistory} />
+          </div>
+
           {frequentLocations.length > 0 && (
             <div className="mt-4">
               <h4 className="font-semibold">Ubicaciones Frecuentes:</h4>
@@ -321,16 +323,16 @@ const PetManagement = () => {
   };
 
   const fetchScanHistory = async (petId) => {
-    console.log('fetchScanHistory llamado con petId:', petId); // Depuración
+    console.log('fetchScanHistory llamado con petId:', petId);
     try {
       const history = await getScanHistory(petId);
-      console.log('Historial recibido:', history); // Depuración
+      console.log('Historial recibido:', history);
       const sortedHistory = Array.isArray(history) 
         ? history.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp))
         : [];
       setScanHistory(sortedHistory);
       setSelectedPetId(petId);
-      console.log('Estados actualizados - scanHistory:', sortedHistory, 'selectedPetId:', petId); // Depuración
+      console.log('Estados actualizados - scanHistory:', sortedHistory, 'selectedPetId:', petId);
       if (sortedHistory.length === 0) {
         setError('No hay escaneos registrados para esta mascota.');
       }

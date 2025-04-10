@@ -184,7 +184,7 @@ const Profile = () => {
                   <img
                     src={pet.photo || 'https://via.placeholder.com/50'}
                     alt={`Foto de ${pet.name}`}
-                    className="pet-photo w-12 h-12 rounded-full object-cover"
+                    className="pet-photo-ciruclar"
                   />
                   <span className="text-gray-600">
                     {pet.name}{' '}

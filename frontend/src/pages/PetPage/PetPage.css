@@ -61,19 +61,23 @@ body {
 .pet-hero {
   text-align: center;
   margin-bottom: 3rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
 
 .pet-photo {
   margin-bottom: 1.5rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
 .pet-photo img {
-  width: 100%;
-  max-width: 300px;
-  height: 300px;
+  width: 400px;
+  height: 400px;
   object-fit: cover;
-  border-radius: 50%;
-  border: 5px solid #f4b084; /* Borde naranja pastel */
+  border: none;
   box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
 }
 
@@ -190,7 +194,6 @@ body {
 .marketing-banner {
   background: linear-gradient(135deg, #f4b084, #e89b6b); /* Gradiente naranja */
   padding: 2rem;
-  border-radius: 15px;
   text-align: center;
   color: #ffffff;
   box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
@@ -264,8 +267,8 @@ body {
   }
 
   .pet-photo img {
-    max-width: 200px;
-    height: 200px;
+    width: 300px;
+    height: 300px;
   }
 
   .detail-card {
@@ -313,8 +316,8 @@ body {
   }
 
   .pet-photo img {
-    max-width: 150px;
-    height: 150px;
+    width: 250px;
+    height: 250px;
   }
 
   .marketing-banner .cta-button {

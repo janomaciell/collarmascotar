@@ -17,6 +17,7 @@ import NotificationPromptModal from './components/NotificationPromptModal/Notifi
 import './App.css';
 import Analytics from "./components/Analytics";
 import EditProfile from './pages/EditProfile/EditProfile';
+import Compra from './components/Compra/Compra';
 
 function App() {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
@@ -82,6 +83,7 @@ function App() {
               }
             />
             <Route path="/edit-profile" element={<EditProfile />} />
+            <Route path="/compra" element={<Compra />} />
           </Routes>
         </main>
         <Footer />

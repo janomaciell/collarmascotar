@@ -73,7 +73,7 @@ const PetPage = () => {
           </div>
         )}
 
-        {/* Foto y mensaje principal */}
+        {/* Sección Héroe (Foto y mensaje principal) */}
         <section className="pet-hero">
           {pet.photo && (
             <div className="pet-photo">
@@ -88,7 +88,6 @@ const PetPage = () => {
           </p>
         </section>
 
-        {/* Información de la mascota en tarjetas */}
         <section className="pet-details">
           {/* Tarjeta: Información Básica */}
           <div className="detail-card">
@@ -162,7 +161,6 @@ const PetPage = () => {
           )}
         </section>
 
-        {/* Botones de acción */}
         <section className="contact-buttons">
           <a href={`tel:${pet.phone}`} className="call-button primary">
             📞 Llamar al dueño
@@ -179,7 +177,6 @@ const PetPage = () => {
           )}
         </section>
 
-        {/* Sección de marketing para nuevos clientes */}
         <section className="marketing-banner">
           <h2>¿Quieres proteger a tu mascota como a {pet.name}?</h2>
           <p>
@@ -191,7 +188,6 @@ const PetPage = () => {
         </section>
       </main>
 
-      {/* Footer */}
       <footer className="pet-page-footer">
         <p>© 2025 CollarMascotaQR. Todos los derechos reservados.</p>
       </footer>

@@ -22,7 +22,7 @@ const Home = () => {
           <p>CollarMascotaQR: La solución inteligente para mantener a tu mascota segura y siempre contigo.</p>
           <div className="hero-buttons">
             <Link to="/about" className="secondary-button">Descubre más</Link>
-            <Link to="/register" className="cta-button">¡Compra ahora!</Link>
+            <Link to="/compra" className="cta-button">¡Compra ahora!</Link>
           </div>
         </div>
         <div className="hero-image">
@@ -108,11 +108,11 @@ const Home = () => {
       <section className="cta-final-section" aria-label="Llamado a la acción final">
         <h2>¡No esperes más!</h2>
         <p>Protege a tu mascota hoy con CollarMascotaQR y vive con la tranquilidad que mereces.</p>
-        <Link to="/register" className="cta-button">Pide el tuyo ahora</Link>
+        <Link to="/compra" className="cta-button">Pide el tuyo ahora</Link>
       </section>
 
       {/* Botón Flotante */}
-      <Link to="/register" className="floating-cta">¡Pide el tuyo!</Link>
+      <Link to="/compra" className="floating-cta">¡Pide el tuyo!</Link>
     </main>
   );
 };

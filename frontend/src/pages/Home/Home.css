@@ -38,6 +38,7 @@ body {
   position: relative;
   margin-top: 70px;
   min-height: calc(100vh - 70px);
+  gap: 2rem;
 }
 
 .hero-content {
@@ -128,21 +129,28 @@ body {
 /* Sección Promesa */
 .promise-section {
   display: flex;
-  align-items: center;
+  align-items: stretch; /* Cambio para que los elementos se estiren */
+align-items: center;
   justify-content: space-between;
+  position: relative;
+  gap: 2rem;
   background: var(--blanco);
 }
 
 .promise-image {
-  flex: 1;
-  max-width: 500px;
+  max-width: 650px;
+  min-width: 300px;
+  height: 100%; /* Cambio para que ocupe todo el alto */
+  margin: 0; /* Eliminar márgenes */
+  padding: 0; /* Eliminar padding */
+  
 }
 
 .promise-image img {
   width: 100%;
-  height: auto;
-  max-height: 500px;
+  height: 100%;
   object-fit: cover;
+  display: block; /* Eliminar espacio extra debajo de la imagen */
 }
 
 .promise-content {
@@ -178,6 +186,7 @@ body {
   padding: 5rem 2rem;
   text-align: center;
   background: var(--beige-pastel);
+  gap: 2rem;
 }
 
 .how-it-works-section h2 {
@@ -213,8 +222,9 @@ body {
 /* Sección Servicios */
 .services-section {
   padding: 5rem 2rem;
-  background: var(--beige-pastel);
+  background: var(--blanco);
   text-align: center;
+  gap: 2rem;
 }
 
 .services-section h2 {
@@ -267,6 +277,7 @@ body {
   padding: 5rem 2rem;
   background: var(--blanco);
   text-align: center;
+  gap: 2rem;
 }
 
 .testimonials-section h2 {
@@ -307,6 +318,7 @@ body {
   text-align: center;
   background: var(--azul-pastel);
   color: var(--blanco);
+  gap: 2rem;
 }
 
 .cta-final-section h2 {
@@ -354,7 +366,11 @@ body {
 
 /* Responsividad */
 @media (max-width: 1024px) {
-  .hero-section, .promise-section {
+  .promise-section {
+    flex-direction: column-reverse;
+    text-align: center;
+  }
+  .hero-section {
     flex-direction: column;
     text-align: center;
   }
@@ -432,6 +448,12 @@ body {
   .services-grid, .how-it-works-grid, .testimonials-grid {
     gap: 1.5rem;
     padding: 0 1rem;
+  }
+  .service-item {
+    width: 90%;
+    max-width: 350px;
+    min-height: 250px; /* o el alto mínimo que necesites */
+    margin: 0 auto;
   }
 }
 

@@ -42,7 +42,7 @@ const PetList = ({ pets, onToggleLost, onShowHistory }) => {
                 <button 
                   className="history-btn"
                   onClick={() => {
-                    console.log('Clic en Ver Historial para petId:', pet.id); // Depuración
+                    console.log('Clic en Ver Historial para petId:', pet.id);
                     onShowHistory(pet.id);
                   }}
                 >

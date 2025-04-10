@@ -151,7 +151,8 @@ const LostPoster = () => {
                 onError={(e) => (e.target.src = 'https://via.placeholder.com/300?text=Error+de+Imagen')}
               />
             </div>
-
+            <p>"jano maciel esta aca pero la foto no"</p>
+            <img src={pet.photo} alt="foto perro" />
             <div className="poster-details">
               <h2>{pet.name}</h2>
               <div className="detail-row">
