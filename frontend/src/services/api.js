@@ -161,6 +161,6 @@ export const getReward = async (petId) => {
     throw error.response?.data || error.message;
   }
 };
-const response = await fetch(`${API_URL}/users/points-history/`, {
-  headers: { 'Authorization': `Token ${localStorage.getItem('token')}` },
-});
+// const response = await fetch(`${API_URL}/users/points-history/`, {
+//   headers: { 'Authorization': `Token ${localStorage.getItem('token')}` },
+// });
