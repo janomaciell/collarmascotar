@@ -57,6 +57,38 @@
   resize: vertical;
 }
 
+.form-group input.error,
+.form-group textarea.error {
+  border-color: #ff4444;
+}
+
+.error-message {
+  color: #ff4444;
+  font-size: 0.8rem;
+  margin-top: 0.3rem;
+  display: block;
+}
+
+.photo-preview-container {
+  position: relative;
+  margin: 1rem 0;
+}
+
+.photo-preview {
+  max-width: 200px;
+  border-radius: 8px;
+}
+
+.remove-photo-button {
+  background: #ff4444;
+  color: white;
+  border: none;
+  padding: 0.5rem 1rem;
+  border-radius: 4px;
+  cursor: pointer;
+  margin-top: 0.5rem;
+}
+
 .submit-button {
   background-color: #f4b084; /* Naranja pastel */
   color: white;
@@ -78,12 +110,19 @@
   box-shadow: 0 8px 20px rgba(74, 60, 49, 0.3);
 }
 
+.submit-button.loading {
+  opacity: 0.7;
+  cursor: not-allowed;
+}
+
 /* Estilos Responsivos */
 @media (max-width: 768px) {
   .pet-form {
     padding: 1.5rem;
     margin: 1.5rem auto;
     max-width: 100%; /* Ajuste para pantallas pequeñas */
+    width: 90%;
+    padding: 1rem;
   }
 
   .form-group input,
@@ -92,8 +131,18 @@
     font-size: 0.95rem;
   }
 
+  .form-group input,
+  .form-group textarea,
+  .form-group select {
+    font-size: 16px; /* Previene zoom en iOS */
+  }
+
   .submit-button {
     padding: 0.9rem 1.5rem;
     font-size: 1rem;
+  }
+
+  .photo-preview {
+    max-width: 150px;
   }
 }

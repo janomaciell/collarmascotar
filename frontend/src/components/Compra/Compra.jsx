@@ -46,16 +46,8 @@ const Compra = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    if (!selectedPetId) {
-      setError('Selecciona una mascota.');
-      return;
-    }
-    if (!selectedOption) {
-      setError('Selecciona una opción de compra.');
-      return;
-    }
-    if (!userPhone) {
-      setError('Ingresa tu número de WhatsApp.');
+    if (!selectedPetId || !selectedOption || !userPhone) {
+      setError('Por favor completa todos los campos requeridos.');
       return;
     }
 
@@ -74,20 +66,33 @@ const Compra = () => {
       );
 
       const formattedPhone = userPhone.replace(/\D/g, '');
-      window.open(`https://wa.me/54${formattedPhone}?text=${message}`, '_blank');
+      
+      // Usar setTimeout para evitar problemas con el estado de React
+      setTimeout(() => {
+        const whatsappUrl = `https://wa.me/54${formattedPhone}?text=${message}`;
+        const newWindow = window.open(whatsappUrl, '_blank', 'noopener,noreferrer');
+        
+        if (newWindow) {
+          newWindow.opener = null;
+        }
+        
+        setSuccessMessage('¡Redirigiéndote a WhatsApp para coordinar tu pedido!');
+        
+        // Limpiar el formulario después de un pequeño delay
+        setTimeout(() => {
+          setSelectedPetId(null);
+          setSelectedOption(null);
+          setColor('');
+          setSize('');
+          setUserPhone('');
+          setAdditionalInfo('');
+          setSuccessMessage('');
+        }, 3000);
+      }, 100);
 
-      setSuccessMessage('¡Redirigiéndote a WhatsApp para coordinar tu pedido!');
-      setTimeout(() => setSuccessMessage(''), 5000);
-
-      setSelectedPetId(null);
-      setSelectedOption(null);
-      setColor('');
-      setSize('');
-      setUserPhone('');
-      setAdditionalInfo('');
     } catch (err) {
-      setError('Error al procesar tu solicitud. Intenta de nuevo.');
-      console.error(err);
+      console.error('Error al procesar la solicitud:', err);
+      setError('Hubo un error al procesar tu solicitud. Por favor intenta de nuevo.');
     }
   };
 

@@ -21,8 +21,8 @@ const Footer = () => {
         </div>
         <div className="footer-section">
           <h3>Contacto</h3>
-          <p>Email: info@collarmascotaqr.com</p>
-          <p>Teléfono: (123) 456-7890</p>
+          <p>Email: janomaciel1@gmail.com</p>
+          <p>Teléfono: 2267-405599</p>
         </div>
       </div>
       <div className="footer-bottom">

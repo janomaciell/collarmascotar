@@ -32,6 +32,9 @@ ALLOWED_HOSTS = [
     'collarmascotar.vercel.app', 
     'localhost', 
     '127.0.0.1',
+    'api.whatsapp.com',
+    'web.whatsapp.com',
+    'wa.me'
 ]
 
                 
@@ -190,7 +193,10 @@ CORS_ALLOWED_ORIGINS = [
     "https://collarmascotar.onrender.com",
     "http://localhost:3000",
     "https://collarmascotar.vercel.app",
-    "http://localhost:8000"
+    "http://localhost:8000",
+    "https://api.whatsapp.com",
+    "https://web.whatsapp.com",
+    "https://wa.me"
 ]
 
 API_URL=config('API_URL')

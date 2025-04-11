@@ -31,7 +31,7 @@ const PetForm = ({ onSubmit, initialData = {} }) => {
 
   const [photoPreview, setPhotoPreview] = useState(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
-
+  const [errors, setErrors] = useState({});
 
   const handleChange = (e) => {
     const { name, value, type, checked, files } = e.target;
@@ -58,11 +58,35 @@ const PetForm = ({ onSubmit, initialData = {} }) => {
     }
   };
 
+  const validateForm = () => {
+    const newErrors = {};
+
+    // Validar teléfono (10 dígitos)
+    if (!formData.phone.match(/^\d{10}$/)) {
+      newErrors.phone = "El teléfono debe tener 10 dígitos";
+    }
+
+    // Validar edad
+    if (formData.age < 0 || formData.age > 30) {
+      newErrors.age = "La edad debe estar entre 0 y 30 años";
+    }
+
+    // Validar email si existe
+    if (formData.email && !formData.email.match(/^[^\s@]+@[^\s@]+\.[^\s@]+$/)) {
+      newErrors.email = "El correo electrónico no es válido";
+    }
+
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     
-    if (isSubmitting) {
-      return; // Prevenir envíos múltiples
+    if (isSubmitting) return;
+    
+    if (!validateForm()) {
+      return;
     }
 
     try {
@@ -77,7 +101,8 @@ const PetForm = ({ onSubmit, initialData = {} }) => {
 
       await onSubmit(data);
     } catch (error) {
-      console.error('Error al enviar el formulario:', error);
+      console.error('Error:', error);
+      setErrors({ submit: 'Error al enviar el formulario' });
     } finally {
       setIsSubmitting(false);
     }
@@ -97,11 +122,23 @@ const PetForm = ({ onSubmit, initialData = {} }) => {
             onChange={handleChange}
           />
           {photoPreview && (
-            <img 
-              src={photoPreview} 
-              alt="Preview" 
-              className="photo-preview"
-            />
+            <div className="photo-preview-container">
+              <img 
+                src={photoPreview} 
+                alt="Preview" 
+                className="photo-preview"
+              />
+              <button 
+                type="button" 
+                className="remove-photo-button"
+                onClick={() => {
+                  setFormData({ ...formData, photo: null });
+                  setPhotoPreview(null);
+                }}
+              >
+                ✕ Eliminar foto
+              </button>
+            </div>
           )}
         </div>
 
@@ -186,8 +223,10 @@ const PetForm = ({ onSubmit, initialData = {} }) => {
             name="phone"
             value={formData.phone}
             onChange={handleChange}
+            className={errors.phone ? 'error' : ''}
             required
           />
+          {errors.phone && <span className="error-message">{errors.phone}</span>}
         </div>
 
         <div className="form-group">
@@ -200,6 +239,7 @@ const PetForm = ({ onSubmit, initialData = {} }) => {
             onChange={handleChange}
             placeholder="ejemplo@correo.com"
           />
+          {errors.email && <span className="error">{errors.email}</span>}
         </div>
         
         <div className="form-group">
@@ -311,9 +351,14 @@ const PetForm = ({ onSubmit, initialData = {} }) => {
         </div>
       </div>
 
-      <button type="submit" className="submit-button">
-        {initialData.id ? 'Actualizar Mascota' : 'Crear Mascota'}
+      <button 
+        type="submit" 
+        className={`submit-button ${isSubmitting ? 'loading' : ''}`}
+        disabled={isSubmitting}
+      >
+        {isSubmitting ? 'Enviando...' : (initialData.id ? 'Actualizar Mascota' : 'Crear Mascota')}
       </button>
+      {errors.submit && <span className="error">{errors.submit}</span>}
     </form>
   );
 };
