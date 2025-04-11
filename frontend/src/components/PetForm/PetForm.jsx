@@ -30,6 +30,8 @@ const PetForm = ({ onSubmit, initialData = {} }) => {
   });
 
   const [photoPreview, setPhotoPreview] = useState(null);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
 
   const handleChange = (e) => {
     const { name, value, type, checked, files } = e.target;
@@ -56,18 +58,29 @@ const PetForm = ({ onSubmit, initialData = {} }) => {
     }
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    const data = new FormData();
     
-    // Agregar todos los campos al FormData
-    Object.keys(formData).forEach(key => {
-      if (formData[key] !== null && formData[key] !== '') {
-        data.append(key, formData[key]);
-      }
-    });
+    if (isSubmitting) {
+      return; // Prevenir envíos múltiples
+    }
 
-    onSubmit(data);
+    try {
+      setIsSubmitting(true);
+      const data = new FormData();
+      
+      Object.entries(formData).forEach(([key, value]) => {
+        if (value !== null && value !== '') {
+          data.append(key, value);
+        }
+      });
+
+      await onSubmit(data);
+    } catch (error) {
+      console.error('Error al enviar el formulario:', error);
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
