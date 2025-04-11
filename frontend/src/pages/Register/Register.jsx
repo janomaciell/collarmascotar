@@ -1,18 +1,10 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { register } from '../../services/api';
 import './Register.css';
 
-const questions = [
-  { question: "¿Cuál es tu nombre?", field: "first_name" },
-  { question: "¿Cuál es tu apellido?", field: "last_name" },
-  { question: "¿Cuál es tu correo electrónico?", field: "email", pattern: /^[^\s@]+@[^\s@]+\.[^\s@]+$/ },
-  { question: "Crea tu contraseña", field: "password", type: "password", pattern: /^(?=.*\d).{8,}$/ },
-  { question: "Elige tu nombre de usuario", field: "username" },
-];
-
 const Register = () => {
-  const [position, setPosition] = useState(0);
+  const navigate = useNavigate();
   const [formData, setFormData] = useState({
     username: '',
     email: '',
@@ -20,97 +12,158 @@ const Register = () => {
     first_name: '',
     last_name: '',
   });
-  const [inputValue, setInputValue] = useState('');
-  const [error, setError] = useState('');
-  const [isWrong, setIsWrong] = useState(false);
-  const [isDone, setIsDone] = useState(false);
-  const navigate = useNavigate();
-
-  useEffect(() => {
-    if (position < questions.length) {
-      setInputValue(formData[questions[position].field] || '');
-      document.getElementById('inputContainer').classList.add('active');
-    }
-  }, [position]);
+  const [errors, setErrors] = useState({});
+  const [submitting, setSubmitting] = useState(false);
 
   const handleChange = (e) => {
-    setInputValue(e.target.value);
+    const { name, value } = e.target;
+    setFormData({
+      ...formData,
+      [name]: value
+    });
   };
 
-  const validate = async () => {
-    const currentQuestion = questions[position];
-    const value = inputValue.trim();
+  const validateForm = () => {
+    const newErrors = {};
+    
+    if (!formData.first_name.trim()) {
+      newErrors.first_name = "El nombre es requerido";
+    }
+    
+    if (!formData.last_name.trim()) {
+      newErrors.last_name = "El apellido es requerido";
+    }
+    
+    if (!formData.username.trim()) {
+      newErrors.username = "El nombre de usuario es requerido";
+    }
+    
+    if (!formData.email.trim()) {
+      newErrors.email = "El correo electrónico es requerido";
+    } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) {
+      newErrors.email = "Ingrese un correo electrónico válido";
+    }
+    
+    if (!formData.password) {
+      newErrors.password = "La contraseña es requerida";
+    } else if (!/^(?=.*\d).{8,}$/.test(formData.password)) {
+      newErrors.password = "La contraseña debe tener al menos 8 caracteres y 1 número";
+    }
+    
+    return newErrors;
+  };
 
-    // Validar el campo actual
-    if (!value.match(currentQuestion.pattern || /.+/)) {
-      setIsWrong(true);
-      setError(
-        currentQuestion.field === 'password'
-          ? 'La contraseña debe tener al menos 8 caracteres y 1 número'
-          : 'Por favor, completa este campo correctamente'
-      );
-      setTimeout(() => {
-        setIsWrong(false);
-        setError('');
-      }, 700); // Duración de la animación "wrong"
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    const formErrors = validateForm();
+    
+    if (Object.keys(formErrors).length > 0) {
+      setErrors(formErrors);
       return;
     }
-
-    // Actualizar formData con el valor validado
-    setFormData((prev) => ({ ...prev, [currentQuestion.field]: value }));
-
-    // Avanzar al siguiente paso o registrar
-    if (position + 1 < questions.length) {
-      setPosition(position + 1);
-    } else {
-      try {
-        await register(formData);
-        setIsDone(true);
-        setTimeout(() => navigate('/login'), 1000); // Redirige después de la animación
-      } catch (err) {
-        setError('Error al registrarse. Por favor, intenta nuevamente.');
-        console.error(err);
-      }
+    
+    setErrors({});
+    setSubmitting(true);
+    
+    try {
+      await register(formData);
+      // Registro exitoso
+      setTimeout(() => navigate('/login'), 1000);
+    } catch (err) {
+      console.error(err);
+      setErrors({ general: "Error al registrarse. Por favor, intenta nuevamente." });
+    } finally {
+      setSubmitting(false);
     }
-  };
-
-  const handleKeyUp = (e) => {
-    if (e.keyCode === 13) validate(); // Enter para validar
   };
 
   return (
     <div className="register-page">
       <h1 className="register-title">Regístrate en CollarMascotaQR</h1>
-      <h2 className="register-subtitle">Completa cada paso para registrarte</h2>
-      <div id="progress" style={{ width: `${(position * 100) / questions.length}vw` }}></div>
-      <div className="center">
-        <div id="register" className={`${isWrong ? 'wrong' : ''} ${isDone ? 'close' : ''}`}>
-          {!isDone && position < questions.length && (
-            <>
-              <i className="ion-android-arrow-forward next" onClick={validate}></i>
-              <div id="inputContainer" className="active">
-                <input
-                  id="inputField"
-                  type={questions[position].type || 'text'}
-                  value={inputValue}
-                  onChange={handleChange}
-                  onKeyUp={handleKeyUp}
-                  required
-                  autoFocus
-                />
-                <label id="inputLabel">{questions[position].question}</label>
-                <div id="inputProgress"></div>
-              </div>
-            </>
+      <h2 className="register-subtitle">Completa el formulario para crear tu cuenta</h2>
+      
+      <div className="register-form-container">
+        <form className="register-form" onSubmit={handleSubmit}>
+          {errors.general && (
+            <div className="error-message general-error">{errors.general}</div>
           )}
-        </div>
-        {isDone && (
-          <h1 className="welcome-text visible">
-            ¡Bienvenido/a {formData.first_name}!
-          </h1>
-        )}
+          
+          <div className="form-group">
+            <label htmlFor="first_name">Nombre</label>
+            <input
+              type="text"
+              id="first_name"
+              name="first_name"
+              value={formData.first_name}
+              onChange={handleChange}
+              className={errors.first_name ? "error" : ""}
+            />
+            {errors.first_name && <span className="error-text">{errors.first_name}</span>}
+          </div>
+          
+          <div className="form-group">
+            <label htmlFor="last_name">Apellido</label>
+            <input
+              type="text"
+              id="last_name"
+              name="last_name"
+              value={formData.last_name}
+              onChange={handleChange}
+              className={errors.last_name ? "error" : ""}
+            />
+            {errors.last_name && <span className="error-text">{errors.last_name}</span>}
+          </div>
+          
+          <div className="form-group">
+            <label htmlFor="username">Nombre de usuario</label>
+            <input
+              type="text"
+              id="username"
+              name="username"
+              value={formData.username}
+              onChange={handleChange}
+              className={errors.username ? "error" : ""}
+            />
+            {errors.username && <span className="error-text">{errors.username}</span>}
+          </div>
+          
+          <div className="form-group">
+            <label htmlFor="email">Correo electrónico</label>
+            <input
+              type="email"
+              id="email"
+              name="email"
+              value={formData.email}
+              onChange={handleChange}
+              className={errors.email ? "error" : ""}
+            />
+            {errors.email && <span className="error-text">{errors.email}</span>}
+          </div>
+          
+          <div className="form-group">
+            <label htmlFor="password">Contraseña</label>
+            <input
+              type="password"
+              id="password"
+              name="password"
+              value={formData.password}
+              onChange={handleChange}
+              className={errors.password ? "error" : ""}
+            />
+            {errors.password && <span className="error-text">{errors.password}</span>}
+            <small>Debe tener al menos 8 caracteres y 1 número</small>
+          </div>
+          
+          <button 
+            type="submit" 
+            className="register-button"
+            disabled={submitting}
+          >
+            {submitting ? 'Registrando...' : 'Registrarse'}
+          </button>
+        </form>
       </div>
-      {error && <p className="error-message">{error}</p>}
+      
       <p className="login-link">
         ¿Ya tienes una cuenta? <Link to="/login">Inicia sesión aquí</Link>
       </p>
