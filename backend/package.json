@@ -1,4 +1,16 @@
 {
+  "name": "pet-qr-collar-backend",
+  "version": "1.0.0",
+  "description": "Backend para CollarMascotaQR",
+  "main": "manage.py",
+  "scripts": {
+    "dev": "python manage.py runserver",
+    "migrate": "python manage.py migrate",
+    "makemigrations": "python manage.py makemigrations",
+    "createsuperuser": "python manage.py createsuperuser",
+    "test": "python manage.py test",
+    "shell": "python manage.py shell"
+  },
   "dependencies": {
     "axios": "^1.8.1"
   }

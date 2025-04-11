@@ -1,1 +1,64 @@
+# Dependencias
+node_modules/
+/node_modules
+/.pnp
+.pnp.js
+
+# Entorno
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# Archivos de construcción
+/build
+/dist
+*.pyc
+__pycache__/
+
+# Vercel
 .vercel
+.now
+
+# Logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+*.log
+
+# IDE y editores
+.idea/
+.vscode/
+*.swp
+*.swo
+.DS_Store
+Thumbs.db
+
+# Archivos de base de datos
+*.sqlite3
+db.sqlite3
+
+# Archivos de medios y estáticos
+/media
+/static
+/staticfiles
+
+# Archivos de caché
+.cache/
+.pytest_cache/
+.coverage
+coverage/
+
+# Archivos temporales
+*.tmp
+*.temp
+*.bak
+
+# Archivos de configuración local
+local_settings.py
+
+# Entorno virtual de Python
+venv/
+env/
+ENV/

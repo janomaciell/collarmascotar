@@ -42,7 +42,36 @@ class PetViewSet(viewsets.ModelViewSet):
     def get_queryset(self):
         return Pet.objects.filter(owner=self.request.user)
     
+    def create(self, request, *args, **kwargs):
+        # Verificar si ya existe una mascota con el mismo nombre para este usuario
+        name = request.data.get('name')
+        existing_pet = Pet.objects.filter(
+            owner=request.user,
+            name=name
+        ).first()
+        
+        if (existing_pet):
+            # Si la mascota ya existe, retornar error
+            return Response(
+                {"error": f"Ya tienes una mascota registrada con el nombre {name}"},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+        
+        # Si no existe, crear la nueva mascota
+        response = super().create(request, *args, **kwargs)
+        
+        # Agregar un pequeño delay para evitar múltiples solicitudes
+        from time import sleep
+        sleep(0.5)
+        
+        return response
+    
     def perform_create(self, serializer):
+        # Verificar si ya existe un QR code similar
+        qr_code = serializer.validated_data.get('qr_code')
+        if qr_code and Pet.objects.filter(qr_code=qr_code).exists():
+            raise serializers.ValidationError("Este código QR ya está en uso")
+            
         serializer.save(owner=self.request.user)
     
     def partial_update(self, request, *args, **kwargs):

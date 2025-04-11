@@ -13,6 +13,7 @@ https://docs.djangoproject.com/en/5.1/ref/settings/
 from pathlib import Path
 from decouple import config
 
+
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -89,18 +90,19 @@ WSGI_APPLICATION = 'config.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'pet_qr_db',          # Nombre de tu base de datos
-        'USER': 'root',               # Tu usuario de MySQL
-        'PASSWORD': '1234',     # Tu contraseña de MySQL
-        'HOST': 'localhost',          # Host donde está tu MySQL
-        'PORT': '3306',              # Puerto por defecto de MySQL
+        'NAME': config('MYSQLDATABASE'),
+        'USER': config('MYSQLUSER'),
+        'PASSWORD': config('MYSQLPASSWORD'),
+        'HOST': config('MYSQLHOST'),
+        'PORT': config('MYSQLPORT'),
         'OPTIONS': {
             'init_command': "SET sql_mode='STRICT_TRANS_TABLES'",
-            'charset': 'utf8mb4'  # Añade esto para mejor soporte de caracteres
+            'charset': 'utf8mb4'
         }
     }
 }
 
+#mysql://root:GdwfEiQqhHCOhbrJjqFjHVlRpfoaUfEY@trolley.proxy.rlwy.net:58588/railway
 
 # Password validation
 # https://docs.djangoproject.com/en/5.1/ref/settings/#auth-password-validators

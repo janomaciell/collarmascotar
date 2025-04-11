@@ -74,6 +74,9 @@ class Pet(models.Model):
             
         super().save(*args, **kwargs)
 
+    class Meta:
+        unique_together = ['owner', 'name']  # Previene duplicados de nombre por usuario
+
 
 class Scan(models.Model):
     pet = models.ForeignKey(Pet, on_delete=models.CASCADE, related_name='scans')
@@ -109,7 +112,7 @@ class UserLocation(models.Model):
         lon2_rad = math.radians(lon)
         
         dlat = lat2_rad - lat1_rad
-        dlon = lon2_rad - lon1_rad
+        dlon = dlon2_rad - lon1_rad
         
         a = math.sin(dlat/2) ** 2 + math.cos(lat1_rad) * math.cos(lat2_rad) * math.sin(dlon/2) ** 2
         c = 2 * math.atan2(math.sqrt(a), math.sqrt(1-a))
