@@ -102,7 +102,6 @@ DATABASES = {
     }
 }
 
-#mysql://root:GdwfEiQqhHCOhbrJjqFjHVlRpfoaUfEY@trolley.proxy.rlwy.net:58588/railway
 
 # Password validation
 # https://docs.djangoproject.com/en/5.1/ref/settings/#auth-password-validators
