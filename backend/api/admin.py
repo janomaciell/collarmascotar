@@ -16,11 +16,10 @@ class PreGeneratedQRAdmin(admin.ModelAdmin):
     list_display = ('qr_uuid', 'is_assigned', 'is_printed', 'created_at', 'qr_code')
     list_filter = ('is_assigned', 'is_printed', 'created_at')
     search_fields = ('qr_uuid',)
-    actions = ['mark_as_printed', 'export_unused_qrs']  # Quitamos generate_batch de actions por ahora
+    actions = ['mark_as_printed', 'export_unused_qrs']
     readonly_fields = ('qr_uuid', 'qr_code', 'created_at')
 
     def generate_batch(self, request, queryset=None):
-        # Este método se usa para la vista personalizada, no como acción masiva
         if 'apply' in request.POST:
             form = GenerateBatchForm(request.POST)
             if form.is_valid():
@@ -74,7 +73,7 @@ class PreGeneratedQRAdmin(admin.ModelAdmin):
     def get_urls(self):
         urls = super().get_urls()
         custom_urls = [
-            path('generate-batch/', self.admin_site.admin_view(self.generate_batch), name='generate_batch'),
+            path('generate-batch/', self.admin_site.admin_view(self.generate_batch), name='api_pregeneratedqr_generate_batch'),
         ]
         return custom_urls + urls
 

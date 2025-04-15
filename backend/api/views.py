@@ -409,7 +409,7 @@ def send_community_notification(request):
 
 
 class LostPetView(APIView):
-    permission_classes = [permissions.IsAuthenticated]  # Añadimos permisos explícitos
+    permission_classes = [permissions.IsAuthenticated]
 
     def post(self, request, *args, **kwargs):
         print("Solicitud POST recibida en LostPetView")  # Depuración
