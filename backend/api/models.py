@@ -149,12 +149,11 @@ class LostPetAlert(models.Model):
     
 
 
-# api/models.py
 class PreGeneratedQR(models.Model):
     qr_uuid = models.UUIDField(default=uuid.uuid4, editable=False, unique=True)
     qr_code = models.ImageField(upload_to='pre_generated_qr_codes/', blank=True)
     is_assigned = models.BooleanField(default=False)
-    is_printed = models.BooleanField(default=False)  # Nuevo campo
+    is_printed = models.BooleanField(default=False)
     created_at = models.DateTimeField(auto_now_add=True)
     
     def save(self, *args, **kwargs):

@@ -2,6 +2,9 @@ import zipfile
 from django.contrib import admin
 from django import forms
 from django.http import HttpResponse
+from django.shortcuts import render, redirect
+from django.urls import path
+from django.contrib import messages
 from io import BytesIO
 from .models import PreGeneratedQR, Pet
 
@@ -13,12 +16,11 @@ class PreGeneratedQRAdmin(admin.ModelAdmin):
     list_display = ('qr_uuid', 'is_assigned', 'is_printed', 'created_at', 'qr_code')
     list_filter = ('is_assigned', 'is_printed', 'created_at')
     search_fields = ('qr_uuid',)
-    actions = ['generate_batch', 'mark_as_printed', 'export_unused_qrs']
+    actions = ['mark_as_printed', 'export_unused_qrs']  # Quitamos generate_batch de actions por ahora
     readonly_fields = ('qr_uuid', 'qr_code', 'created_at')
 
-    def generate_batch(self, request, queryset):
-        from django.contrib import messages
-        from django.shortcuts import render, redirect
+    def generate_batch(self, request, queryset=None):
+        # Este método se usa para la vista personalizada, no como acción masiva
         if 'apply' in request.POST:
             form = GenerateBatchForm(request.POST)
             if form.is_valid():
@@ -70,10 +72,9 @@ class PreGeneratedQRAdmin(admin.ModelAdmin):
     export_unused_qrs.short_description = "Exportar QR no usados y no impresos como ZIP"
 
     def get_urls(self):
-        from django.urls import path
         urls = super().get_urls()
         custom_urls = [
-            path('generate-batch/', self.admin_site.admin_view(self.generate_batch), name='generate-batch'),
+            path('generate-batch/', self.admin_site.admin_view(self.generate_batch), name='generate_batch'),
         ]
         return custom_urls + urls
 

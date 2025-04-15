@@ -8,4 +8,20 @@
     <input type="hidden" name="action" value="generate_batch">
     <input type="submit" name="apply" value="Generar QRs">
     <a href="{% url 'admin:api_pregeneratedqr_changelist' %}" class="button cancel-link">Cancelar</a>
+</form> <!-- Añadí el cierre aquí -->
+{% endblock %}
+
+{% block extrahead %}
+    <style>
+        .cancel-link {
+            background-color: #f44336; /* Color rojo */
+            color: white; /* Texto blanco */
+            padding: 10px 20px; /* Espaciado interno */
+            text-decoration: none; /* Sin subrayado */
+            border-radius: 5px; /* Bordes redondeados */
+        }
+        .cancel-link:hover {
+            background-color: #d32f2f; /* Color rojo más oscuro al pasar el mouse */
+        }
+    </style>
 {% endblock %}
