@@ -109,21 +109,10 @@ class LostPetAlertSerializer(serializers.ModelSerializer):
         fields = ['id', 'pet', 'pet_name', 'owner_latitude', 'owner_longitude',
                  'radius_km', 'recipients_count', 'sent_at']
         read_only_fields = ['id', 'recipients_count', 'sent_at']
-        
-#RECOMPENSAS Y PUNTOS
 
-class RewardSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Reward
-        fields = ['amount', 'description', 'is_active']
 
-class UserPointsSerializer(serializers.ModelSerializer):
+class PreGeneratedQRSerializer(serializers.ModelSerializer):
     class Meta:
-        model = UserPoints
-        fields = ['total_points', 'total_pets_helped']
-
-class PointTransactionSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = PointTransaction
-        fields = ['id', 'points', 'reason', 'timestamp']
-        read_only_fields = ['id', 'timestamp']
+        model = PreGeneratedQR
+        fields = ['id', 'qr_uuid', 'qr_code', 'is_assigned', 'is_printed', 'created_at']
+        read_only_fields = ['id', 'qr_uuid', 'qr_code', 'created_at']

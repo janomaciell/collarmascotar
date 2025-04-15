@@ -4,6 +4,7 @@ from . import views
 
 router = DefaultRouter()
 router.register(r'pets', views.PetViewSet, basename='pet')
+router.register(r'pre-generated-qrs', views.PreGeneratedQRViewSet, basename='pregeneratedqr')
 
 urlpatterns = [
     path('pets/lost/', views.LostPetView.as_view(), name='lost-pet-alert'),
@@ -19,9 +20,9 @@ urlpatterns = [
     path('pets/<int:pet_id>/poster/', views.generate_lost_poster, name='generate-poster'),
     path('poster/<int:poster_id>/', views.view_shared_poster, name='view-poster'),
     path('notifications/community/', views.send_community_notification, name='community-notify'),
-    path('rewards/create/<int:pet_id>/', views.create_reward, name='create-reward'),
-    path('user/points/', views.get_user_points, name='user-points'),
     path('users/me/', views.get_user_profile, name='user-profile'),
-    path('users/points-history/', views.get_points_history, name='points-history'),
     path('support/send-email/', views.send_support_email, name='send-support-email'),
+    path('check-qr/<uuid:uuid>/', views.check_qr_status,name='check-qr-status'),
+    path('register-pet-to-qr/<uuid:uuid>/', views.register_pet_to_qr),
+    path('complete-registration/', views.complete_pending_registration),
 ]

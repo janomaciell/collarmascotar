@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from 'react';
-import { useNavigate, Link } from 'react-router-dom';
-import NotificationSettings from '../../components/NotificationSettings';
-import { getUserPoints, getPets, updateUserLocation, logout } from '../../services/api';
+import { useNavigate } from 'react-router-dom';
+import { getPets, updateUserLocation, logout } from '../../services/api';
 import EditProfileModal from '../EditProfile/EditProfile';
 import './Profile.css';
 import { API_URL } from '../../services/api';
@@ -10,11 +9,9 @@ const Profile = () => {
   const navigate = useNavigate();
   const [userData, setUserData] = useState(null);
   const [pets, setPets] = useState([]);
-  const [points, setPoints] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
-  const [pointsHistory, setPointsHistory] = useState([]);
-  const [isModalOpen, setIsModalOpen] = useState(false); // Estado para controlar el modal
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
   useEffect(() => {
     const token = localStorage.getItem('token');
@@ -28,8 +25,6 @@ const Profile = () => {
         await Promise.all([
           fetchUserData(),
           fetchPets(),
-          fetchPoints(),
-          fetchPointsHistory(),
           updateLocation(),
         ]);
       } catch (err) {
@@ -56,20 +51,6 @@ const Profile = () => {
     setPets(data);
   };
 
-  const fetchPoints = async () => {
-    const data = await getUserPoints();
-    setPoints(data);
-  };
-
-  const fetchPointsHistory = async () => {
-    const response = await fetch(`${API_URL}/users/points-history/`, {
-      headers: { Authorization: `Token ${localStorage.getItem('token')}` },
-    });
-    if (!response.ok) throw new Error(`Error ${response.status}: ${response.statusText}`);
-    const data = await response.json();
-    setPointsHistory(data);
-  };
-
   const updateLocation = async () => {
     if (navigator.geolocation) {
       navigator.geolocation.getCurrentPosition(
@@ -81,7 +62,7 @@ const Profile = () => {
           };
           await updateUserLocation(location);
         },
-        (err) => setError('No se pudo obtener tu ubicación. Verifica los permisos.')
+        () => setError('No se pudo obtener tu ubicación. Verifica los permisos.')
       );
     }
   };
@@ -96,15 +77,13 @@ const Profile = () => {
     setError('');
     fetchUserData();
     fetchPets();
-    fetchPoints();
-    fetchPointsHistory();
     updateLocation();
   };
 
   const openModal = () => setIsModalOpen(true);
   const closeModal = () => {
     setIsModalOpen(false);
-    fetchUserData(); // Actualizar los datos del usuario después de cerrar el modal
+    fetchUserData(); // Refrescar datos tras editar
   };
 
   if (loading) {
@@ -142,25 +121,19 @@ const Profile = () => {
       )}
 
       <div className="profile-content space-y-6">
-        {/* Información del usuario */}
+        {/* Info del usuario */}
         <div className="profile-section card bg-white rounded-lg shadow-md p-6">
           <h2 className="text-xl font-semibold text-gray-800 mb-4">
             <i className="fas fa-user mr-2"></i> Información Personal
           </h2>
           {userData && (
             <>
-              <p className="text-gray-600 mb-2">
-                <strong>Usuario:</strong> {userData.username}
-              </p>
-              <p className="text-gray-600 mb-2">
-                <strong>Email:</strong> {userData.email}
-              </p>
+              <p className="text-gray-600 mb-2"><strong>Usuario:</strong> {userData.username}</p>
+              <p className="text-gray-600 mb-2"><strong>Email:</strong> {userData.email}</p>
               <p className="text-gray-600 mb-2">
                 <strong>Nombre:</strong> {userData.first_name} {userData.last_name}
               </p>
-              <p className="text-gray-600 mb-4">
-                <strong>Teléfono:</strong> {userData.phone || 'No especificado'}
-              </p>
+              <p className="text-gray-600 mb-4"><strong>Teléfono:</strong> {userData.phone || 'No especificado'}</p>
               <button
                 className="edit-btn px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 w-full sm:w-auto"
                 onClick={openModal}
@@ -184,7 +157,7 @@ const Profile = () => {
                   <img
                     src={pet.photo || 'https://via.placeholder.com/50'}
                     alt={`Foto de ${pet.name}`}
-                    className="pet-photo-ciruclar"
+                    className="pet-photo-circular"
                   />
                   <span className="text-gray-600">
                     {pet.name}{' '}
@@ -209,7 +182,7 @@ const Profile = () => {
           </button>
         </div>
 
-        {/* Configuración de notificaciones */}
+        {/* Secciones futuras: Notificaciones y Suscripciones
         <div className="profile-section card bg-white rounded-lg shadow-md p-6">
           <h2 className="text-xl font-semibold text-gray-800 mb-4">
             <i className="fas fa-bell mr-2"></i> Notificaciones
@@ -217,7 +190,6 @@ const Profile = () => {
           <NotificationSettings />
         </div>
 
-        {/* Suscripciones */}
         <div className="profile-section card bg-white rounded-lg shadow-md p-6">
           <h2 className="text-xl font-semibold text-gray-800 mb-4">
             <i className="fas fa-crown mr-2"></i> Mi Suscripción
@@ -231,9 +203,9 @@ const Profile = () => {
             Gestionar Suscripción
           </Link>
         </div>
+        */}
       </div>
 
-      {/* Modal para editar perfil */}
       {isModalOpen && <EditProfileModal onClose={closeModal} />}
     </div>
   );

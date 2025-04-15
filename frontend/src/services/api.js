@@ -161,6 +161,42 @@ export const getReward = async (petId) => {
     throw error.response?.data || error.message;
   }
 };
-// const response = await fetch(`${API_URL}/users/points-history/`, {
-//   headers: { 'Authorization': `Token ${localStorage.getItem('token')}` },
-// });
+
+
+export const checkQRStatus = async (uuid) => {
+  try {
+    const response = await axios.get(`${API_URL}/check-qr/${uuid}/`);
+    return response.data;
+  } catch (error) {
+    throw error.response?.data || error.message;
+  }
+};
+
+export const registerPetToQR = async (uuid, petData) => {
+  try {
+    const response = await axios.post(`${API_URL}/register-pet-to-qr/${uuid}/`, petData);
+    return response.data;
+  } catch (error) {
+    throw error.response?.data || error.message;
+  }
+};
+
+export const completePendingRegistration = async (petData, qrUuid) => {
+  try {
+    const response = await axios.post(`${API_URL}/complete-registration/`, {
+      ...petData,
+      qr_uuid: qrUuid
+    });
+    return response.data;
+  } catch (error) {
+    throw new Error(error.response?.data?.error || 'Error al completar el registro');
+  }
+};
+export const generateBatchQRs = async (data) => {
+  try {
+    const response = await axios.post(`${API_URL}/pre-generated-qrs/generate_batch/`, data);
+    return response.data;
+  } catch (error) {
+    throw error.response?.data || error.message;
+  }
+};

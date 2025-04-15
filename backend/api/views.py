@@ -116,9 +116,32 @@ class PetViewSet(viewsets.ModelViewSet):
 @api_view(['GET'])
 @permission_classes([permissions.AllowAny])
 def get_pet_public_info(request, uuid):
-    pet = get_object_or_404(Pet, qr_uuid=uuid)
-    serializer = PetPublicSerializer(pet)
-    return Response(serializer.data)
+    try:
+        pet = Pet.objects.filter(qr_uuid=uuid).first()
+        
+        if pet:
+            serializer = PetPublicSerializer(pet)
+            return Response(serializer.data)
+        else:
+            qr = PreGeneratedQR.objects.filter(qr_uuid=uuid).first()
+            
+            if qr and not qr.is_assigned:
+                # Es un QR pre-generado no asignado
+                return Response({
+                    "is_assigned": False,
+                    "registration_required": True,
+                    "message": "Este QR está listo para registrar una mascota"
+                })
+            else:
+                # QR no encontrado
+                return Response({
+                    "error": "QR no válido o no encontrado"
+                }, status=status.HTTP_404_NOT_FOUND)
+            
+    except Exception as e:
+        return Response({
+            "error": f"Error: {str(e)}"
+        }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 @api_view(['POST'])
 @permission_classes([permissions.AllowAny])
@@ -384,36 +407,6 @@ def send_community_notification(request):
     except Exception as e:
         return Response({"error": f"Error inesperado: {str(e)}"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
-@api_view(['POST'])
-@permission_classes([permissions.IsAuthenticated])
-def create_reward(request, pet_id):
-    pet = get_object_or_404(Pet, id=pet_id, owner=request.user)
-    amount = request.data.get('amount')
-    description = request.data.get('description', '')
-    
-    if not amount:
-        return Response({"error": "Monto de recompensa requerido"}, status=status.HTTP_400_BAD_REQUEST)
-    
-    reward, created = Reward.objects.get_or_create(
-        pet=pet,
-        defaults={
-            'amount': amount,
-            'description': description
-        }
-    )
-    return Response(RewardSerializer(reward).data)
-
-@api_view(['GET'])
-@permission_classes([permissions.IsAuthenticated])
-def get_reward(request, pet_id):
-    reward = get_object_or_404(Reward, pet_id=pet_id)
-    return Response(RewardSerializer(reward).data)
-
-@api_view(['GET'])
-@permission_classes([permissions.IsAuthenticated])
-def get_user_points(request):
-    points, created = UserPoints.objects.get_or_create(user=request.user)
-    return Response(UserPointsSerializer(points).data)
 
 class LostPetView(APIView):
     permission_classes = [permissions.IsAuthenticated]  # Añadimos permisos explícitos
@@ -704,13 +697,6 @@ def get_user_profile(request):
             return Response(serializer.data)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-@api_view(['GET'])
-@permission_classes([permissions.IsAuthenticated])
-def get_points_history(request):
-    transactions = PointTransaction.objects.filter(user=request.user)
-    serializer = PointTransactionSerializer(transactions, many=True)
-    return Response(serializer.data)
-
 @api_view(['POST'])
 @permission_classes([permissions.AllowAny])
 def send_support_email(request):
@@ -788,3 +774,160 @@ def send_support_email(request):
         return Response({"message": "Correo enviado exitosamente"}, status=status.HTTP_200_OK)
     except Exception as e:
         return Response({"error": f"Error al enviar el correo: {str(e)}"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+# views.py - Agregar vistas para gestionar QRs pre-generados
+
+class PreGeneratedQRViewSet(viewsets.ModelViewSet):
+    serializer_class = PreGeneratedQRSerializer
+    # Solo el administrador debería poder gestionar estos QRs
+    permission_classes = [permissions.IsAdminUser]
+    
+    def get_queryset(self):
+        return PreGeneratedQR.objects.all()
+    
+    @action(detail=False, methods=['post'])
+    def generate_batch(self, request):
+        """
+        Genera un lote de QRs pre-generados
+        """
+        try:
+            quantity = int(request.data.get('quantity', 1))
+            if quantity < 1 or quantity > 100:
+                return Response(
+                    {"error": "La cantidad debe estar entre 1 y 100"},
+                    status=status.HTTP_400_BAD_REQUEST
+                )
+                
+            created_qrs = []
+            for _ in range(quantity):
+                qr = PreGeneratedQR()
+                qr.save()
+                created_qrs.append(PreGeneratedQRSerializer(qr).data)
+                
+            return Response({
+                "message": f"Se generaron {quantity} códigos QR",
+                "qrs": created_qrs
+            }, status=status.HTTP_201_CREATED)
+        except Exception as e:
+            return Response(
+                {"error": f"Error al generar QRs: {str(e)}"},
+                status=status.HTTP_500_INTERNAL_SERVER_ERROR
+            )
+
+@api_view(['GET'])
+@permission_classes([permissions.AllowAny])
+def check_qr_status(request, uuid):
+    """
+    Verifica si un QR pre-generado está asignado o no
+    """
+    try:
+        qr = get_object_or_404(PreGeneratedQR, qr_uuid=uuid)
+        
+        return Response({
+            "is_assigned": qr.is_assigned,
+            "uuid": str(qr.qr_uuid)
+        })
+    except Exception as e:
+        return Response(
+            {"error": f"Error al verificar QR: {str(e)}"},
+            status=status.HTTP_500_INTERNAL_SERVER_ERROR
+        )
+
+@api_view(['POST'])
+@permission_classes([permissions.AllowAny])
+def register_pet_to_qr(request, uuid):
+    try:
+        qr = get_object_or_404(PreGeneratedQR, qr_uuid=uuid)
+        if qr.is_assigned:
+            return Response(
+                {"error": "Este código QR ya está asignado a una mascota"},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+        
+        if not request.user.is_authenticated:
+            request.session['pending_pet_data'] = request.data
+            request.session['pending_qr_uuid'] = str(uuid)
+            return Response({
+                "message": "Datos recibidos. Por favor inicia sesión o regístrate para continuar.",
+                "require_auth": True,
+                "temp_data_stored": True
+            }, status=status.HTTP_202_ACCEPTED)
+        
+        pet_data = request.data
+        serializer = PetSerializer(data=pet_data)
+        if serializer.is_valid():
+            pet = serializer.save(owner=request.user)
+            
+            # Mover el QR al modelo Pet
+            pet.qr_uuid = qr.qr_uuid
+            pet.qr_code = qr.qr_code
+            pet.save()
+            
+            # Eliminar el QR de PreGeneratedQR
+            qr.delete()
+            
+            return Response({
+                "message": "Mascota registrada exitosamente",
+                "pet": PetSerializer(pet).data,
+                "qr_uuid": str(pet.qr_uuid)
+            }, status=status.HTTP_201_CREATED)
+        else:
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+            
+    except Exception as e:
+        return Response(
+            {"error": f"Error al registrar mascota: {str(e)}"},
+            status=status.HTTP_500_INTERNAL_SERVER_ERROR
+        )
+
+@api_view(['POST'])
+@permission_classes([permissions.IsAuthenticated])
+def complete_pending_registration(request):
+    try:
+        pending_data = request.session.get('pending_pet_data')
+        pending_qr_uuid = request.session.get('pending_qr_uuid')
+        
+        if not pending_data or not pending_qr_uuid:
+            return Response({
+                "error": "No hay datos pendientes para registrar"
+            }, status=status.HTTP_400_BAD_REQUEST)
+        
+        try:
+            qr = PreGeneratedQR.objects.get(qr_uuid=pending_qr_uuid, is_assigned=False)
+        except PreGeneratedQR.DoesNotExist:
+            if 'pending_pet_data' in request.session:
+                del request.session['pending_pet_data']
+            if 'pending_qr_uuid' in request.session:
+                del request.session['pending_qr_uuid']
+            return Response({
+                "error": "El código QR ya no está disponible"
+            }, status=status.HTTP_410_GONE)
+        
+        serializer = PetSerializer(data=pending_data)
+        if serializer.is_valid():
+            pet = serializer.save(owner=request.user)
+            
+            # Mover el QR al modelo Pet
+            pet.qr_uuid = qr.qr_uuid
+            pet.qr_code = qr.qr_code
+            pet.save()
+            
+            # Eliminar el QR de PreGeneratedQR
+            qr.delete()
+            
+            # Limpiar la sesión
+            del request.session['pending_pet_data']
+            del request.session['pending_qr_uuid']
+            
+            return Response({
+                "message": "Registro completado exitosamente",
+                "pet": PetSerializer(pet).data,
+                "qr_uuid": str(pet.qr_uuid)
+            }, status=status.HTTP_201_CREATED)
+        else:
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+            
+    except Exception as e:
+        return Response({
+            "error": f"Error al completar el registro: {str(e)}"
+        }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)

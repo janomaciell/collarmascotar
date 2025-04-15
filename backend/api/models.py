@@ -54,28 +54,14 @@ class Pet(models.Model):
     vet_address = models.TextField(blank=True, null=True)
 
     def save(self, *args, **kwargs):
-        if not self.qr_code:
-            qr = qrcode.QRCode(
-                version=1,
-                error_correction=qrcode.constants.ERROR_CORRECT_L,
-                box_size=10,
-                border=4,
-            )
-            qr.add_data(f'{settings.FRONTEND_URL}/pet/{self.qr_uuid}')
-            qr.make(fit=True)
-            img = qr.make_image(fill_color="black", back_color="white")
-            buffer = BytesIO()
-            img.save(buffer, format='PNG')
-            self.qr_code.save(f'qr_{self.name}_{self.qr_uuid}.png', File(buffer), save=False)
-        
-        # If setting as lost for the first time, update last_seen_date
+
         if self.is_lost and not self.last_seen_date:
             self.last_seen_date = timezone.now()
             
         super().save(*args, **kwargs)
 
     class Meta:
-        unique_together = ['owner', 'name']  # Previene duplicados de nombre por usuario
+        unique_together = ['owner', 'name']  
 
 
 class Scan(models.Model):
@@ -112,7 +98,7 @@ class UserLocation(models.Model):
         lon2_rad = math.radians(lon)
         
         dlat = lat2_rad - lat1_rad
-        dlon = dlon2_rad - lon1_rad
+        dlon = lon2_rad - lon1_rad
         
         a = math.sin(dlat/2) ** 2 + math.cos(lat1_rad) * math.cos(lat2_rad) * math.sin(dlon/2) ** 2
         c = 2 * math.atan2(math.sqrt(a), math.sqrt(1-a))
@@ -161,22 +147,33 @@ class LostPetAlert(models.Model):
     def __str__(self):
         return f"Alert for {self.pet.name} at {self.sent_at}"
     
-#RECOMENSAS Y PUNTOS
 
-class Reward(models.Model):
-    pet = models.OneToOneField('Pet', on_delete=models.CASCADE, related_name='reward')
-    amount = models.DecimalField(max_digits=10, decimal_places=2)
-    description = models.TextField(blank=True, null=True)
-    is_active = models.BooleanField(default=True)
+
+# api/models.py
+class PreGeneratedQR(models.Model):
+    qr_uuid = models.UUIDField(default=uuid.uuid4, editable=False, unique=True)
+    qr_code = models.ImageField(upload_to='pre_generated_qr_codes/', blank=True)
+    is_assigned = models.BooleanField(default=False)
+    is_printed = models.BooleanField(default=False)  # Nuevo campo
     created_at = models.DateTimeField(auto_now_add=True)
-
-class UserPoints(models.Model):
-    user = models.OneToOneField(User, on_delete=models.CASCADE)
-    total_points = models.IntegerField(default=0)
-    total_pets_helped = models.IntegerField(default=0)
-
-class PointTransaction(models.Model):
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
-    points = models.IntegerField()
-    reason = models.CharField(max_length=200)
-    timestamp = models.DateTimeField(auto_now_add=True)
+    
+    def save(self, *args, **kwargs):
+        if not self.qr_code:
+            qr = qrcode.QRCode(
+                version=1,
+                error_correction=qrcode.constants.ERROR_CORRECT_L,
+                box_size=10,
+                border=4,
+            )
+            qr.add_data(f'{settings.FRONTEND_URL}/register-pet/{self.qr_uuid}')
+            qr.make(fit=True)
+            img = qr.make_image(fill_color="black", back_color="white")
+            buffer = BytesIO()
+            img.save(buffer, format='PNG')
+            self.qr_code.save(f'pre_qr_{self.qr_uuid}.png', File(buffer), save=False)
+        super().save(*args, **kwargs)
+    
+    def __str__(self):
+        status = "Asignado" if self.is_assigned else "No asignado"
+        printed = "Impreso" if self.is_printed else "No impreso"
+        return f"QR {self.qr_uuid} - {status}, {printed}"

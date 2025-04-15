@@ -1,13 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
-import { getPetByUuid, notifyOwner, sendCommunityNotification } from '../../services/api';
-import './PetPage.css';
+import { getPetByUuid, notifyOwner, sendCommunityNotification, checkQRStatus } from '../../services/api';
 import { API_URL } from '../../services/api';
 
 const BASE_URL = import.meta.env.VITE_BASE_URL;
 
 const PetPage = () => {
   const { uuid } = useParams();
+  const navigate = useNavigate();
   const [pet, setPet] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState('');
@@ -17,18 +17,30 @@ const PetPage = () => {
     const fetchPetAndNotify = async () => {
       try {
         setIsLoading(true);
-        const response = await fetch(`${API_URL}/users/me/`, {
-          headers: { Authorization: `Token ${localStorage.getItem('token')}` },
-        });
-        const data = await response.json();
-        setUserData(data);
 
+        // Verificar si el QR está asignado
+        const qrStatus = await checkQRStatus(uuid);
+        if (!qrStatus.is_assigned) {
+          navigate(`/register-pet/${uuid}`);
+          return;
+        }
+
+        // Obtener datos del usuario si está autenticado
+        const token = localStorage.getItem('token');
+        if (token) {
+          const response = await fetch(`${API_URL}/users/me/`, {
+            headers: { Authorization: `Token ${token}` },
+          });
+          const data = await response.json();
+          setUserData(data);
+        }
+
+        // Obtener datos de la mascota
         const petData = await getPetByUuid(uuid);
         setPet(petData);
         setError('');
-        console.log("Datos del dueño:", data.user); // Agregar este log
-        console.log("Imagen de la mascota:", data.photo);
 
+        // Notificar al dueño y a la comunidad si hay geolocalización
         if (navigator.geolocation) {
           navigator.geolocation.getCurrentPosition(
             async (position) => {
@@ -57,7 +69,7 @@ const PetPage = () => {
     };
 
     fetchPetAndNotify();
-  }, [uuid]);
+  }, [uuid, navigate]);
 
   if (isLoading) return <div className="loading">Cargando información de la mascota...</div>;
   if (error) return <div className="error-container">{error}</div>;
@@ -67,23 +79,19 @@ const PetPage = () => {
 
   return (
     <div className="pet-page-container">
-      {/* Header con branding */}
       <header className="pet-page-header">
         <div className="logo">
           <h1>CollarMascotaQR</h1>
         </div>
       </header>
 
-      {/* Sección principal */}
       <main className="pet-profile">
-        {/* Alerta si la mascota está perdida */}
         {pet.is_lost && (
           <div className="lost-alert">
             <h2>🚨 ¡Estoy perdido! Ayúdame a volver a casa 🚨</h2>
           </div>
         )}
 
-        {/* Sección Héroe (Foto y mensaje principal) */}
         <section className="pet-hero">
           {pet.photo && (
             <div className="pet-photo">
@@ -99,7 +107,6 @@ const PetPage = () => {
         </section>
 
         <section className="pet-details">
-          {/* Tarjeta: Información Básica */}
           <div className="detail-card">
             <h2>🐾 Sobre mí</h2>
             <ul>
@@ -114,7 +121,6 @@ const PetPage = () => {
             </ul>
           </div>
 
-          {/* Tarjeta: Información de Salud */}
           {(pet.medical_conditions || pet.allergies) && (
             <div className="detail-card">
               <h2>🏥 Mi salud</h2>
@@ -127,7 +133,6 @@ const PetPage = () => {
             </div>
           )}
 
-          {/* Tarjeta: Información del Veterinario */}
           {(pet.vet_name || pet.vet_phone) && (
             <div className="detail-card">
               <h2>👩‍⚕️ Mi veterinario</h2>
@@ -144,7 +149,6 @@ const PetPage = () => {
             </div>
           )}
 
-          {/* Tarjeta: Contacto del Dueño */}
           <div className="detail-card">
             <h2>🏡 Mi familia</h2>
             <ul>
@@ -162,7 +166,6 @@ const PetPage = () => {
             </ul>
           </div>
 
-          {/* Tarjeta: Notas Adicionales */}
           {pet.notes && (
             <div className="detail-card">
               <h2>📝 Notas especiales</h2>
@@ -190,7 +193,7 @@ const PetPage = () => {
               href={`https://wa.me/549${pet.phone.replace(/^0/, '').replace(/\D/g, '')}?text=${encodeURIComponent(
                 `Hola ${userData.first_name}, encontré a ${pet.name} y me gustaría ayudarte a que vuelva a casa. ¿Cómo puedo ayudarte?`
               )}`}
-              className="call-button primary"              
+              className="call-button primary"
               target="_blank"
               rel="noopener noreferrer"
             >

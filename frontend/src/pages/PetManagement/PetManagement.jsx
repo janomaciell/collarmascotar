@@ -8,24 +8,22 @@ import html2canvas from 'html2canvas';
 import jsPDF from 'jspdf';
 import { API_URL } from '../../services/api';
 
-// Función para calcular distancia entre dos puntos
 const calculateDistance = (lat1, lon1, lat2, lon2) => {
-  const R = 6371; // Radio de la Tierra en km
+  const R = 6371;
   const dLat = (lat2 - lat1) * Math.PI / 180;
   const dLon = (lon2 - lon1) * Math.PI / 180;
-  const a = 
-    Math.sin(dLat/2) * Math.sin(dLat/2) +
-    Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) * 
-    Math.sin(dLon/2) * Math.sin(dLon/2);
-  const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
-  return R * c; // Distancia en km
+  const a =
+    Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+    Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) *
+    Math.sin(dLon / 2) * Math.sin(dLon / 2);
+  const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+  return R * c;
 };
 
-// Componente para mostrar el historial de escaneos
 const ScanHistoryDetail = ({ scanHistory, userLocation, pet }) => {
   const [frequentLocations, setFrequentLocations] = useState([]);
   const [pattern, setPattern] = useState(null);
-  
+
   useEffect(() => {
     if (scanHistory.length > 0) {
       analyzeScans();
@@ -37,71 +35,68 @@ const ScanHistoryDetail = ({ scanHistory, userLocation, pet }) => {
 
   const analyzeScans = () => {
     const locationClusters = [];
-    
-    scanHistory.forEach(scan => {
+
+    scanHistory.forEach((scan) => {
       const lat = parseFloat(scan.latitude);
       const lng = parseFloat(scan.longitude);
       if (isNaN(lat) || isNaN(lng)) return;
 
-      const existingCluster = locationClusters.find(cluster => {
-        return calculateDistance(
-          cluster.center.lat, 
-          cluster.center.lng, 
-          lat, 
-          lng
-        ) < 0.1; // 100 metros
-      });
-      
+      const existingCluster = locationClusters.find((cluster) =>
+        calculateDistance(cluster.center.lat, cluster.center.lng, lat, lng) < 0.1
+      );
+
       if (existingCluster) {
         existingCluster.scans.push(scan);
       } else {
         locationClusters.push({
           center: { lat, lng },
-          scans: [scan]
+          scans: [scan],
         });
       }
     });
-    
+
     const sortedLocations = locationClusters.sort((a, b) => b.scans.length - a.scans.length);
     setFrequentLocations(sortedLocations.slice(0, 3));
-    
+
     if (scanHistory.length >= 3) {
       const hourFrequency = {};
       const dayFrequency = {};
-      
-      scanHistory.forEach(scan => {
+
+      scanHistory.forEach((scan) => {
         const date = new Date(scan.timestamp);
         const hour = date.getHours();
         const day = date.getDay();
-        
+
         hourFrequency[hour] = (hourFrequency[hour] || 0) + 1;
         dayFrequency[day] = (dayFrequency[day] || 0) + 1;
       });
-      
-      let maxHour = 0, maxHourCount = 0;
-      let maxDay = 0, maxDayCount = 0;
-      
+
+      let maxHour = 0,
+        maxHourCount = 0;
+      let maxDay = 0,
+        maxDayCount = 0;
+
       Object.entries(hourFrequency).forEach(([hour, count]) => {
         if (count > maxHourCount) {
           maxHour = parseInt(hour);
           maxHourCount = count;
         }
       });
-      
+
       Object.entries(dayFrequency).forEach(([day, count]) => {
         if (count > maxDayCount) {
           maxDay = parseInt(day);
           maxDayCount = count;
         }
       });
-      
+
       const days = ['domingo', 'lunes', 'martes', 'miércoles', 'jueves', 'viernes', 'sábado'];
-      
+
       if (maxHourCount >= 2) {
         setPattern({
           hour: maxHour,
           day: days[maxDay],
-          message: `${pet.name} tiende a ser encontrado/a los ${days[maxDay]}s alrededor de las ${maxHour}:00 horas.`
+          message: `${pet.name} tiende a ser encontrado/a los ${days[maxDay]}s alrededor de las ${maxHour}:00 horas.`,
         });
       }
     }
@@ -115,10 +110,10 @@ const ScanHistoryDetail = ({ scanHistory, userLocation, pet }) => {
             {scanHistory.map((scan, index) => (
               <li key={index} className="flex justify-between items-center p-2 bg-gray-50 rounded">
                 <span>{new Date(scan.timestamp).toLocaleString()}</span>
-                <a 
-                  href={`https://www.google.com/maps?q=${scan.latitude},${scan.longitude}`} 
-                  target="_blank" 
-                  rel="noopener noreferrer" 
+                <a
+                  href={`https://www.google.com/maps?q=${scan.latitude},${scan.longitude}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
                   className="text-blue-500 hover:underline"
                 >
                   Ver en Google Maps
@@ -139,10 +134,10 @@ const ScanHistoryDetail = ({ scanHistory, userLocation, pet }) => {
                 {frequentLocations.map((loc, idx) => (
                   <li key={idx}>
                     Visto {loc.scans.length} veces cerca de:{' '}
-                    <a 
-                      href={`https://www.google.com/maps?q=${loc.center.lat},${loc.center.lng}`} 
-                      target="_blank" 
-                      rel="noopener noreferrer" 
+                    <a
+                      href={`https://www.google.com/maps?q=${loc.center.lat},${loc.center.lng}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
                       className="text-blue-500 hover:underline"
                     >
                       Lat: {loc.center.lat.toFixed(4)}, Lng: {loc.center.lng.toFixed(4)}
@@ -152,9 +147,7 @@ const ScanHistoryDetail = ({ scanHistory, userLocation, pet }) => {
               </ul>
             </div>
           )}
-          {pattern && (
-            <p className="mt-4 italic text-gray-600">{pattern.message}</p>
-          )}
+          {pattern && <p className="mt-4 italic text-gray-600">{pattern.message}</p>}
         </>
       ) : (
         <p>No hay escaneos registrados para {pet.name}.</p>
@@ -323,16 +316,13 @@ const PetManagement = () => {
   };
 
   const fetchScanHistory = async (petId) => {
-    console.log('fetchScanHistory llamado con petId:', petId);
     try {
       const history = await getScanHistory(petId);
-      console.log('Historial recibido:', history);
-      const sortedHistory = Array.isArray(history) 
+      const sortedHistory = Array.isArray(history)
         ? history.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp))
         : [];
       setScanHistory(sortedHistory);
       setSelectedPetId(petId);
-      console.log('Estados actualizados - scanHistory:', sortedHistory, 'selectedPetId:', petId);
       if (sortedHistory.length === 0) {
         setError('No hay escaneos registrados para esta mascota.');
       }
@@ -364,7 +354,7 @@ const PetManagement = () => {
         <div style="margin-top: 10mm; text-align: center; width: 100%;">
           <p style="font-size: 24px; color: #4a3c31; margin: 5px 0;"><strong>Nombre:</strong> ${pet.name}</p>
           <p style="font-size: 20px; color: #666; margin: 5px 0;"><strong>Raza:</strong> ${pet.breed || 'No especificada'}</p>
-          <p style="font-size: 20px; color: #666; margin: 5px 0;"><strong>Edad:</strong> ${pet.age} años</p>
+          <p style="font-size: 20px; color: #666; margin: 5px 0;<strong>Edad:</strong> ${pet.age} años</p>
           <p style="font-size: 20px; color: #666; margin: 5px 0;"><strong>Última vez vista:</strong> ${pet.last_seen_date ? new Date(pet.last_seen_date).toLocaleString() : new Date().toLocaleString()}</p>
           <p style="font-size: 20px; color: #666; margin: 5px 0;"><strong>Contacto:</strong> ${pet.phone || 'No disponible'}</p>
         </div>
@@ -420,7 +410,7 @@ const PetManagement = () => {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': `Token ${localStorage.getItem('token')}`,
+          Authorization: `Token ${localStorage.getItem('token')}`,
         },
         body: JSON.stringify({
           pet_id: petId,
@@ -458,7 +448,7 @@ const PetManagement = () => {
     try {
       const response = await fetch(`${API_URL}/poster/${posterId}/`, {
         headers: {
-          'Authorization': `Token ${localStorage.getItem('token')}`,
+          Authorization: `Token ${localStorage.getItem('token')}`,
         },
       });
 
@@ -516,16 +506,16 @@ const PetManagement = () => {
           </div>
         ) : (
           <>
-            <PetList 
-              pets={pets} 
-              onToggleLost={handleToggleLost} 
-              onShowHistory={fetchScanHistory} 
+            <PetList
+              pets={pets}
+              onToggleLost={handleToggleLost}
+              onShowHistory={fetchScanHistory}
             />
             {selectedPetId && (
               <div className="scan-history bg-white p-4 rounded-lg shadow mt-4">
                 <div className="flex justify-between items-center">
                   <h3 className="text-xl font-semibold mb-2">Historial de Escaneos</h3>
-                  <button 
+                  <button
                     onClick={() => {
                       setSelectedPetId(null);
                       setScanHistory([]);
@@ -536,10 +526,10 @@ const PetManagement = () => {
                     Cerrar
                   </button>
                 </div>
-                <ScanHistoryDetail 
-                  scanHistory={scanHistory} 
+                <ScanHistoryDetail
+                  scanHistory={scanHistory}
                   userLocation={userLocation}
-                  pet={pets.find(p => p.id === selectedPetId) || {}}
+                  pet={pets.find((p) => p.id === selectedPetId) || {}}
                 />
               </div>
             )}

@@ -1,0 +1,62 @@
+/* pages/QRRegistrationPage.css */
+.qr-registration-container {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 20px;
+  }
+  
+  .qr-registration-header {
+    text-align: center;
+    margin-bottom: 20px;
+  }
+  
+  .qr-registration-header h1 {
+    font-size: 2rem;
+    color: #4a3c31;
+  }
+  
+  .qr-registration-header h2 {
+    font-size: 1.5rem;
+    color: #666;
+  }
+  
+  .qr-registration-content {
+    background: #fff;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  }
+  
+  .auth-warning {
+    background: #fff3cd;
+    padding: 15px;
+    border-radius: 4px;
+    margin-bottom: 20px;
+    text-align: center;
+  }
+  
+  .auth-button {
+    background: #87a8d0;
+    color: white;
+    padding: 10px 20px;
+    margin: 0 10px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+  }
+  
+  .auth-button:hover {
+    background: #6b8ab0;
+  }
+  
+  .error-message {
+    color: #d32f2f;
+    margin-top: 10px;
+    text-align: center;
+  }
+  
+  .qr-registration-footer {
+    text-align: center;
+    margin-top: 20px;
+    color: #777;
+  }

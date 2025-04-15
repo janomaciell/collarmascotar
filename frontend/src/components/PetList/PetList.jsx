@@ -7,7 +7,7 @@ const PetList = ({ pets, onToggleLost, onShowHistory }) => {
       {pets.length === 0 ? (
         <p className="no-pets-message">No tienes mascotas registradas aún.</p>
       ) : (
-        pets.map(pet => (
+        pets.map((pet) => (
           <div key={pet.id} className="pet-card">
             <div className="pet-card-content">
               <div className="pet-info">
@@ -18,33 +18,32 @@ const PetList = ({ pets, onToggleLost, onShowHistory }) => {
               </div>
               <div className="pet-qr">
                 {pet.qr_code && (
-                  <img 
-                    src={pet.qr_code} 
-                    alt={`Código QR de ${pet.name}`}
-                    className="qr-image"
-                  />
+                  <>
+                    <img
+                      src={pet.qr_code}
+                      alt={`Código QR de ${pet.name}`}
+                      className="qr-image"
+                    />
+                    <a
+                      href={pet.qr_code}
+                      download={`qr_${pet.name}.png`}
+                      className="download-button"
+                    >
+                      Descargar QR
+                    </a>
+                  </>
                 )}
-                <a 
-                  href={pet.qr_code} 
-                  download={`qr_${pet.name}.png`}
-                  className="download-button"
-                >
-                  Descargar QR
-                </a>
               </div>
               <div className="pet-actions">
-                <button 
+                <button
                   className={`toggle-lost-btn ${pet.is_lost ? 'is-lost' : ''}`}
                   onClick={() => onToggleLost(pet.id, pet.is_lost)}
                 >
                   {pet.is_lost ? 'Marcar como encontrada' : 'Marcar como perdida'}
                 </button>
-                <button 
+                <button
                   className="history-btn"
-                  onClick={() => {
-                    console.log('Clic en Ver Historial para petId:', pet.id);
-                    onShowHistory(pet.id);
-                  }}
+                  onClick={() => onShowHistory(pet.id)}
                 >
                   Ver Historial
                 </button>

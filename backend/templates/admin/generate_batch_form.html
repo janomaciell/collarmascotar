@@ -1,0 +1,11 @@
+{% extends "admin/base_site.html" %}
+
+{% block content %}
+<h1>{{ title }}</h1>
+<form method="post">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <input type="hidden" name="action" value="generate_batch">
+    <input type="submit" name="apply" value="Generar QRs">
+    <a href="{% url 'admin:api_pregeneratedqr_changelist' %}" class="button cancel-link">Cancelar</a>
+{% endblock %}
