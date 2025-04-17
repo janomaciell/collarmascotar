@@ -98,13 +98,8 @@ const Profile = () => {
     <div className="profile-container max-w-3xl mx-auto p-4">
       <div className="profile-header flex justify-between items-center mb-6">
         <h1 className="text-2xl font-bold text-gray-800">Mi Perfil</h1>
-        <button
-          className="logout-btn flex items-center gap-2 px-4 py-2 bg-red-500 text-white rounded-md hover:bg-red-600"
-          onClick={handleLogout}
-          aria-label="Cerrar sesión"
-        >
-          <i className="fas fa-sign-out-alt"></i> Cerrar Sesión
-        </button>
+
+        
       </div>
 
       {error && (
