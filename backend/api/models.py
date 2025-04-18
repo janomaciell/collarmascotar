@@ -164,7 +164,8 @@ class PreGeneratedQR(models.Model):
                 box_size=10,
                 border=4,
             )
-            qr.add_data(f'{settings.FRONTEND_URL}/register-pet/{self.qr_uuid}')
+            # Cambiar para que apunte a /qr/ en lugar de /register-pet/
+            qr.add_data(f'{settings.FRONTEND_URL}/qr/{self.qr_uuid}')
             qr.make(fit=True)
             img = qr.make_image(fill_color="black", back_color="white")
             buffer = BytesIO()

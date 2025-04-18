@@ -11,19 +11,15 @@ const PetForm = ({ onSubmit, initialData = {} }) => {
     email: initialData.email || '',
     notes: initialData.notes || '',
     photo: null,
-    // Campos de salud
     allergies: initialData.allergies || '',
     medical_conditions: initialData.medical_conditions || '',
     blood_type: initialData.blood_type || '',
     weight: initialData.weight || '',
-    // Información de identificación
     microchip_id: initialData.microchip_id || '',
     birth_date: initialData.birth_date || '',
     gender: initialData.gender || '',
-    // Estado de esterilización
     is_sterilized: initialData.is_sterilized || false,
     sterilization_date: initialData.sterilization_date || '',
-    // Información del veterinario
     vet_name: initialData.vet_name || '',
     vet_phone: initialData.vet_phone || '',
     vet_address: initialData.vet_address || '',
@@ -39,21 +35,22 @@ const PetForm = ({ onSubmit, initialData = {} }) => {
     if (type === 'file') {
       setFormData({
         ...formData,
-        [name]: files[0]
+        [name]: files[0],
       });
       
-      // Crear preview de la imagen
       if (files[0]) {
         const reader = new FileReader();
         reader.onloadend = () => {
           setPhotoPreview(reader.result);
         };
         reader.readAsDataURL(files[0]);
+      } else {
+        setPhotoPreview(null);
       }
     } else {
       setFormData({
         ...formData,
-        [name]: type === 'checkbox' ? checked : value
+        [name]: type === 'checkbox' ? checked : value,
       });
     }
   };
@@ -61,19 +58,24 @@ const PetForm = ({ onSubmit, initialData = {} }) => {
   const validateForm = () => {
     const newErrors = {};
 
-    // Validar teléfono (10 dígitos)
-    if (!formData.phone.match(/^\d{10}$/)) {
-      newErrors.phone = "El teléfono debe tener 10 dígitos";
+    if (!formData.name) {
+      newErrors.name = 'El nombre es obligatorio';
     }
 
-    // Validar edad
-    if (formData.age < 0 || formData.age > 30) {
-      newErrors.age = "La edad debe estar entre 0 y 30 años";
+    if (!formData.age || formData.age < 0 || formData.age > 30) {
+      newErrors.age = 'La edad debe estar entre 0 y 30 años';
     }
 
-    // Validar email si existe
+    if (!formData.address) {
+      newErrors.address = 'La dirección es obligatoria';
+    }
+
+    if (!formData.phone || !formData.phone.match(/^\d{10}$/)) {
+      newErrors.phone = 'El teléfono debe tener 10 dígitos';
+    }
+
     if (formData.email && !formData.email.match(/^[^\s@]+@[^\s@]+\.[^\s@]+$/)) {
-      newErrors.email = "El correo electrónico no es válido";
+      newErrors.email = 'El correo electrónico no es válido';
     }
 
     setErrors(newErrors);
@@ -91,17 +93,12 @@ const PetForm = ({ onSubmit, initialData = {} }) => {
 
     try {
       setIsSubmitting(true);
-      const data = new FormData();
-      
-      Object.entries(formData).forEach(([key, value]) => {
-        if (value !== null && value !== '') {
-          data.append(key, value);
-        }
-      });
+      console.log('FormData antes de enviar:', formData); // Debug: Log the formData state
 
-      await onSubmit(data);
+      // Pass the plain formData object to onSubmit
+      await onSubmit(formData);
     } catch (error) {
-      console.error('Error:', error);
+      console.error('Error en PetForm:', error);
       setErrors({ submit: 'Error al enviar el formulario' });
     } finally {
       setIsSubmitting(false);
@@ -151,7 +148,9 @@ const PetForm = ({ onSubmit, initialData = {} }) => {
             value={formData.name}
             onChange={handleChange}
             required
+            className={errors.name ? 'error' : ''}
           />
+          {errors.name && <span className="error-message">{errors.name}</span>}
         </div>
         
         <div className="form-group">
@@ -165,7 +164,9 @@ const PetForm = ({ onSubmit, initialData = {} }) => {
             value={formData.age}
             onChange={handleChange}
             required
+            className={errors.age ? 'error' : ''}
           />
+          {errors.age && <span className="error-message">{errors.age}</span>}
         </div>
 
         <div className="form-group">
@@ -212,7 +213,9 @@ const PetForm = ({ onSubmit, initialData = {} }) => {
             value={formData.address}
             onChange={handleChange}
             required
+            className={errors.address ? 'error' : ''}
           />
+          {errors.address && <span className="error-message">{errors.address}</span>}
         </div>
         
         <div className="form-group">
@@ -223,8 +226,8 @@ const PetForm = ({ onSubmit, initialData = {} }) => {
             name="phone"
             value={formData.phone}
             onChange={handleChange}
-            className={errors.phone ? 'error' : ''}
             required
+            className={errors.phone ? 'error' : ''}
           />
           {errors.phone && <span className="error-message">{errors.phone}</span>}
         </div>
@@ -238,8 +241,9 @@ const PetForm = ({ onSubmit, initialData = {} }) => {
             value={formData.email}
             onChange={handleChange}
             placeholder="ejemplo@correo.com"
+            className={errors.email ? 'error' : ''}
           />
-          {errors.email && <span className="error">{errors.email}</span>}
+          {errors.email && <span className="error-message">{errors.email}</span>}
         </div>
         
         <div className="form-group">
@@ -358,7 +362,7 @@ const PetForm = ({ onSubmit, initialData = {} }) => {
       >
         {isSubmitting ? 'Enviando...' : (initialData.id ? 'Actualizar Mascota' : 'Crear Mascota')}
       </button>
-      {errors.submit && <span className="error">{errors.submit}</span>}
+      {errors.submit && <span className="error-message">{errors.submit}</span>}
     </form>
   );
 };

@@ -21,6 +21,13 @@ const QRRegistrationPage = () => {
         if (response.is_assigned) {
           setError('Este QR ya está asignado a una mascota.');
         }
+
+        // Check for pending registration after login
+        const pendingData = sessionStorage.getItem('pending_pet_data');
+        const pendingQR = sessionStorage.getItem('pending_qr_uuid');
+        if (pendingData && pendingQR && isAuthenticated) {
+          await handleCompleteRegistration();
+        }
       } catch (err) {
         setError('Error al verificar el QR: ' + (err.message || 'QR no válido.'));
       } finally {
@@ -28,44 +35,64 @@ const QRRegistrationPage = () => {
       }
     };
     verifyQR();
-  }, [uuid]);
+  }, [uuid, isAuthenticated]);
 
   const handlePetSubmission = async (petData) => {
     try {
       setError('');
       const formData = new FormData();
-      Object.entries(petData).forEach(([key, value]) => {
-        if (value !== null && value !== '') {
-          formData.append(key, value);
+
+      console.log('Datos recibidos en handlePetSubmission:', petData);
+
+      const requiredFields = ['name', 'age', 'address', 'phone'];
+      for (const field of requiredFields) {
+        if (!petData[field]) {
+          throw new Error(`El campo ${field} es obligatorio.`);
+        }
+        formData.append(field, petData[field]);
+      }
+
+      const optionalFields = [
+        'breed', 'email', 'notes', 'photo', 'allergies', 'medical_conditions',
+        'blood_type', 'weight', 'microchip_id', 'birth_date', 'gender',
+        'is_sterilized', 'sterilization_date', 'vet_name', 'vet_phone', 'vet_address'
+      ];
+      optionalFields.forEach((key) => {
+        if (petData[key] !== null && petData[key] !== undefined && petData[key] !== '') {
+          formData.append(key, petData[key]);
         }
       });
 
+      for (let pair of formData.entries()) {
+        console.log('FormData contiene:', pair[0], pair[1]);
+      }
+
       const response = await registerPetToQR(uuid, formData);
       if (response.require_auth) {
-        // Guardar datos en localStorage para mantenerlos tras redirección
-        localStorage.setItem('pending_pet_data', JSON.stringify(petData));
-        localStorage.setItem('pending_qr_uuid', uuid);
+        sessionStorage.setItem('pending_pet_data', JSON.stringify(petData));
+        sessionStorage.setItem('pending_qr_uuid', uuid);
         navigate('/login', { state: { from: `/register-pet/${uuid}` } });
       } else {
         navigate('/dashboard', { state: { successMessage: 'Mascota registrada exitosamente.' } });
       }
     } catch (err) {
+      console.error('Error completo:', err);
       setError('Error al registrar la mascota: ' + (err.message || 'Intente nuevamente.'));
     }
   };
 
   const handleCompleteRegistration = async () => {
     try {
-      const pendingData = JSON.parse(localStorage.getItem('pending_pet_data'));
-      const pendingQR = localStorage.getItem('pending_qr_uuid');
+      const pendingData = JSON.parse(sessionStorage.getItem('pending_pet_data'));
+      const pendingQR = sessionStorage.getItem('pending_qr_uuid');
       if (!pendingData || !pendingQR) {
         setError('No hay datos pendientes para registrar.');
         return;
       }
 
-      const response = await completePendingRegistration(pendingData);
-      localStorage.removeItem('pending_pet_data');
-      localStorage.removeItem('pending_qr_uuid');
+      const response = await completePendingRegistration(pendingData, pendingQR);
+      sessionStorage.removeItem('pending_pet_data');
+      sessionStorage.removeItem('pending_qr_uuid');
       navigate('/dashboard', { state: { successMessage: 'Registro completado exitosamente.' } });
     } catch (err) {
       setError('Error al completar el registro: ' + (err.message || 'Intente nuevamente.'));
@@ -77,6 +104,9 @@ const QRRegistrationPage = () => {
     return (
       <div className="error-container">
         {error || 'Este QR ya está asignado o no es válido.'}
+        <button onClick={() => navigate('/')} className="back-button">
+          Volver al inicio
+        </button>
       </div>
     );
   }
@@ -89,17 +119,6 @@ const QRRegistrationPage = () => {
       </header>
       <main className="qr-registration-content">
         <p>Escaneaste un QR para registrar una nueva mascota. Por favor, completa los datos.</p>
-        {!isAuthenticated && (
-          <div className="auth-warning">
-            <p>Debes iniciar sesión o registrarte para completar el proceso.</p>
-            <button onClick={() => navigate('/login')} className="auth-button">
-              Iniciar Sesión
-            </button>
-            <button onClick={() => navigate('/register')} className="auth-button">
-              Registrarse
-            </button>
-          </div>
-        )}
         <PetForm onSubmit={handlePetSubmission} />
         {error && <div className="error-message">{error}</div>}
       </main>

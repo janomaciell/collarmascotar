@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from 'react';
-import { useParams } from 'react-router-dom';
+import React, { useEffect, useState } from 'react';
+import { useParams, useNavigate } from 'react-router-dom';
 import { getPetByUuid, notifyOwner, sendCommunityNotification, checkQRStatus } from '../../services/api';
 import { API_URL } from '../../services/api';
 
@@ -17,26 +17,34 @@ const PetPage = () => {
     const fetchPetAndNotify = async () => {
       try {
         setIsLoading(true);
+        console.log("API URL:", API_URL);
+        console.log("Verificando QR para UUID:", uuid);
+        console.log("URL completa:", `${API_URL}/check-qr/${uuid}/`);
 
         // Verificar si el QR está asignado
-        const qrStatus = await checkQRStatus(uuid);
-        if (!qrStatus.is_assigned) {
+        let qrStatus;
+        try {
+          qrStatus = await checkQRStatus(uuid);
+          console.log("Estado QR:", qrStatus);
+        } catch (qrError) {
+          // Si el QR no se encuentra en PreGeneratedQR, podría ya estar asignado a un Pet
+          if (qrError.message.includes("404")) {
+            console.log("QR no encontrado en PreGeneratedQR, asumiendo que ya está asignado");
+          } else {
+            throw qrError; // Re-lanzar otros errores
+          }
+        }
+
+        if (qrStatus && !qrStatus.is_assigned) {
+          console.log("QR no asignado, redirigiendo a registro");
           navigate(`/register-pet/${uuid}`);
           return;
         }
 
-        // Obtener datos del usuario si está autenticado
-        const token = localStorage.getItem('token');
-        if (token) {
-          const response = await fetch(`${API_URL}/users/me/`, {
-            headers: { Authorization: `Token ${token}` },
-          });
-          const data = await response.json();
-          setUserData(data);
-        }
-
         // Obtener datos de la mascota
+        console.log("Fetching pet data for UUID:", uuid);
         const petData = await getPetByUuid(uuid);
+        console.log("Pet data received:", petData);
         setPet(petData);
         setError('');
 
@@ -48,12 +56,17 @@ const PetPage = () => {
                 latitude: position.coords.latitude,
                 longitude: position.coords.longitude,
               };
-              await notifyOwner(uuid, location);
-              await sendCommunityNotification(uuid, location, 50);
+              try {
+                await notifyOwner(uuid, location);
+                await sendCommunityNotification(uuid, location, 50);
+              } catch (notificationError) {
+                console.error("Error en notificaciones:", notificationError);
+                setError("Mascota encontrada, pero no se pudo enviar notificaciones: " + notificationError.message);
+              }
             },
-            (err) => {
-              console.error('Geolocalización denegada:', err);
-              setError('No se pudo obtener la ubicación del escáner.');
+            (geoError) => {
+              console.error('Geolocalización denegada:', geoError);
+              setError('No se pudo obtener la ubicación para enviar notificaciones.');
             },
             { enableHighAccuracy: true, timeout: 5000 }
           );
@@ -61,8 +74,8 @@ const PetPage = () => {
           setError('Geolocalización no soportada por el navegador.');
         }
       } catch (err) {
-        setError('No se pudo encontrar la información de esta mascota: ' + (err.detail || err.message));
-        console.error(err);
+        console.error("Error en el proceso:", err);
+        setError(`No se pudo obtener la información: ${err.message}`);
       } finally {
         setIsLoading(false);
       }
@@ -88,7 +101,8 @@ const PetPage = () => {
       <main className="pet-profile">
         {pet.is_lost && (
           <div className="lost-alert">
-            <h2>🚨 ¡Estoy perdido! Ayúdame a volver a casa 🚨</h2>
+            <h2>🚨 ¡{pet.name} está perdido! 🚨</h2>
+            <p>Por favor, ayúdanos a devolver a {pet.name} con su familia. Contacta al dueño lo antes posible.</p>
           </div>
         )}
 

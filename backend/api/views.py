@@ -1,4 +1,5 @@
 from rest_framework import viewsets, permissions, generics, status
+from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
 from rest_framework.decorators import api_view, permission_classes, action
 from django.shortcuts import get_object_or_404
@@ -18,9 +19,13 @@ from firebase_admin import credentials, initialize_app, messaging
 from rest_framework.authtoken.views import ObtainAuthToken
 from rest_framework.authtoken.models import Token
 
+
+
 # Inicializa Firebase Admin
 cred = credentials.Certificate(str(settings.FIREBASE_CREDENTIALS_PATH))
 default_app = initialize_app(cred, name='petqr')
+
+
 
 class CustomAuthToken(ObtainAuthToken):
     def post(self, request, *args, **kwargs):
@@ -114,34 +119,17 @@ class PetViewSet(viewsets.ModelViewSet):
         return Response(self.get_serializer(pet).data)
 
 @api_view(['GET'])
-@permission_classes([permissions.AllowAny])
-def get_pet_public_info(request, uuid):
+@permission_classes([AllowAny])
+def get_pet_by_uuid(request, uuid):
     try:
-        pet = Pet.objects.filter(qr_uuid=uuid).first()
-        
-        if pet:
-            serializer = PetPublicSerializer(pet)
-            return Response(serializer.data)
-        else:
-            qr = PreGeneratedQR.objects.filter(qr_uuid=uuid).first()
-            
-            if qr and not qr.is_assigned:
-                # Es un QR pre-generado no asignado
-                return Response({
-                    "is_assigned": False,
-                    "registration_required": True,
-                    "message": "Este QR está listo para registrar una mascota"
-                })
-            else:
-                # QR no encontrado
-                return Response({
-                    "error": "QR no válido o no encontrado"
-                }, status=status.HTTP_404_NOT_FOUND)
-            
-    except Exception as e:
-        return Response({
-            "error": f"Error: {str(e)}"
-        }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+        pet = get_object_or_404(Pet, qr_uuid=uuid)
+        serializer = PetSerializer(pet)
+        return Response(serializer.data)
+    except Pet.DoesNotExist:
+        return Response(
+            {"error": "QR no válido o no encontrado"},
+            status=status.HTTP_404_NOT_FOUND
+        )
 
 @api_view(['POST'])
 @permission_classes([permissions.AllowAny])
@@ -813,70 +801,120 @@ class PreGeneratedQRViewSet(viewsets.ModelViewSet):
                 {"error": f"Error al generar QRs: {str(e)}"},
                 status=status.HTTP_500_INTERNAL_SERVER_ERROR
             )
-
 @api_view(['GET'])
-@permission_classes([permissions.AllowAny])
+@permission_classes([AllowAny])
 def check_qr_status(request, uuid):
     """
     Verifica si un QR pre-generado está asignado o no
     """
     try:
-        qr = get_object_or_404(PreGeneratedQR, qr_uuid=uuid)
+        print(f"Verificando QR con UUID: {uuid}")
         
-        return Response({
-            "is_assigned": qr.is_assigned,
-            "uuid": str(qr.qr_uuid)
-        })
+        # Primero busca en PreGeneratedQR
+        qr = PreGeneratedQR.objects.filter(qr_uuid=uuid).first()
+        if qr:
+            print(f"QR encontrado en PreGeneratedQR: {qr.qr_uuid}, is_assigned: {qr.is_assigned}")
+            
+            # Si está marcado como asignado, verifica si hay un Pet asociado
+            if qr.is_assigned:
+                pet = Pet.objects.filter(qr_uuid=uuid).first()
+                if not pet:
+                    print(f"Advertencia: QR {uuid} está marcado como asignado pero no hay Pet asociado")
+                    # Marcar como no asignado si no hay Pet
+                    qr.is_assigned = False
+                    qr.save()
+                    print(f"QR {uuid} actualizado a is_assigned: False")
+
+            response_data = {
+                "is_assigned": qr.is_assigned,
+                "uuid": str(qr.qr_uuid)
+            }
+            print(f"Respuesta: {response_data}")
+            return Response(response_data)
+
+        # Si no está en PreGeneratedQR, busca en Pet
+        pet = Pet.objects.filter(qr_uuid=uuid).first()
+        if pet:
+            print(f"QR encontrado en Pet: {pet.qr_uuid}")
+            response_data = {
+                "is_assigned": True,  # Si está en Pet, está asignado
+                "uuid": str(pet.qr_uuid)
+            }
+            print(f"Respuesta: {response_data}")
+            return Response(response_data)
+
+        # Si no se encuentra en ningún modelo
+        print(f"QR no encontrado: {uuid}")
+        return Response(
+            {"error": "QR no encontrado"},
+            status=status.HTTP_404_NOT_FOUND
+        )
+
     except Exception as e:
+        print(f"Error al verificar QR {uuid}: {str(e)}")
         return Response(
             {"error": f"Error al verificar QR: {str(e)}"},
             status=status.HTTP_500_INTERNAL_SERVER_ERROR
         )
-
 @api_view(['POST'])
-@permission_classes([permissions.AllowAny])
+@permission_classes([AllowAny])
 def register_pet_to_qr(request, uuid):
     try:
-        qr = get_object_or_404(PreGeneratedQR, qr_uuid=uuid)
-        if qr.is_assigned:
-            return Response(
-                {"error": "Este código QR ya está asignado a una mascota"},
-                status=status.HTTP_400_BAD_REQUEST
-            )
+        # Verify QR exists and isn't assigned
+        qr = get_object_or_404(PreGeneratedQR, qr_uuid=uuid, is_assigned=False)
         
-        if not request.user.is_authenticated:
-            request.session['pending_pet_data'] = request.data
-            request.session['pending_qr_uuid'] = str(uuid)
-            return Response({
-                "message": "Datos recibidos. Por favor inicia sesión o regístrate para continuar.",
-                "require_auth": True,
-                "temp_data_stored": True
-            }, status=status.HTTP_202_ACCEPTED)
+        # Convert MultiValueDict to dict
+        data = request.POST.dict()
+        if 'photo' in request.FILES:
+            data['photo'] = request.FILES['photo']
+
+        # Add qr_uuid to data explicitly
+        data['qr_uuid'] = str(uuid)  # Make sure it's a string
+
+        serializer = PetSerializer(data=data)
         
-        pet_data = request.data
-        serializer = PetSerializer(data=pet_data)
         if serializer.is_valid():
-            pet = serializer.save(owner=request.user)
+            # Get authenticated user
+            user = request.user if request.user.is_authenticated else None
+            if not user:
+                return Response({
+                    "require_auth": True,
+                    "message": "Authentication required to register a pet."
+                }, status=status.HTTP_401_UNAUTHORIZED)
+
+            # Save the pet with the qr_uuid
+            pet = serializer.save(owner=user, qr_uuid=uuid)
             
-            # Mover el QR al modelo Pet
-            pet.qr_uuid = qr.qr_uuid
-            pet.qr_code = qr.qr_code
-            pet.save()
+            # Transfer the QR code file from PreGeneratedQR to Pet
+            if qr.qr_code:
+                pet.qr_code = qr.qr_code
+                pet.qr_code.name = f"pet_qr_{pet.id}.png"  # Rename the file to avoid conflicts                
+                pet.save()
             
-            # Eliminar el QR de PreGeneratedQR
-            qr.delete()
-            
+            # Update QR status
+            qr.is_assigned = True
+            qr.save()
+
             return Response({
-                "message": "Mascota registrada exitosamente",
-                "pet": PetSerializer(pet).data,
-                "qr_uuid": str(pet.qr_uuid)
+                "status": "success",
+                "message": "Pet registered successfully",
+                "pet": PetSerializer(pet).data
             }, status=status.HTTP_201_CREATED)
         else:
-            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-            
+            return Response(
+                {
+                    "error": "Invalid data",
+                    "details": serializer.errors
+                }, 
+                status=status.HTTP_400_BAD_REQUEST
+            )
+
     except Exception as e:
         return Response(
-            {"error": f"Error al registrar mascota: {str(e)}"},
+            {
+                "error": "Error processing request",
+                "message": str(e)
+            },
             status=status.HTTP_500_INTERNAL_SERVER_ERROR
         )
 
@@ -930,4 +968,47 @@ def complete_pending_registration(request):
     except Exception as e:
         return Response({
             "error": f"Error al completar el registro: {str(e)}"
+        }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+        
+@api_view(['GET'])
+@permission_classes([AllowAny])
+def qr_redirect(request, uuid):
+    """
+    Determina a dónde redirigir según el estado del QR.
+    - Si el QR está en PreGeneratedQR y is_assigned=False, redirige a /register-pet/{uuid}.
+    - Si el QR está en Pet, redirige a /pet/{uuid}.
+    - Si no se encuentra el QR, devuelve error.
+    """
+    try:
+        print(f"UUID recibido: {uuid}")
+        print(f"Datos de la petición: {request.GET}")
+        # First, check if the QR exists in PreGeneratedQR
+        qr = PreGeneratedQR.objects.filter(qr_uuid=uuid).first()
+        if qr and not qr.is_assigned:
+            return Response({
+                "status": "unassigned",
+                "redirect_to": f"/register-pet/{uuid}"
+            })
+
+        # If not in PreGeneratedQR, check the Pet model
+        pet = Pet.objects.filter(qr_uuid=uuid).first()
+        if pet:
+            return Response({
+                "status": "assigned",
+                "redirect_to": f"/pet/{uuid}",
+                "pet_data": PetSerializer(pet).data,
+                "is_lost": pet.is_lost
+            })
+
+        # If QR is not found in either model
+        return Response({
+            "error": "QR no válido",
+            "redirect_to": "/error"
+        }, status=status.HTTP_404_NOT_FOUND)
+
+    except Exception as e:
+        print(f"Error en qr_redirect: {str(e)}")
+        return Response({
+            "error": f"Error al procesar el QR: {str(e)}",
+            "redirect_to": "/error"
         }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)

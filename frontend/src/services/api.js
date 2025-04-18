@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-export const API_URL = import.meta.env.VITE_API_URL?.replace(/\/$/, '') || 'http://localhost:3001/api';
+export const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000';
 
 axios.interceptors.request.use(
   (config) => {
@@ -12,6 +12,13 @@ axios.interceptors.request.use(
   },
   (error) => Promise.reject(error)
 );
+export const getAuthHeaders = () => {
+  const token = localStorage.getItem('token');
+  return {
+    'Content-Type': 'application/json',
+    ...(token ? { 'Authorization': `Token ${token}` } : {})
+  };
+};
 
 export const register = async (userData) => {
   try {
@@ -56,10 +63,27 @@ export const createPet = async (petData) => {
 
 export const getPetByUuid = async (uuid) => {
   try {
-    const response = await axios.get(`${API_URL}/pet/${uuid}/`);
-    return response.data;
+    console.log(`Attempting to fetch pet with UUID: ${uuid}`);
+    const response = await fetch(`${API_URL}/pets/${uuid}/`);
+    
+    console.log(`Response status: ${response.status}`);
+    
+    if (response.status === 401) {
+      console.error("Authentication required - this endpoint requires login");
+      throw new Error('Se requiere autenticación para ver esta mascota');
+    }
+    
+    if (!response.ok) {
+      console.error(`Error response: ${response.status}`);
+      throw new Error('QR no válido o no encontrado');
+    }
+    
+    const data = await response.json();
+    console.log("Pet data retrieved successfully:", data);
+    return data;
   } catch (error) {
-    throw error.response?.data || error.message;
+    console.error('Error fetching pet data:', error);
+    throw error;
   }
 };
 
@@ -162,22 +186,59 @@ export const getReward = async (petId) => {
   }
 };
 
-
 export const checkQRStatus = async (uuid) => {
   try {
-    const response = await axios.get(`${API_URL}/check-qr/${uuid}/`);
-    return response.data;
+    // Asegurarse que la URL esté bien formada
+    const url = `${API_URL}/check-qr/${uuid}/`;
+    console.log('Intentando conectar a:', url);
+    
+    const response = await fetch(url, {
+      method: 'GET',
+      headers: {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json',
+      }
+    });
+    
+    if (!response.ok) {
+      const errorText = await response.text();
+      console.error('Error del servidor:', {
+        status: response.status,
+        statusText: response.statusText,
+        errorText
+      });
+      throw new Error(`Error ${response.status}: ${response.statusText}`);
+    }
+    
+    return await response.json();
   } catch (error) {
-    throw error.response?.data || error.message;
+    console.error('Error en checkQRStatus:', error);
+    throw error;
   }
 };
 
 export const registerPetToQR = async (uuid, petData) => {
   try {
-    const response = await axios.post(`${API_URL}/register-pet-to-qr/${uuid}/`, petData);
-    return response.data;
+    const response = await fetch(`${API_URL}/register-pet-to-qr/${uuid}/`, {
+      method: 'POST',
+      headers: {
+        Authorization: `Token ${localStorage.getItem('token')}`,
+        // No establecer Content-Type, dejar que el navegador lo maneje para FormData
+      },
+      body: petData,
+    });
+
+    const data = await response.json();
+
+    if (!response.ok) {
+      console.error('Error de la API:', data);
+      throw new Error(JSON.stringify(data, null, 2) || 'Error al registrar mascota');
+    }
+
+    return data;
   } catch (error) {
-    throw error.response?.data || error.message;
+    console.error('Error completo:', error);
+    throw error;
   }
 };
 
@@ -198,5 +259,14 @@ export const generateBatchQRs = async (data) => {
     return response.data;
   } catch (error) {
     throw error.response?.data || error.message;
+  }
+};
+export const getQRRedirectInfo = async (uuid) => {
+  try {
+    const response = await axios.get(`${API_URL}/qr/${uuid}/`);
+    return response.data;
+  } catch (error) {
+    console.error('Error en getQRRedirectInfo:', error.response?.data || error.message);
+    throw new Error(error.response?.data?.error || 'Error al verificar el QR');
   }
 };

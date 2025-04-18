@@ -19,6 +19,7 @@ import Analytics from "./components/Analytics";
 import EditProfile from './pages/EditProfile/EditProfile';
 import Compra from './components/Compra/Compra';
 import QRRegistrationPage from './pages/QRRegistrationPage/QRRegistrationPage';
+import QRRedirectPage from './pages/QRRedirectPage/QRRedirectPage';
 
 function App() {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
@@ -86,6 +87,7 @@ function App() {
             <Route path="/edit-profile" element={<EditProfile />} />
             <Route path="/compra" element={<Compra />} />
             <Route path="/register-pet/:uuid" element={<QRRegistrationPage />} />
+            <Route path="/qr/:uuid" element={<QRRedirectPage />} />
           </Routes>
         </main>
         <Footer />

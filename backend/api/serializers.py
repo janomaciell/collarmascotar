@@ -53,6 +53,13 @@ class PetSerializer(serializers.ModelSerializer):
             'vet_address'
         ]
         read_only_fields = ['id', 'qr_code', 'qr_uuid', 'created_at']
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        # Log de los campos requeridos
+        print("Campos requeridos en el serializer:")
+        for field_name, field in self.fields.items():
+            print(f"{field_name}: required={field.required}")
+    
     def validate_photo(self, value):
         if value and len(value.name) > 100:
             extension = value.name.split('.')[-1]
