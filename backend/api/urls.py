@@ -26,5 +26,5 @@ urlpatterns = [
     path('register-pet-to-qr/<uuid:uuid>/', views.register_pet_to_qr ,name='register-pet-to-qr'),
     path('complete-registration/', views.complete_pending_registration ,name='complete-registration'),
     path('qr/<uuid:uuid>/', views.qr_redirect, name='qr-redirect'),
-
+    path('pet/<str:uuid>/', views.pet_detail, name='pet-detail'),
 ]

@@ -1,8 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { getPetByUuid, notifyOwner, sendCommunityNotification, checkQRStatus } from '../../services/api';
-import { API_URL } from '../../services/api';
-
+import './PetPage.css'; 
 const BASE_URL = import.meta.env.VITE_BASE_URL;
 
 const PetPage = () => {
@@ -17,38 +16,17 @@ const PetPage = () => {
     const fetchPetAndNotify = async () => {
       try {
         setIsLoading(true);
-        console.log("API URL:", API_URL);
-        console.log("Verificando QR para UUID:", uuid);
-        console.log("URL completa:", `${API_URL}/check-qr/${uuid}/`);
+        const qrStatus = await checkQRStatus(uuid);
 
-        // Verificar si el QR está asignado
-        let qrStatus;
-        try {
-          qrStatus = await checkQRStatus(uuid);
-          console.log("Estado QR:", qrStatus);
-        } catch (qrError) {
-          // Si el QR no se encuentra en PreGeneratedQR, podría ya estar asignado a un Pet
-          if (qrError.message.includes("404")) {
-            console.log("QR no encontrado en PreGeneratedQR, asumiendo que ya está asignado");
-          } else {
-            throw qrError; // Re-lanzar otros errores
-          }
-        }
-
-        if (qrStatus && !qrStatus.is_assigned) {
-          console.log("QR no asignado, redirigiendo a registro");
+        if (!qrStatus.is_assigned) {
           navigate(`/register-pet/${uuid}`);
           return;
         }
 
-        // Obtener datos de la mascota
-        console.log("Fetching pet data for UUID:", uuid);
         const petData = await getPetByUuid(uuid);
-        console.log("Pet data received:", petData);
         setPet(petData);
         setError('');
 
-        // Notificar al dueño y a la comunidad si hay geolocalización
         if (navigator.geolocation) {
           navigator.geolocation.getCurrentPosition(
             async (position) => {
@@ -60,12 +38,10 @@ const PetPage = () => {
                 await notifyOwner(uuid, location);
                 await sendCommunityNotification(uuid, location, 50);
               } catch (notificationError) {
-                console.error("Error en notificaciones:", notificationError);
                 setError("Mascota encontrada, pero no se pudo enviar notificaciones: " + notificationError.message);
               }
             },
             (geoError) => {
-              console.error('Geolocalización denegada:', geoError);
               setError('No se pudo obtener la ubicación para enviar notificaciones.');
             },
             { enableHighAccuracy: true, timeout: 5000 }
@@ -73,9 +49,8 @@ const PetPage = () => {
         } else {
           setError('Geolocalización no soportada por el navegador.');
         }
-      } catch (err) {
-        console.error("Error en el proceso:", err);
-        setError(`No se pudo obtener la información: ${err.message}`);
+      } catch (error) {
+        setError(error.message || 'Error al cargar datos de la mascota');
       } finally {
         setIsLoading(false);
       }
@@ -96,6 +71,9 @@ const PetPage = () => {
         <div className="logo">
           <h1>CollarMascotaQR</h1>
         </div>
+        {pet.is_lost && (
+          <p className="header-lost-message">🚨 Estoy perdido</p>
+        )}
       </header>
 
       <main className="pet-profile">
@@ -139,9 +117,7 @@ const PetPage = () => {
             <div className="detail-card">
               <h2>🏥 Mi salud</h2>
               <ul>
-                {pet.medical_conditions && (
-                  <li><strong>Condiciones médicas:</strong> {pet.medical_conditions}</li>
-                )}
+                {pet.medical_conditions && <li><strong>Condiciones médicas:</strong> {pet.medical_conditions}</li>}
                 {pet.allergies && <li><strong>Alergias:</strong> {pet.allergies}</li>}
               </ul>
             </div>
@@ -152,12 +128,7 @@ const PetPage = () => {
               <h2>👩‍⚕️ Mi veterinario</h2>
               <ul>
                 {pet.vet_name && <li><strong>Nombre:</strong> {pet.vet_name}</li>}
-                {pet.vet_phone && (
-                  <li>
-                    <strong>Teléfono:</strong>{' '}
-                    <a href={`tel:${pet.vet_phone}`}>{pet.vet_phone}</a>
-                  </li>
-                )}
+                {pet.vet_phone && <li><strong>Teléfono:</strong> <a href={`tel:${pet.vet_phone}`} className="text-blue-600 underline">{pet.vet_phone}</a></li>}
                 {pet.vet_address && <li><strong>Dirección:</strong> {pet.vet_address}</li>}
               </ul>
             </div>
@@ -167,16 +138,8 @@ const PetPage = () => {
             <h2>🏡 Mi familia</h2>
             <ul>
               <li><strong>Dirección:</strong> {pet.address}</li>
-              <li>
-                <strong>Teléfono:</strong>{' '}
-                <a href={`tel:${pet.phone}`}>{pet.phone}</a>
-              </li>
-              {pet.email && (
-                <li>
-                  <strong>Email:</strong>{' '}
-                  <a href={`mailto:${pet.email}`}>{pet.email}</a>
-                </li>
-              )}
+              <li><strong>Teléfono:</strong> <a href={`tel:${pet.phone}`} className="text-blue-600 underline">{pet.phone}</a></li>
+              {pet.email && <li><strong>Email:</strong> <a href={`mailto:${pet.email}`} className="text-blue-600 underline">{pet.email}</a></li>}
             </ul>
           </div>
 
@@ -204,12 +167,10 @@ const PetPage = () => {
           )}
           {pet.phone && userData && (
             <a
-              href={`https://wa.me/549${pet.phone.replace(/^0/, '').replace(/\D/g, '')}?text=${encodeURIComponent(
-                `Hola ${userData.first_name}, encontré a ${pet.name} y me gustaría ayudarte a que vuelva a casa. ¿Cómo puedo ayudarte?`
-              )}`}
-              className="call-button primary"
+              href={`https://wa.me/549${pet.phone.replace(/^0/, '').replace(/\D/g, '')}?text=${encodeURIComponent(`Hola ${userData.first_name}, encontré a ${pet.name} y me gustaría ayudarte a que vuelva a casa. ¿Cómo puedo ayudarte?`)}`}
               target="_blank"
               rel="noopener noreferrer"
+              className="call-button primary"
             >
               💬 Enviar WhatsApp al dueño
             </a>
@@ -218,9 +179,7 @@ const PetPage = () => {
 
         <section className="marketing-banner">
           <h2>¿Quieres proteger a tu mascota como a {pet.name}?</h2>
-          <p>
-            Con CollarMascotaQR, tu mejor amigo siempre estará seguro. Escanea, conecta y protege con un solo clic.
-          </p>
+          <p>Con CollarMascotaQR, tu mejor amigo siempre estará seguro. Escanea, conecta y protege con un solo clic.</p>
           <a href="/register" className="cta-button">
             ¡Consigue tu collar ahora!
           </a>

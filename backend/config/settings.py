@@ -58,10 +58,10 @@ INSTALLED_APPS = [
 ]
 
 MIDDLEWARE = [
+    'corsheaders.middleware.CorsMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'whitenoise.middleware.WhiteNoiseMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
-    'corsheaders.middleware.CorsMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
@@ -170,13 +170,9 @@ CORS_ALLOW_ALL_ORIGINS = True  # En producción, especificar orígenes
 
 # Configuración de REST Framework
 REST_FRAMEWORK = {
-    'DEFAULT_AUTHENTICATION_CLASSES': [
-        'rest_framework.authentication.TokenAuthentication',
-        'rest_framework.authentication.SessionAuthentication',
-        'rest_framework.authentication.BasicAuthentication',
-    ],
+    'DEFAULT_AUTHENTICATION_CLASSES': [],  # Deshabilita la autenticación global
     'DEFAULT_PERMISSION_CLASSES': [
-        'rest_framework.permissions.AllowAny',  # Cambiado de IsAuthenticated a AllowAny
+        'rest_framework.permissions.AllowAny',
     ],
 }
 
@@ -209,8 +205,11 @@ CORS_ALLOWED_ORIGINS = [
     "http://localhost:8000",
     "https://api.whatsapp.com",
     "https://web.whatsapp.com",
-    "https://wa.me"
+    "https://wa.me",
+    "http://localhost:5173"
 ]
+
+CORS_ALLOW_CREDENTIALS = True
 
 API_URL=config('API_URL')
 FRONTEND_URL=config('FRONTEND_URL')

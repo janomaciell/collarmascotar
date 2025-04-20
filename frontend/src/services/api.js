@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-export const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000';
+export const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000/api';
 
 axios.interceptors.request.use(
   (config) => {
@@ -63,27 +63,20 @@ export const createPet = async (petData) => {
 
 export const getPetByUuid = async (uuid) => {
   try {
-    console.log(`Attempting to fetch pet with UUID: ${uuid}`);
-    const response = await fetch(`${API_URL}/pets/${uuid}/`);
+    console.log(`Intentando obtener mascota con UUID: ${uuid}`);
+    // Usar axios para mantener consistencia con otras llamadas
+    const response = await axios.get(`${API_URL}/pet/${uuid}/`, {
+      headers: getAuthHeaders()
+    });
     
-    console.log(`Response status: ${response.status}`);
-    
-    if (response.status === 401) {
-      console.error("Authentication required - this endpoint requires login");
-      throw new Error('Se requiere autenticación para ver esta mascota');
-    }
-    
-    if (!response.ok) {
-      console.error(`Error response: ${response.status}`);
-      throw new Error('QR no válido o no encontrado');
-    }
-    
-    const data = await response.json();
-    console.log("Pet data retrieved successfully:", data);
-    return data;
+    console.log("Datos de mascota recibidos:", response.data);
+    return response.data;
   } catch (error) {
-    console.error('Error fetching pet data:', error);
-    throw error;
+    console.error('Error al obtener datos de mascota:', error);
+    if (error.response?.status === 404) {
+      throw new Error('Mascota no encontrada');
+    }
+    throw error.response?.data || error;
   }
 };
 
@@ -188,25 +181,17 @@ export const getReward = async (petId) => {
 
 export const checkQRStatus = async (uuid) => {
   try {
-    // Asegurarse que la URL esté bien formada
-    const url = `${API_URL}/check-qr/${uuid}/`;
-    console.log('Intentando conectar a:', url);
-    
-    const response = await fetch(url, {
+    console.log('Intentando conexión a:', `${API_URL}/check-qr/${uuid}/`);
+    const response = await fetch(`${API_URL}/check-qr/${uuid}/`, {
       method: 'GET',
       headers: {
         'Accept': 'application/json',
         'Content-Type': 'application/json',
-      }
+      },
+      credentials: 'include'
     });
     
     if (!response.ok) {
-      const errorText = await response.text();
-      console.error('Error del servidor:', {
-        status: response.status,
-        statusText: response.statusText,
-        errorText
-      });
       throw new Error(`Error ${response.status}: ${response.statusText}`);
     }
     
