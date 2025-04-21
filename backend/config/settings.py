@@ -200,16 +200,17 @@ REACT_APP_API_URL = config('API_URL', default='http://localhost:8000/api')
 
 CORS_ALLOWED_ORIGINS = [
     "https://collarmascotar.onrender.com",
+    
     "http://localhost:3000",
     "https://collarmascotar.vercel.app",
     "http://localhost:8000",
     "https://api.whatsapp.com",
     "https://web.whatsapp.com",
-    "https://wa.me",
-    "http://localhost:5173"
+    "https://wa.me"
+    
 ]
 
-CORS_ALLOW_CREDENTIALS = True
+#CORS_ALLOW_CREDENTIALS = True
 
 API_URL=config('API_URL')
 FRONTEND_URL=config('FRONTEND_URL')
