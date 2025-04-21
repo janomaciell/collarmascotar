@@ -13,6 +13,11 @@ const QRRegistrationPage = () => {
   const [isAuthenticated, setIsAuthenticated] = useState(!!localStorage.getItem('token'));
 
   useEffect(() => {
+    const token = localStorage.getItem('token');
+    setIsAuthenticated(!!token);
+  }, []);
+
+  useEffect(() => {
     const verifyQR = async () => {
       try {
         setIsLoading(true);
@@ -40,6 +45,16 @@ const QRRegistrationPage = () => {
   const handlePetSubmission = async (petData) => {
     try {
       setError('');
+      
+      // Verificar autenticación primero
+      if (!isAuthenticated) {
+        // Guardar datos del formulario y redireccionar a login
+        sessionStorage.setItem('pending_pet_data', JSON.stringify(petData));
+        sessionStorage.setItem('pending_qr_uuid', uuid);
+        navigate('/login', { state: { from: `/register-pet/${uuid}` } });
+        return;
+      }
+
       const formData = new FormData();
 
       console.log('Datos recibidos en handlePetSubmission:', petData);
@@ -68,15 +83,31 @@ const QRRegistrationPage = () => {
       }
 
       const response = await registerPetToQR(uuid, formData);
-      if (response.require_auth) {
-        sessionStorage.setItem('pending_pet_data', JSON.stringify(petData));
-        sessionStorage.setItem('pending_qr_uuid', uuid);
-        navigate('/login', { state: { from: `/register-pet/${uuid}` } });
-      } else {
-        navigate('/dashboard', { state: { successMessage: 'Mascota registrada exitosamente.' } });
-      }
+      
+      // Si la respuesta es exitosa, redirigir al dashboard
+      navigate('/dashboard', { 
+        state: { successMessage: 'Mascota registrada exitosamente.' } 
+      });
+
     } catch (err) {
       console.error('Error completo:', err);
+      
+      // Si el error es de autenticación a pesar de tener token
+      if (err.response?.status === 401) {
+        // El token podría estar expirado - limpiar y redirigir a login
+        localStorage.removeItem('token');
+        setIsAuthenticated(false);
+        sessionStorage.setItem('pending_pet_data', JSON.stringify(petData));
+        sessionStorage.setItem('pending_qr_uuid', uuid);
+        navigate('/login', { 
+          state: { 
+            from: `/register-pet/${uuid}`,
+            message: 'Su sesión ha expirado. Por favor, inicie sesión nuevamente.'
+          } 
+        });
+        return;
+      }
+
       setError('Error al registrar la mascota: ' + (err.message || 'Intente nuevamente.'));
     }
   };
