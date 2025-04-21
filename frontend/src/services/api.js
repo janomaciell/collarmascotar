@@ -24,6 +24,8 @@ export const getAuthHeaders = () => {
 export const register = async (userData) => {
   try {
     const response = await axios.post(`${API_URL}/register/`, userData);
+    const url = `${API_URL}/register/`;
+    console.log('Register URL:', url); // Debug the URL
     return response.data;
   } catch (error) {
     throw error.response?.data || error.message;
@@ -33,6 +35,8 @@ export const register = async (userData) => {
 export const login = async (credentials) => {
   try {
     const response = await axios.post(`${API_URL}/login/`, credentials);
+    const url = `${API_URL}/login/`;
+    console.log('Login URL:', url); // Debug the URL
     localStorage.setItem('token', response.data.token);
     return response.data;
   } catch (error) {
