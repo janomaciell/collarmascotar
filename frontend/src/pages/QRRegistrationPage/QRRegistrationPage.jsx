@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import PetForm from '../../components/PetForm/PetForm';
-import { checkQRStatus, registerPetToQR, completePendingRegistration } from '../../services/api';
+import { checkQRStatus, registerPetToQR, completePendingRegistration, validateToken } from '../../services/api';
 import './QRRegistrationPage.css';
 
 const QRRegistrationPage = () => {
@@ -14,13 +14,23 @@ const QRRegistrationPage = () => {
 
   // Actualizar isAuthenticated dinámicamente
   useEffect(() => {
-    const checkAuth = () => {
+    const checkAuth = async () => {
       const token = localStorage.getItem('token');
-      console.log('Verificando autenticación, token:', token); // Depuración
-      setIsAuthenticated(!!token);
+      console.log('Verificando autenticación, token:', token);
+      if (token) {
+        try {
+          await validateToken();
+          setIsAuthenticated(true);
+        } catch (err) {
+          console.log('Token inválido, limpiando sesión');
+          localStorage.removeItem('token');
+          setIsAuthenticated(false);
+        }
+      } else {
+        setIsAuthenticated(false);
+      }
     };
     checkAuth();
-    // Escuchar cambios en localStorage
     window.addEventListener('storage', checkAuth);
     return () => window.removeEventListener('storage', checkAuth);
   }, []);
@@ -30,7 +40,7 @@ const QRRegistrationPage = () => {
       try {
         setIsLoading(true);
         const response = await checkQRStatus(uuid);
-        console.log('Estado del QR:', response); // Depuración
+        console.log('Estado del QR:', response);
         setQRStatus(response);
         if (response.is_assigned) {
           setError('Este QR ya está asignado a una mascota.');
@@ -54,14 +64,30 @@ const QRRegistrationPage = () => {
   const handlePetSubmission = async (petData) => {
     try {
       setError('');
-      console.log('Datos recibidos en handlePetSubmission:', petData); // Depuración
+      console.log('Datos recibidos en handlePetSubmission:', petData);
 
-      // Verificar autenticación
+      // Verificar autenticación y validez del token
       if (!isAuthenticated) {
-        console.log('Usuario no autenticado, redirigiendo a login'); // Depuración
+        console.log('Usuario no autenticado, redirigiendo a login');
         sessionStorage.setItem('pending_pet_data', JSON.stringify(petData));
         sessionStorage.setItem('pending_qr_uuid', uuid);
         navigate('/login', { state: { from: `/register-pet/${uuid}` } });
+        return;
+      }
+
+      // Validar token antes de enviar la solicitud
+      try {
+        await validateToken();
+      } catch (err) {
+        console.log('Token inválido, redirigiendo a login');
+        sessionStorage.setItem('pending_pet_data', JSON.stringify(petData));
+        sessionStorage.setItem('pending_qr_uuid', uuid);
+        navigate('/login', { 
+          state: { 
+            from: `/register-pet/${uuid}`,
+            message: 'Su sesión no es válida. Por favor, inicie sesión nuevamente.'
+          } 
+        });
         return;
       }
 
@@ -86,31 +112,35 @@ const QRRegistrationPage = () => {
       });
 
       for (let pair of formData.entries()) {
-        console.log('FormData contiene:', pair[0], pair[1]); // Depuración
+        console.log('FormData contiene:', pair[0], pair[1]);
       }
 
       const response = await registerPetToQR(uuid, formData);
-      console.log('Respuesta de registerPetToQR:', response); // Depuración
+      console.log('Respuesta de registerPetToQR:', response);
 
-      // Redirigir al dashboard
       navigate('/dashboard', { 
         state: { successMessage: 'Mascota registrada exitosamente.' } 
       });
     } catch (err) {
       console.error('Error completo:', err);
       if (err.message.includes('Authentication required') || err.response?.status === 401) {
-        console.log('Error 401 detectado, limpiando token y redirigiendo'); // Depuración
-        localStorage.removeItem('token');
-        setIsAuthenticated(false);
-        sessionStorage.setItem('pending_pet_data', JSON.stringify(petData));
-        sessionStorage.setItem('pending_qr_uuid', uuid);
-        navigate('/login', { 
-          state: { 
-            from: `/register-pet/${uuid}`,
-            message: 'Su sesión ha expirado. Por favor, inicie sesión nuevamente.'
-          } 
-        });
-        return;
+        console.log('Error 401 detectado, validando token');
+        try {
+          await validateToken();
+        } catch (tokenErr) {
+          console.log('Token inválido, redirigiendo a login');
+          localStorage.removeItem('token');
+          setIsAuthenticated(false);
+          sessionStorage.setItem('pending_pet_data', JSON.stringify(petData));
+          sessionStorage.setItem('pending_qr_uuid', uuid);
+          navigate('/login', { 
+            state: { 
+              from: `/register-pet/${uuid}`,
+              message: 'Su sesión ha expirado o no es válida. Por favor, inicie sesión nuevamente.'
+            } 
+          });
+          return;
+        }
       }
       setError('Error al registrar la mascota: ' + (err.message || 'Intente nuevamente.'));
     }
@@ -120,7 +150,7 @@ const QRRegistrationPage = () => {
     try {
       const pendingData = JSON.parse(sessionStorage.getItem('pending_pet_data'));
       const pendingQR = sessionStorage.getItem('pending_qr_uuid');
-      console.log('Completando registro pendiente:', { pendingData, pendingQR }); // Depuración
+      console.log('Completando registro pendiente:', { pendingData, pendingQR });
       if (!pendingData || !pendingQR) {
         setError('No hay datos pendientes para registrar.');
         return;
@@ -134,7 +164,7 @@ const QRRegistrationPage = () => {
       });
 
       const response = await completePendingRegistration(formData, pendingQR);
-      console.log('Respuesta de completePendingRegistration:', response); // Depuración
+      console.log('Respuesta de completePendingRegistration:', response);
       sessionStorage.removeItem('pending_pet_data');
       sessionStorage.removeItem('pending_qr_uuid');
       navigate('/dashboard', { state: { successMessage: 'Registro completado exitosamente.' } });

@@ -21,10 +21,27 @@ export const getAuthHeaders = () => {
   };
 };
 
+// Nueva función para validar el token
+export const validateToken = async () => {
+  try {
+    const token = localStorage.getItem('token');
+    if (!token) {
+      throw new Error('No se encontró un token de autenticación');
+    }
+    // Usar un endpoint que valide el token, por ejemplo, obtener datos del usuario
+    const response = await axios.get(`${API_URL}/user/points/`);
+    console.log('Token validado correctamente:', response.data);
+    return response.data;
+  } catch (error) {
+    console.error('Error al validar token:', error.response?.data || error.message);
+    throw new Error('Token inválido o expirado');
+  }
+};
+
 export const register = async (userData) => {
   try {
     const response = await axios.post(`${API_URL}/register/`, userData);
-    console.log('Register URL:', `${API_URL}/register/`); // Debug
+    console.log('Register URL:', `${API_URL}/register/`);
     return response.data;
   } catch (error) {
     throw error.response?.data || error.message;
@@ -34,9 +51,9 @@ export const register = async (userData) => {
 export const login = async (credentials) => {
   try {
     const response = await axios.post(`${API_URL}/login/`, credentials);
-    console.log('Login URL:', `${API_URL}/login/`); // Debug
+    console.log('Login URL:', `${API_URL}/login/`);
     localStorage.setItem('token', response.data.token);
-    console.log('Token guardado:', response.data.token); // Debug
+    console.log('Token guardado:', response.data.token);
     return response.data;
   } catch (error) {
     throw error.response?.data || error.message;
@@ -186,7 +203,7 @@ export const getReward = async (petId) => {
 export const checkQRStatus = async (uuid) => {
   try {
     const url = `${API_URL}/check-qr/${uuid}/`;
-    console.log('Conectando a:', url); // Debug
+    console.log('Conectando a:', url);
     const response = await fetch(url, {
       method: 'GET',
       headers: {
@@ -209,7 +226,7 @@ export const checkQRStatus = async (uuid) => {
 export const registerPetToQR = async (uuid, petData) => {
   try {
     const token = localStorage.getItem('token');
-    console.log('Token enviado en registerPetToQR:', token); // Depuración
+    console.log('Token enviado en registerPetToQR:', token);
     if (!token) {
       throw new Error('No se encontró un token de autenticación. Por favor, inicia sesión.');
     }
@@ -236,20 +253,27 @@ export const registerPetToQR = async (uuid, petData) => {
 export const completePendingRegistration = async (petData, qrUuid) => {
   try {
     const token = localStorage.getItem('token');
-    console.log('Token enviado en completePendingRegistration:', token); // Depuración
+    console.log('Token enviado en completePendingRegistration:', token);
     if (!token) {
       throw new Error('No se encontró un token de autenticación. Por favor, inicia sesión.');
     }
-    const response = await axios.post(`${API_URL}/complete-registration/`, petData, {
+    const response = await fetch(`${API_URL}/complete-registration/`, {
+      method: 'POST',
       headers: {
         Authorization: `Token ${token}`,
         // No establecer Content-Type para FormData
       },
+      body: petData,
     });
-    return response.data;
+    const data = await response.json();
+    if (!response.ok) {
+      console.error('Error de la API:', data);
+      throw new Error(JSON.stringify(data, null, 2) || 'Error al completar el registro');
+    }
+    return data;
   } catch (error) {
     console.error('Error en completePendingRegistration:', error);
-    throw new Error(error.response?.data?.error || 'Error al completar el registro');
+    throw error;
   }
 };
 
