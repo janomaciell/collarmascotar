@@ -121,15 +121,29 @@ class PetViewSet(viewsets.ModelViewSet):
 @api_view(['GET'])
 @permission_classes([AllowAny])
 def get_pet_by_uuid(request, uuid):
+    """
+    Obtiene los datos de una mascota por su UUID
+    """
     try:
-        pet = get_object_or_404(Pet, qr_uuid=uuid)
+        # Intentar obtener la mascota por UUID
+        pet = Pet.objects.get(qr_uuid=uuid)
+        
+        # Serializar los datos
         serializer = PetSerializer(pet)
-        return Response(serializer.data)
+        return Response({
+            'status': 'success',
+            'data': serializer.data
+        })
     except Pet.DoesNotExist:
-        return Response(
-            {"error": "QR no válido o no encontrado"},
-            status=status.HTTP_404_NOT_FOUND
-        )
+        return Response({
+            'status': 'error',
+            'message': 'Mascota no encontrada'
+        }, status=status.HTTP_404_NOT_FOUND)
+    except Exception as e:
+        return Response({
+            'status': 'error',
+            'message': str(e)
+        }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 @api_view(['POST'])
 @permission_classes([permissions.AllowAny])
@@ -887,8 +901,8 @@ def register_pet_to_qr(request, uuid):
             
             # Transfer the QR code file from PreGeneratedQR to Pet
             if qr.qr_code:
+                print("se guardo en pet")
                 pet.qr_code = qr.qr_code
-                pet.qr_code.name = f"pet_qr_{pet.id}.png"  # Rename the file to avoid conflicts                
                 pet.save()
             
             # Update QR status

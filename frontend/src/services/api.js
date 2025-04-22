@@ -21,25 +21,27 @@ export const getAuthHeaders = () => {
   };
 };
 
-export const register = async (userData) => {
+export const login = async (credentials) => {
   try {
-    const response = await axios.post(`${API_URL}/register/`, userData);
-    const url = `${API_URL}/register/`;
-    console.log('Register URL:', url); // Debug the URL
+    const url = `${API_URL}/login/`;
+    console.log('Login URL:', url); // Debug the URL
+    const response = await axios.post(url, credentials);
+    localStorage.setItem('token', response.data.token);
     return response.data;
   } catch (error) {
+    console.error('Login error:', error.response?.data || error.message);
     throw error.response?.data || error.message;
   }
 };
 
-export const login = async (credentials) => {
+export const register = async (userData) => {
   try {
-    const response = await axios.post(`${API_URL}/login/`, credentials);
-    const url = `${API_URL}/login/`;
-    console.log('Login URL:', url); // Debug the URL
-    localStorage.setItem('token', response.data.token);
+    const url = `${API_URL}/register/`;
+    console.log('Register URL:', url); // Debug the URL
+    const response = await axios.post(url, userData);
     return response.data;
   } catch (error) {
+    console.error('Register error:', error.response?.data || error.message);
     throw error.response?.data || error.message;
   }
 };
@@ -69,28 +71,21 @@ export const createPet = async (petData) => {
 export const getPetByUuid = async (uuid) => {
   try {
     console.log(`Attempting to fetch pet with UUID: ${uuid}`);
-    const response = await fetch(`${API_URL}/pets/${uuid}/`);
+    // Usamos la misma ruta que devuelve qr_redirect
+    const response = await axios.get(`${API_URL}/qr/${uuid}/`);
     
-    console.log(`Response status: ${response.status}`);
-    
-    if (response.status === 401) {
-      console.error("Authentication required - this endpoint requires login");
-      throw new Error('Se requiere autenticación para ver esta mascota');
-    }
-    
-    if (!response.ok) {
-      console.error(`Error response: ${response.status}`);
+    if (response.data.status === 'assigned' && response.data.pet_data) {
+      console.log("Pet data retrieved successfully:", response.data.pet_data);
+      return response.data.pet_data;
+    } else {
       throw new Error('QR no válido o no encontrado');
     }
-    
-    const data = await response.json();
-    console.log("Pet data retrieved successfully:", data);
-    return data;
   } catch (error) {
     console.error('Error fetching pet data:', error);
-    throw error;
+    throw new Error(error.response?.data?.message || 'Error al obtener datos de la mascota');
   }
 };
+
 
 export const getScanHistory = async (petId) => {
   try {

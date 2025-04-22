@@ -11,7 +11,7 @@ urlpatterns = [
     path('', include(router.urls)),
     path('login/', views.CustomAuthToken.as_view(), name='login'),
     path('pets/<uuid:uuid>/scan/', views.record_scan, name='record-scan'),
-    path('pets/<uuid:uuid>/', views.get_pet_by_uuid, name='get-pet-by-uuid'),
+    #path('pets/<uuid:uuid>/', views.get_pet_by_uuid, name='get_pet_by_uuid'),    
     path('pets/<int:pet_id>/scans/', views.get_scan_history, name='scan-history'),
     path('register/', views.RegisterUserView.as_view(), name='register'),
     path('device/register/', views.register_device, name='register-device'),
@@ -26,5 +26,5 @@ urlpatterns = [
     path('register-pet-to-qr/<uuid:uuid>/', views.register_pet_to_qr ,name='register-pet-to-qr'),
     path('complete-registration/', views.complete_pending_registration ,name='complete-registration'),
     path('qr/<uuid:uuid>/', views.qr_redirect, name='qr-redirect'),
-
+    path('pets/uuid/<str:uuid>/', views.get_pet_by_uuid, name='get-pet-by-uuid'),
 ]
