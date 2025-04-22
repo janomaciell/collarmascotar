@@ -2,7 +2,6 @@ import axios from 'axios';
 
 export const API_URL = import.meta.env.VITE_API_URL.replace(/\/+$/, '');
 
-
 axios.interceptors.request.use(
   (config) => {
     const token = localStorage.getItem('token');
@@ -13,6 +12,7 @@ axios.interceptors.request.use(
   },
   (error) => Promise.reject(error)
 );
+
 export const getAuthHeaders = () => {
   const token = localStorage.getItem('token');
   return {
@@ -24,8 +24,7 @@ export const getAuthHeaders = () => {
 export const register = async (userData) => {
   try {
     const response = await axios.post(`${API_URL}/register/`, userData);
-    const url = `${API_URL}/register/`;
-    console.log('Register URL:', url); // Debug the URL
+    console.log('Register URL:', `${API_URL}/register/`); // Debug
     return response.data;
   } catch (error) {
     throw error.response?.data || error.message;
@@ -35,9 +34,9 @@ export const register = async (userData) => {
 export const login = async (credentials) => {
   try {
     const response = await axios.post(`${API_URL}/login/`, credentials);
-    const url = `${API_URL}/login/`;
-    console.log('Login URL:', url); // Debug the URL
+    console.log('Login URL:', `${API_URL}/login/`); // Debug
     localStorage.setItem('token', response.data.token);
+    console.log('Token guardado:', response.data.token); // Debug
     return response.data;
   } catch (error) {
     throw error.response?.data || error.message;
@@ -68,23 +67,17 @@ export const createPet = async (petData) => {
 
 export const getPetByUuid = async (uuid) => {
   try {
-    console.log(`Attempting to fetch pet with UUID: ${uuid}`);
+    console.log(`Fetching pet with UUID: ${uuid}`);
     const response = await fetch(`${API_URL}/pets/${uuid}/`);
-    
     console.log(`Response status: ${response.status}`);
-    
     if (response.status === 401) {
-      console.error("Authentication required - this endpoint requires login");
       throw new Error('Se requiere autenticación para ver esta mascota');
     }
-    
     if (!response.ok) {
-      console.error(`Error response: ${response.status}`);
       throw new Error('QR no válido o no encontrado');
     }
-    
     const data = await response.json();
-    console.log("Pet data retrieved successfully:", data);
+    console.log('Pet data retrieved:', data);
     return data;
   } catch (error) {
     console.error('Error fetching pet data:', error);
@@ -154,7 +147,6 @@ export const getUserPoints = async () => {
   }
 };
 
-// Nuevas funciones para las rutas faltantes
 export const updateUserLocation = async (locationData) => {
   try {
     const response = await axios.post(`${API_URL}/location/update/`, locationData);
@@ -169,7 +161,7 @@ export const generateLostPoster = async (petId, posterData) => {
     method: 'POST',
     headers: {
       'Authorization': `Token ${localStorage.getItem('token')}`,
-      'Content-Type': 'application/json',  // Ajustado para JSON
+      'Content-Type': 'application/json',
     },
     body: JSON.stringify(posterData),
   });
@@ -193,10 +185,8 @@ export const getReward = async (petId) => {
 
 export const checkQRStatus = async (uuid) => {
   try {
-    // Asegurarse que la URL esté bien formada
     const url = `${API_URL}/check-qr/${uuid}/`;
-    console.log('Intentando conectar a:', url);
-    
+    console.log('Conectando a:', url); // Debug
     const response = await fetch(url, {
       method: 'GET',
       headers: {
@@ -204,17 +194,11 @@ export const checkQRStatus = async (uuid) => {
         'Content-Type': 'application/json',
       }
     });
-    
     if (!response.ok) {
       const errorText = await response.text();
-      console.error('Error del servidor:', {
-        status: response.status,
-        statusText: response.statusText,
-        errorText
-      });
+      console.error('Error del servidor:', { status: response.status, errorText });
       throw new Error(`Error ${response.status}: ${response.statusText}`);
     }
-    
     return await response.json();
   } catch (error) {
     console.error('Error en checkQRStatus:', error);
@@ -224,40 +208,51 @@ export const checkQRStatus = async (uuid) => {
 
 export const registerPetToQR = async (uuid, petData) => {
   try {
+    const token = localStorage.getItem('token');
+    console.log('Token enviado en registerPetToQR:', token); // Depuración
+    if (!token) {
+      throw new Error('No se encontró un token de autenticación. Por favor, inicia sesión.');
+    }
     const response = await fetch(`${API_URL}/register-pet-to-qr/${uuid}/`, {
       method: 'POST',
       headers: {
-        Authorization: `Token ${localStorage.getItem('token')}`,
-        // No establecer Content-Type, dejar que el navegador lo maneje para FormData
+        Authorization: `Token ${token}`,
+        // No establecer Content-Type para FormData
       },
       body: petData,
     });
-
     const data = await response.json();
-
     if (!response.ok) {
       console.error('Error de la API:', data);
       throw new Error(JSON.stringify(data, null, 2) || 'Error al registrar mascota');
     }
-
     return data;
   } catch (error) {
-    console.error('Error completo:', error);
+    console.error('Error completo en registerPetToQR:', error);
     throw error;
   }
 };
 
 export const completePendingRegistration = async (petData, qrUuid) => {
   try {
-    const response = await axios.post(`${API_URL}/complete-registration/`, {
-      ...petData,
-      qr_uuid: qrUuid
+    const token = localStorage.getItem('token');
+    console.log('Token enviado en completePendingRegistration:', token); // Depuración
+    if (!token) {
+      throw new Error('No se encontró un token de autenticación. Por favor, inicia sesión.');
+    }
+    const response = await axios.post(`${API_URL}/complete-registration/`, petData, {
+      headers: {
+        Authorization: `Token ${token}`,
+        // No establecer Content-Type para FormData
+      },
     });
     return response.data;
   } catch (error) {
+    console.error('Error en completePendingRegistration:', error);
     throw new Error(error.response?.data?.error || 'Error al completar el registro');
   }
 };
+
 export const generateBatchQRs = async (data) => {
   try {
     const response = await axios.post(`${API_URL}/pre-generated-qrs/generate_batch/`, data);
@@ -266,6 +261,7 @@ export const generateBatchQRs = async (data) => {
     throw error.response?.data || error.message;
   }
 };
+
 export const getQRRedirectInfo = async (uuid) => {
   try {
     const response = await axios.get(`${API_URL}/qr/${uuid}/`);
