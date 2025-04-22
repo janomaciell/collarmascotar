@@ -1,9 +1,8 @@
 from rest_framework import viewsets, permissions, generics, status
-from rest_framework.permissions import IsAuthenticated, AllowAny
+from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
-from rest_framework.decorators import api_view, permission_classes, action, authentication_classes
+from rest_framework.decorators import api_view, permission_classes, action
 from django.shortcuts import get_object_or_404
-from rest_framework.authentication import TokenAuthentication
 from .models import *
 from .serializers import *
 from django.contrib.auth.models import User
@@ -43,16 +42,10 @@ class CustomAuthToken(ObtainAuthToken):
 
 class PetViewSet(viewsets.ModelViewSet):
     serializer_class = PetSerializer
-    authentication_classes = [TokenAuthentication]
-    queryset = Pet.objects.all()  # Añadir esta línea
+    permission_classes = [permissions.IsAuthenticated]
     
     def get_queryset(self):
-        """
-        Sobrescribe el queryset base para filtrar por usuario autenticado
-        """
-        if self.request.user.is_authenticated:
-            return Pet.objects.filter(owner=self.request.user)
-        return Pet.objects.none()  # No mostrar mascotas si no está autenticado
+        return Pet.objects.filter(owner=self.request.user)
     
     def create(self, request, *args, **kwargs):
         # Verificar si ya existe una mascota con el mismo nombre para este usuario
@@ -124,29 +117,11 @@ class PetViewSet(viewsets.ModelViewSet):
         
         pet.save()
         return Response(self.get_serializer(pet).data)
-    def get_permissions(self):
-        # Si es una petición retrieve (GET /api/pets/<uuid>/)
-        if self.action == 'retrieve':
-            pet_uuid = self.kwargs.get('pk')
-            try:
-                pet = Pet.objects.get(qr_uuid=pet_uuid)
-                # Si la mascota no está perdida, permitir el acceso sin autenticación
-                if not pet.is_lost:
-                    return [AllowAny()]
-            except Pet.DoesNotExist:
-                pass
-        return [IsAuthenticated()]
 
 @api_view(['GET'])
 @permission_classes([AllowAny])
-@authentication_classes([])  # Explicitly disable authentication for this endpoint
 def get_pet_by_uuid(request, uuid):
     try:
-        # Print debug info
-        print(f"Accessing pet with UUID: {uuid}")
-        print(f"Permission classes: {[p.__name__ for p in get_pet_by_uuid.permission_classes]}")
-        print(f"Authentication classes: {[a.__name__ for a in get_pet_by_uuid.authentication_classes]}")
-        
         pet = get_object_or_404(Pet, qr_uuid=uuid)
         serializer = PetSerializer(pet)
         return Response(serializer.data)
@@ -158,7 +133,6 @@ def get_pet_by_uuid(request, uuid):
 
 @api_view(['POST'])
 @permission_classes([permissions.AllowAny])
-@authentication_classes([])  # Explicitly disable authentication
 def record_scan(request, uuid):
     pet = get_object_or_404(Pet, qr_uuid=uuid)
     latitude = request.data.get('latitude')
@@ -216,7 +190,6 @@ def record_scan(request, uuid):
 
 @api_view(['GET'])
 @permission_classes([permissions.IsAuthenticated])
-@authentication_classes([TokenAuthentication])
 def get_scan_history(request, pet_id):
     pet = get_object_or_404(Pet, id=pet_id, owner=request.user)
     scans = pet.scans.all()
@@ -238,7 +211,6 @@ class RegisterUserView(generics.CreateAPIView):
 
 @api_view(['POST'])
 @permission_classes([permissions.IsAuthenticated])
-@authentication_classes([TokenAuthentication])
 def register_device(request):
     try:
         serializer = DeviceRegistrationSerializer(data=request.data)
@@ -260,7 +232,6 @@ def register_device(request):
 
 @api_view(['POST'])
 @permission_classes([permissions.IsAuthenticated])
-@authentication_classes([TokenAuthentication])
 def update_user_location(request):
     latitude = request.data.get('latitude')
     longitude = request.data.get('longitude')
@@ -294,7 +265,6 @@ def update_user_location(request):
 
 @api_view(['GET'])
 @permission_classes([permissions.IsAuthenticated])
-@authentication_classes([TokenAuthentication])
 def notification_status(request):
     try:
         devices = DeviceRegistration.objects.filter(user=request.user)
@@ -315,7 +285,6 @@ def notification_status(request):
 
 @api_view(['POST'])
 @permission_classes([permissions.IsAuthenticated])
-@authentication_classes([TokenAuthentication])
 def generate_lost_poster(request, pet_id):
     pet = get_object_or_404(Pet, id=pet_id, owner=request.user)
     
@@ -384,7 +353,6 @@ def view_shared_poster(request, poster_id):
 
 @api_view(['POST'])
 @permission_classes([permissions.AllowAny])
-@authentication_classes([])
 def send_community_notification(request):
     pet_uuid = request.data.get('petId')
     scanner_location = request.data.get('scannerLocation')
@@ -430,7 +398,6 @@ def send_community_notification(request):
 
 class LostPetView(APIView):
     permission_classes = [permissions.IsAuthenticated]
-    authentication_classes = [TokenAuthentication]
 
     def post(self, request, *args, **kwargs):
         print("Solicitud POST recibida en LostPetView")  # Depuración
@@ -707,7 +674,6 @@ def send_fcm_notification(tokens, title, body, data=None):
     
 @api_view(['GET', 'PUT'])
 @permission_classes([permissions.IsAuthenticated])
-@authentication_classes([TokenAuthentication])
 def get_user_profile(request):
     if request.method == 'GET':
         serializer = UserSerializer(request.user)
@@ -803,7 +769,6 @@ class PreGeneratedQRViewSet(viewsets.ModelViewSet):
     serializer_class = PreGeneratedQRSerializer
     # Solo el administrador debería poder gestionar estos QRs
     permission_classes = [permissions.IsAdminUser]
-    authentication_classes = [TokenAuthentication]
     
     def get_queryset(self):
         return PreGeneratedQR.objects.all()
@@ -815,7 +780,7 @@ class PreGeneratedQRViewSet(viewsets.ModelViewSet):
         """
         try:
             quantity = int(request.data.get('quantity', 1))
-            if (quantity < 1 or quantity > 100):
+            if quantity < 1 or quantity > 100:
                 return Response(
                     {"error": "La cantidad debe estar entre 1 y 100"},
                     status=status.HTTP_400_BAD_REQUEST
@@ -838,7 +803,6 @@ class PreGeneratedQRViewSet(viewsets.ModelViewSet):
             )
 @api_view(['GET'])
 @permission_classes([AllowAny])
-@authentication_classes([])
 def check_qr_status(request, uuid):
     """
     Verifica si un QR pre-generado está asignado o no
@@ -894,7 +858,6 @@ def check_qr_status(request, uuid):
         )
 @api_view(['POST'])
 @permission_classes([AllowAny])
-@authentication_classes([])
 def register_pet_to_qr(request, uuid):
     try:
         # Verify QR exists and isn't assigned
@@ -925,6 +888,7 @@ def register_pet_to_qr(request, uuid):
             # Transfer the QR code file from PreGeneratedQR to Pet
             if qr.qr_code:
                 pet.qr_code = qr.qr_code
+                pet.qr_code.name = f"pet_qr_{pet.id}.png"  # Rename the file to avoid conflicts                
                 pet.save()
             
             # Update QR status
@@ -956,7 +920,6 @@ def register_pet_to_qr(request, uuid):
 
 @api_view(['POST'])
 @permission_classes([permissions.IsAuthenticated])
-@authentication_classes([TokenAuthentication])
 def complete_pending_registration(request):
     try:
         pending_data = request.session.get('pending_pet_data')
@@ -1009,7 +972,6 @@ def complete_pending_registration(request):
         
 @api_view(['GET'])
 @permission_classes([AllowAny])
-@authentication_classes([])
 def qr_redirect(request, uuid):
     """
     Determina a dónde redirigir según el estado del QR.
@@ -1050,19 +1012,3 @@ def qr_redirect(request, uuid):
             "error": f"Error al procesar el QR: {str(e)}",
             "redirect_to": "/error"
         }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-
-@api_view(['GET'])
-@permission_classes([AllowAny])
-def pet_detail(request, uuid):
-    """
-    Vista para obtener los detalles de una mascota por su UUID
-    """
-    try:
-        pet = Pet.objects.get(qr_uuid=uuid)
-        serializer = PetSerializer(pet)
-        return Response(serializer.data)
-    except Pet.DoesNotExist:
-        return Response(
-            {"error": "Mascota no encontrada"},
-            status=status.HTTP_404_NOT_FOUND
-        )
