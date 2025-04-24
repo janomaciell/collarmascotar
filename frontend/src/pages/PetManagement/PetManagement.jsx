@@ -161,7 +161,6 @@ const PetManagement = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState('');
   const [successMessage, setSuccessMessage] = useState('');
-  const [showForm, setShowForm] = useState(false);
   const [selectedPetId, setSelectedPetId] = useState(null);
   const [scanHistory, setScanHistory] = useState([]);
   const [userLocation, setUserLocation] = useState(null);
@@ -280,7 +279,6 @@ const PetManagement = () => {
 
       const newPet = await createPet(petData);
       setPets([...pets, newPet]);
-      setShowForm(false);
       setSuccessMessage('Mascota creada exitosamente');
       setTimeout(() => setSuccessMessage(''), 3000);
     } catch (err) {
@@ -492,12 +490,6 @@ const PetManagement = () => {
             </div>
           </div>
         )}
-
-        <button className="add-pet-button" onClick={() => setShowForm(!showForm)}>
-          {showForm ? 'Cancelar' : 'Añadir Nueva Mascota'}
-        </button>
-
-        {showForm && <PetForm onSubmit={handleCreatePet} />}
 
         {isLoading ? (
           <div className="loading-message">

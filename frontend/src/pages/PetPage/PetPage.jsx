@@ -5,15 +5,28 @@ import './PetPage.css';
 
 const BASE_URL = import.meta.env.VITE_BASE_URL;
 
+// Nuevo componente PetIntro
+const PetIntro = ({ name, isLost }) => (
+  <>
+    <p className="intro-text">
+      {isLost
+        ? 'Me he perdido y necesito tu ayuda para volver con mi familia. ¡Gracias por escanear mi collar!'
+        : 'Gracias por escanear mi collar. Aquí tienes toda mi información para que me conozcas mejor.'}
+    </p>
+  </>
+);
+
 const PetPage = () => {
   const { uuid } = useParams();
   const navigate = useNavigate();
   const [pet, setPet] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState('');
+  const [locationError, setLocationError] = useState('');
+  const [locationRequested, setLocationRequested] = useState(false);
 
   useEffect(() => {
-    const fetchPetAndNotify = async () => {
+    const fetchPetData = async () => {
       try {
         setIsLoading(true);
 
@@ -27,42 +40,50 @@ const PetPage = () => {
         // Obtener datos de la mascota
         const petData = await getPetByUuid(uuid);
         setPet(petData);
-
-        // Notificar al dueño y a la comunidad si hay geolocalización
-        if (navigator.geolocation) {
-          navigator.geolocation.getCurrentPosition(
-            async (position) => {
-              const location = {
-                latitude: position.coords.latitude,
-                longitude: position.coords.longitude,
-              };
-              try {
-                await notifyOwner(uuid, location);
-                await sendCommunityNotification(uuid, location, 50);
-              } catch (notificationError) {
-                console.error('Error en notificaciones:', notificationError);
-                setError('Mascota encontrada, pero no se pudo enviar notificaciones.');
-              }
-            },
-            (geoError) => {
-              console.error('Geolocalización denegada:', geoError);
-              setError('No se pudo obtener la ubicación para enviar notificaciones.');
-            },
-            { enableHighAccuracy: true, timeout: 5000 }
-          );
-        } else {
-          setError('Geolocalización no soportada por el navegador.');
-        }
+        setIsLoading(false);
+        
+        // No solicitamos geolocalización automáticamente
+        // Lo haremos mediante un botón explícito
       } catch (err) {
-        console.error('Error en el proceso:', err);
+        console.error('Error al obtener datos de la mascota:', err);
         setError('No se pudo obtener la información de la mascota. Por favor, intenta de nuevo.');
-      } finally {
         setIsLoading(false);
       }
     };
 
-    fetchPetAndNotify();
+    fetchPetData();
   }, [uuid, navigate]);
+
+  // Función para solicitar geolocalización explícitamente
+  const requestLocation = () => {
+    setLocationRequested(true);
+    
+    if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(
+        async (position) => {
+          const location = {
+            latitude: position.coords.latitude,
+            longitude: position.coords.longitude,
+          };
+          try {
+            await notifyOwner(uuid, location);
+            await sendCommunityNotification(uuid, location, 50);
+            setLocationError('');
+          } catch (notificationError) {
+            console.error('Error en notificaciones:', notificationError);
+            setLocationError('No se pudieron enviar las notificaciones de ubicación.');
+          }
+        },
+        (geoError) => {
+          console.error('Geolocalización denegada:', geoError);
+          setLocationError('No se pudo obtener la ubicación para enviar notificaciones.');
+        },
+        { enableHighAccuracy: true, timeout: 5000 }
+      );
+    } else {
+      setLocationError('Geolocalización no soportada por el navegador.');
+    }
+  };
 
   if (isLoading) {
     return (
@@ -92,6 +113,32 @@ const PetPage = () => {
       </header>
 
       <main className="pet-profile" role="main">
+        {!locationRequested && (
+          <div className="location-request-banner">
+            <p>Ayúdanos a notificar al dueño de {pet.name} compartiendo tu ubicación.</p>
+            <button 
+              className="location-request-button" 
+              onClick={requestLocation}
+              aria-label="Compartir mi ubicación"
+            >
+              📍 Compartir mi ubicación
+            </button>
+          </div>
+        )}
+
+        {locationError && (
+          <div className="location-error-banner" role="status">
+            <p>{locationError}</p>
+            <button 
+              className="location-retry-button" 
+              onClick={requestLocation}
+              aria-label="Reintentar compartir ubicación"
+            >
+              Reintentar
+            </button>
+          </div>
+        )}
+
         {pet.is_lost && (
           <div className="lost-alert" role="alert">
             <h2>🚨 ¡{pet.name} está perdido! 🚨</h2>
@@ -105,14 +152,10 @@ const PetPage = () => {
               <img src={petPhotoUrl} alt={`Foto de ${pet.name}`} loading="lazy" />
             </div>
           )}
-          <h1 id="pet-name">¡Hola! Soy {pet.name}</h1>
-          <p className="intro-text">
-            {pet.is_lost
-              ? 'Me he perdido y necesito tu ayuda para volver con mi familia. ¡Gracias por escanear mi collar!'
-              : 'Gracias por escanear mi collar. Aquí tienes toda mi información para que me conozcas mejor.'}
-          </p>
+          <PetIntro name={pet.name} isLost={pet.is_lost} />
         </section>
 
+        {/* El resto del componente permanece igual */}
         <section className="pet-details" aria-label="Detalles de la mascota">
           <div className="detail-card" aria-labelledby="about-me">
             <h2 id="about-me">🐾 Sobre mí</h2>
@@ -198,6 +241,7 @@ const PetPage = () => {
           >
             📞 Llamar al dueño
           </a>
+          
           {pet.vet_phone && (
             <a
               href={`tel:${pet.vet_phone}`}
@@ -207,6 +251,7 @@ const PetPage = () => {
               🩺 Llamar al veterinario
             </a>
           )}
+          
           {pet.email && (
             <a
               href={`mailto:${pet.email}`}
@@ -216,6 +261,7 @@ const PetPage = () => {
               ✉️ Enviar email
             </a>
           )}
+          
           {pet.phone && (
             <a
               href={`https://wa.me/549${pet.phone.replace(/^0/, '').replace(/\D/g, '')}?text=${encodeURIComponent(
@@ -241,7 +287,6 @@ const PetPage = () => {
           </a>
         </section>
       </main>
-
     </div>
   );
 };
