@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { getPets, updateUserLocation, logout } from '../../services/api';
 import EditProfileModal from '../EditProfile/EditProfile';
@@ -9,7 +9,9 @@ const Profile = () => {
   const navigate = useNavigate();
   const [userData, setUserData] = useState(null);
   const [pets, setPets] = useState([]);
-  const [loading, setLoading] = useState(true);
+  const [isLoadingPets, setIsLoadingPets] = useState(true);
+  const [isLoadingUser, setIsLoadingUser] = useState(true);
+  const [loading, setLoading] = useState(true); // Agregar estado loading
   const [error, setError] = useState('');
   const [isModalOpen, setIsModalOpen] = useState(false);
 
@@ -20,35 +22,51 @@ const Profile = () => {
       return;
     }
 
-    const fetchData = async () => {
-      try {
-        await Promise.all([
-          fetchUserData(),
-          fetchPets(),
-          updateLocation(),
-        ]);
-      } catch (err) {
-        setError('Error al cargar los datos. Por favor, intenta de nuevo.');
-      } finally {
-        setLoading(false);
-      }
-    };
-
     fetchData();
   }, [navigate]);
 
   const fetchUserData = async () => {
-    const response = await fetch(`${API_URL}/users/me/`, {
-      headers: { Authorization: `Token ${localStorage.getItem('token')}` },
-    });
-    if (!response.ok) throw new Error('Error al cargar datos del usuario');
-    const data = await response.json();
-    setUserData(data);
+    try {
+      setIsLoadingUser(true);
+      const response = await fetch(`${API_URL}/users/me/`, {
+        headers: { 
+          Authorization: `Token ${localStorage.getItem('token')}`,
+          'Content-Type': 'application/json'
+        },
+      });
+      
+      if (!response.ok) {
+        throw new Error(`Error ${response.status}: ${response.statusText}`);
+      }
+      
+      const data = await response.json();
+      setUserData(data);
+      return data;
+    } catch (err) {
+      console.error('Error en fetchUserData:', err);
+      setError('Error al cargar datos del usuario');
+      setUserData(null);
+      return null;
+    } finally {
+      setIsLoadingUser(false);
+    }
   };
 
   const fetchPets = async () => {
-    const data = await getPets();
-    setPets(data);
+    try {
+      setIsLoadingPets(true);
+      const data = await getPets();
+      if (!data) throw new Error('No se recibieron datos de mascotas');
+      setPets(data);
+      return data;
+    } catch (err) {
+      console.error('Error en fetchPets:', err);
+      setError('Error al cargar mascotas');
+      setPets([]);
+      return [];
+    } finally {
+      setIsLoadingPets(false);
+    }
   };
 
   const updateLocation = async () => {
@@ -67,6 +85,47 @@ const Profile = () => {
     }
   };
 
+  const fetchData = async () => {
+    try {
+      setLoading(true);
+      setIsLoadingUser(true);
+      setIsLoadingPets(true);
+
+      // Ejecutar las peticiones en paralelo
+      const [userResponse, petsResponse] = await Promise.all([
+        fetch(`${API_URL}/users/me/`, {
+          headers: { Authorization: `Token ${localStorage.getItem('token')}` },
+        }),
+        getPets()
+      ]);
+
+      // Verificar y procesar respuesta del usuario
+      if (!userResponse.ok) {
+        throw new Error('Error al cargar datos del usuario');
+      }
+      const userData = await userResponse.json();
+      setUserData(userData);
+      
+      // Procesar respuesta de mascotas
+      setPets(petsResponse || []);
+
+      // Actualizar ubicación en segundo plano
+      updateLocation().catch(err => 
+        console.warn('Error actualizando ubicación:', err)
+      );
+
+    } catch (err) {
+      console.error('Error en fetchData:', err);
+      setError('Error al cargar los datos. Por favor, intenta de nuevo.');
+      setPets([]);
+      setUserData(null);
+    } finally {
+      setLoading(false);
+      setIsLoadingUser(false);
+      setIsLoadingPets(false);
+    }
+  };
+
   const handleLogout = () => {
     logout();
     navigate('/login');
@@ -75,9 +134,13 @@ const Profile = () => {
   const handleRetry = () => {
     setLoading(true);
     setError('');
-    fetchUserData();
-    fetchPets();
-    updateLocation();
+    Promise.all([
+      fetchUserData(),
+      fetchPets(),
+      updateLocation()
+    ]).finally(() => {
+      setLoading(false);
+    });
   };
 
   const openModal = () => setIsModalOpen(true);
@@ -85,6 +148,8 @@ const Profile = () => {
     setIsModalOpen(false);
     fetchUserData(); // Refrescar datos tras editar
   };
+
+  const memoizedPets = useMemo(() => pets, [pets]);
 
   if (loading) {
     return (
@@ -145,14 +210,24 @@ const Profile = () => {
           <h2 className="text-xl font-semibold text-gray-800 mb-4">
             <i className="fas fa-paw mr-2"></i> Mis Mascotas
           </h2>
-          {pets.length > 0 ? (
+          {isLoadingPets ? (
+            <div className="animate-pulse flex space-x-4">
+              <div className="rounded-full bg-slate-200 h-10 w-10"></div>
+              <div className="flex-1 space-y-6 py-1">
+                <div className="h-2 bg-slate-200 rounded"></div>
+              </div>
+            </div>
+          ) : memoizedPets && memoizedPets.length > 0 ? (
             <ul className="pet-list space-y-4">
-              {pets.map((pet) => (
+              {memoizedPets.map((pet) => (
                 <li key={pet.id} className="flex items-center gap-4">
                   <img
                     src={pet.photo || 'https://via.placeholder.com/50'}
                     alt={`Foto de ${pet.name}`}
                     className="pet-photo-circular"
+                    loading="lazy"
+                    width="50"
+                    height="50"
                   />
                   <span className="text-gray-600">
                     {pet.name}{' '}
