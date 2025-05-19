@@ -93,10 +93,12 @@ h2 {
 }
 
 .option-card:hover {
+  border-color: #f4b084;
   transform: translateY(-5px);
 }
 
 .option-card.selected {
+  border-color: #f4b084;
   background: #fff5f0;
 }
 
@@ -108,6 +110,7 @@ h2 {
 .option-card .price {
   font-size: 1.2rem;
   font-weight: bold;
+  color: #f4b084;
   margin-top: 0.5rem;
 }
 
@@ -133,6 +136,7 @@ textarea {
 }
 
 .submit-button {
+  background: #f4b084;
   color: #fff;
   border: none;
   padding: 1rem;
@@ -144,6 +148,7 @@ textarea {
 }
 
 .submit-button:hover {
+  background: #e4a074;
   transform: translateY(-3px);
 }
 
@@ -166,4 +171,155 @@ textarea {
   padding: 1rem;
   border-radius: 8px;
   margin-bottom: 1rem;
+}
+
+.lost-pet-question {
+  text-align: center;
+  font-size: 1.5rem;
+  margin-bottom: 1.5rem;
+  color: var(--negro);
+}
+
+.yes-no-buttons {
+  display: flex;
+  justify-content: center;
+  gap: 2rem;
+  margin-bottom: 2rem;
+}
+
+.choice-button {
+  padding: 1rem 3rem;
+  font-size: 1.2rem;
+  font-weight: bold;
+  border: 2px solid var(--naranja-intenso);
+  border-radius: 30px;
+  background: var(--blanco);
+  color: var(--negro);
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.choice-button:hover {
+  background: var(--amarillo-intenso);
+  transform: translateY(-2px);
+}
+
+.choice-button.selected {
+  background: var(--naranja-intenso);
+  color: var(--blanco);
+}
+
+/* Media Queries para dispositivos móviles */
+@media screen and (max-width: 768px) {
+  .compra-container {
+    padding-top: 6rem;
+    margin: 1rem;
+  }
+
+  .compra-content {
+    padding: 1rem;
+  }
+
+  h1 {
+    font-size: 1.8rem;
+  }
+
+  h2 {
+    font-size: 1.4rem;
+  }
+
+  .options-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .customization-options {
+    flex-direction: column;
+    gap: 1rem;
+  }
+
+  .yes-no-buttons {
+    flex-direction: column;
+    gap: 1rem;
+    width: 100%;
+    max-width: 280px;
+    margin: 0 auto 2rem;
+  }
+
+  .choice-button {
+    width: 100%;
+    padding: 0.8rem;
+    font-size: 1rem;
+  }
+
+  .pet-selection {
+    grid-template-columns: 1fr;
+  }
+
+  .pet-option {
+    padding: 0.8rem;
+  }
+
+  .pet-thumbnail {
+    width: 50px;
+    height: 50px;
+  }
+
+  .pet-details h4 {
+    font-size: 1rem;
+  }
+
+  .pet-details p {
+    font-size: 0.8rem;
+  }
+
+  .option-card {
+    padding: 0.8rem;
+  }
+
+  .option-card h4 {
+    font-size: 1rem;
+  }
+
+  .option-card .price {
+    font-size: 1.1rem;
+  }
+
+  input[type="tel"],
+  textarea,
+  select {
+    padding: 0.8rem;
+    font-size: 0.9rem;
+  }
+
+  .submit-button {
+    padding: 0.8rem;
+    font-size: 1rem;
+  }
+
+  .lost-pet-question {
+    font-size: 1.2rem;
+    margin-bottom: 1rem;
+  }
+
+  .error-message,
+  .success-message {
+    padding: 0.8rem;
+    font-size: 0.9rem;
+  }
+}
+
+/* Media Queries para dispositivos muy pequeños */
+@media screen and (max-width: 320px) {
+  .compra-container {
+    margin: 0.5rem;
+  }
+
+  h1 {
+    font-size: 1.5rem;
+  }
+
+  .choice-button {
+    font-size: 0.9rem;
+    padding: 0.7rem;
+  }
 }
