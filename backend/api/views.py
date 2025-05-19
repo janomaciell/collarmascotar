@@ -528,7 +528,7 @@ def send_lost_pet_email(pet, email, alert):
     Contacto: {pet.phone or 'No disponible'}
     Si la ves, escanea su QR o contacta al dueño.
     Gracias por tu ayuda,
-    CollarMascotaQR
+    EncuentraME
     """
 
     try:

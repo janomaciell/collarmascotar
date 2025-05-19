@@ -20,7 +20,7 @@ const Home = () => {
       <section className="hero-section" aria-label="Introducción a CollarMascotaQR">
         <div className="hero-content centered">
           <h1>PROTEGE A TU MEJOR AMIGO</h1>
-          <p>CollarMascotaQR: La solución inteligente para mantener a tu mascota segura y siempre contigo.</p>
+          <p>EncuentraME: La solución inteligente para mantener a tu mascota segura y siempre contigo.</p>
           {/* Sección Héroe 
           <div className="hero-counter">
             <span>+50,000</span> Mascotas protegidas
