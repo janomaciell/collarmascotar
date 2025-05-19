@@ -2,19 +2,21 @@
   margin: 0 auto;
   position: relative;
   overflow: hidden;
-  background-color: #ffffff;
-  margin-top: 70px; /* Añadido para dar espacio al nav fijo */
+  background-color: #ffffff; /* White background */
+  margin-top: 70px; /* Space for fixed nav */
+  font-family: 'Poppins', sans-serif;
 }
 
 /* Hero Section */
 .about-hero {
   text-align: center;
-  padding: 6rem 2rem; /* Reducido de 10rem */
-  background: linear-gradient(135deg, #f5f1e9 30%, #d9c6a5 100%);
+  padding: 6rem 2rem;
+  background: #ff9800; /* Intense orange background */
   position: relative;
   margin-bottom: 5rem;
   box-shadow: 0 15px 30px rgba(0, 0, 0, 0.1);
   overflow: hidden;
+  color: #000000; /* Black text */
 }
 
 .hero-shapes {
@@ -36,7 +38,7 @@
 .shape-1 {
   width: 200px;
   height: 200px;
-  background: #87a8d0;
+  background: #ffeb3b; /* Intense yellow */
   top: -50px;
   left: -50px;
 }
@@ -44,24 +46,25 @@
 .shape-2 {
   width: 150px;
   height: 150px;
-  background: #f4b084;
+  background: #ffeb3b; /* Intense yellow */
   bottom: -30px;
   right: -30px;
 }
 
 .about-hero h1 {
   font-size: 4.5rem;
-  color: #87a8d0;
+  color: #000000; /* Black */
   margin-bottom: 1rem;
   position: relative;
   z-index: 1;
-  text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
   font-weight: 800;
+  text-transform: uppercase;
 }
 
 .about-hero p {
   font-size: 1.8rem;
-  color: #4a3c31;
+  color: #000000; /* Black */
   font-style: italic;
   position: relative;
   z-index: 1;
@@ -69,17 +72,17 @@
   margin: 0 auto;
 }
 
-/* Story Section - Fondo diferenciado */
+/* Story Section */
 .story-section {
   margin-bottom: 5rem;
   text-align: center;
   padding: 4rem 2rem;
-  background: linear-gradient(to right, rgba(135, 168, 208, 0.1), rgba(255, 255, 255, 0.9), rgba(135, 168, 208, 0.1));
+  background: #ffffff; /* White */
 }
 
 .story-section h2 {
   font-size: 2.5rem;
-  color: #87a8d0;
+  color: #000000; /* Black */
   margin-bottom: 2rem;
   position: relative;
   display: inline-block;
@@ -93,17 +96,17 @@
   transform: translateX(-50%);
   width: 80px;
   height: 3px;
-  background: #f4b084;
+  background: #ffeb3b; /* Intense yellow */
 }
 
 .story-card {
-  background: #ffffff;
+  background: #ffffff; /* White */
   padding: 3rem;
   border-radius: 20px;
   box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
   max-width: 800px;
   margin: 0 auto;
-  border-left: 5px solid #f4b084;
+  border-left: 5px solid #ff9800; /* Intense orange */
   transition: transform 0.3s ease;
   text-align: left;
 }
@@ -113,7 +116,7 @@
 }
 
 .story-card p {
-  color: #4a3c31;
+  color: #000000; /* Black */
   font-size: 1.2rem;
   line-height: 1.8;
   margin-bottom: 1.5rem;
@@ -123,16 +126,15 @@
   margin-bottom: 0;
 }
 
-/* Mission Section - Fondo diferenciado */
+/* Mission Section */
 .mission-section {
   display: flex;
   align-items: center;
   gap: 3rem;
   margin-bottom: 5rem;
   position: relative;
-  padding: 6rem 5rem; 
-  background: linear-gradient(45deg, rgba(244, 176, 132, 0.15), rgba(244, 176, 132, 0.05));
-  border-radius: 0;
+  padding: 6rem 5rem;
+  background: #ffffff; /* White */
 }
 
 .mission-content {
@@ -141,13 +143,13 @@
 
 .mission-content h2 {
   font-size: 2.5rem;
-  color: #87a8d0;
+  color: #000000; /* Black */
   margin-bottom: 1.5rem;
 }
 
 .mission-content p {
   font-size: 1.2rem;
-  color: #4a3c31;
+  color: #000000; /* Black */
   line-height: 1.8;
   margin-bottom: 1.5rem;
 }
@@ -155,7 +157,7 @@
 .mission-shape {
   width: 180px;
   height: 180px;
-  background: #f4b084;
+  background: #ffeb3b; /* Intense yellow */
   border-radius: 50%;
   opacity: 0.15;
   position: absolute;
@@ -164,17 +166,17 @@
   animation: pulse 4s infinite;
 }
 
-/* Benefits Section - Fondo diferenciado */
+/* Benefits Section */
 .benefits-section {
   margin: 0;
   padding: 6rem 5rem;
   text-align: center;
-  background: linear-gradient(to bottom, #ffffff, rgba(217, 198, 165, 0.2), #ffffff);
+  background: #ffffff; /* White */
 }
 
 .benefits-section h2 {
   font-size: 2.5rem;
-  color: #87a8d0;
+  color: #000000; /* Black */
   margin-bottom: 4rem;
   position: relative;
   display: inline-block;
@@ -188,7 +190,7 @@
   transform: translateX(-50%);
   width: 80px;
   height: 3px;
-  background: #f4b084;
+  background: #ff9800; /* Intense orange */
 }
 
 .benefits-grid {
@@ -200,7 +202,7 @@
 }
 
 .benefit-item {
-  background: #ffffff;
+  background: #ffffff; /* White */
   padding: 2.5rem;
   border-radius: 20px;
   box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
@@ -211,15 +213,15 @@
 }
 
 .benefit-item:nth-child(1) {
-  background: linear-gradient(to bottom right, #ffffff, rgba(135, 168, 208, 0.1));
+  background: linear-gradient(to bottom right, #ffffff, rgba(255, 235, 59, 0.1)); /* Intense yellow gradient */
 }
 
 .benefit-item:nth-child(2) {
-  background: linear-gradient(to bottom right, #ffffff, rgba(217, 198, 165, 0.15));
+  background: linear-gradient(to bottom right, #ffffff, rgba(255, 235, 59, 0.15)); /* Intense yellow gradient */
 }
 
 .benefit-item:nth-child(3) {
-  background: linear-gradient(to bottom right, #ffffff, rgba(244, 176, 132, 0.1));
+  background: linear-gradient(to bottom right, #ffffff, rgba(255, 235, 59, 0.1)); /* Intense yellow gradient */
 }
 
 .benefit-item:before {
@@ -229,7 +231,7 @@
   left: 0;
   right: 0;
   height: 5px;
-  background: #87a8d0;
+  background: #ff9800; /* Intense orange */
   z-index: -1;
 }
 
@@ -241,71 +243,27 @@
 .benefit-icon {
   font-size: 3rem;
   margin-bottom: 1.5rem;
-  color: #f4b084;
+  color: #ff9800; /* Intense orange */
 }
 
 .benefit-item h3 {
-  color: #87a8d0;
+  color: #000000; /* Black */
   font-size: 1.5rem;
   margin-bottom: 1rem;
 }
 
 .benefit-item p {
-  color: #666;
+  color: #000000; /* Black */
   font-size: 1.1rem;
   line-height: 1.6;
 }
 
-/* Testimonial Section - Nuevo con fondo diferenciado */
-.testimonial-section {
-  margin-bottom: 5rem;
-  padding: 5rem 2rem;
-  background: linear-gradient(135deg, rgba(135, 168, 208, 0.15) 0%, rgba(255, 255, 255, 0.9) 50%, rgba(135, 168, 208, 0.15) 100%);
-}
-
-.testimonial {
-  background: #ffffff;
-  padding: 3rem;
-  border-radius: 20px;
-  position: relative;
-  max-width: 800px;
-  margin: 0 auto;
-  text-align: center;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
-  border-top: 5px solid #87a8d0;
-}
-
-.testimonial:before {
-  content: '"';
-  position: absolute;
-  top: 20px;
-  left: 20px;
-  font-size: 6rem;
-  color: rgba(244, 176, 132, 0.2);
-  font-family: Georgia, serif;
-  line-height: 1;
-}
-
-.quote {
-  font-size: 1.3rem;
-  color: #4a3c31;
-  font-style: italic;
-  margin-bottom: 1.5rem;
-  line-height: 1.8;
-}
-
-.author {
-  font-weight: 700;
-  color: #87a8d0;
-  font-size: 1.1rem;
-}
-
-/* CTA Section - Color diferenciado */
+/* CTA Section */
 .about-cta {
   text-align: center;
   padding: 5rem 2rem;
-  background: linear-gradient(135deg, #87a8d0, #f4b084);
-  color: #ffffff;
+  background: #ff9800; /* Intense orange */
+  color: #000000; /* Black */
   position: relative;
   overflow: hidden;
   box-shadow: 0 15px 40px rgba(0, 0, 0, 0.1);
@@ -314,7 +272,7 @@
 .about-cta h2 {
   font-size: 2.8rem;
   margin-bottom: 1.5rem;
-  text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
 }
 
 .about-cta p {
@@ -329,30 +287,23 @@
 .cta-button {
   display: inline-block;
   padding: 1.2rem 3rem;
-  background: #ffffff;
-  color: #87a8d0;
+  background: #ffffff; /* White */
+  color: #000000; /* Black */
   border-radius: 50px;
   text-decoration: none;
   font-weight: 700;
   font-size: 1.2rem;
   transition: all 0.3s ease;
   box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
-  margin-bottom: 1.5rem;
 }
 
 .cta-button:hover {
-  background: #f5f1e9;
-  color: #f4b084;
+  background: #ffeb3b; /* Intense yellow */
+  color: #000000; /* Black */
   transform: scale(1.05);
 }
 
-.cta-guarantee {
-  font-size: 1rem;
-  opacity: 0.9;
-  margin-bottom: 0;
-}
-
-/* Animaciones */
+/* Animations */
 @keyframes float {
   0%, 100% { transform: translateY(0); }
   50% { transform: translateY(-20px); }
@@ -363,7 +314,7 @@
   50% { transform: scale(1.1); }
 }
 
-/* Responsive Design - Mejorado */
+/* Responsive Design */
 @media (max-width: 1200px) {
   .benefits-grid {
     grid-template-columns: repeat(3, 1fr);
@@ -399,7 +350,7 @@
 
 @media (max-width: 768px) {
   .about-container {
-    margin-top: 60px; /* Ajustado para nav más pequeño en móvil */
+    margin-top: 60px;
   }
 
   .about-hero {
@@ -415,17 +366,6 @@
   .about-hero p {
     font-size: 1.1rem;
     padding: 0 1rem;
-  }
-
-  .about-hero {
-    padding: 6rem 2rem;
-  }
-  .about-hero h1 {
-    font-size: 2.8rem;
-  }
-
-  .about-hero p {
-    font-size: 1.3rem;
   }
 
   .story-section {
@@ -471,14 +411,6 @@
     padding: 1rem 2.5rem;
     font-size: 1.1rem;
   }
-  
-  .testimonial {
-    padding: 2rem;
-  }
-  
-  .quote {
-    font-size: 1.1rem;
-  }
 }
 
 @media (max-width: 480px) {
@@ -502,8 +434,7 @@
   
   .mission-section,
   .benefits-section,
-  .story-section,
-  .testimonial-section {
+  .story-section {
     padding: 3rem 1rem;
   }
   

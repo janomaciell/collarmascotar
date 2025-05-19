@@ -12,7 +12,7 @@ const About = () => {
           <div className="shape shape-1"></div>
           <div className="shape shape-2"></div>
         </div>
-        <h1>CollarMascotaQR</h1>
+        <h1>ENCUENTRAME</h1>
         <p>Porque cada minuto cuenta cuando tu mejor amigo se pierde</p>
       </section>
 
@@ -21,12 +21,12 @@ const About = () => {
         <h2>Mi Historia</h2>
         <div className="story-card">
           <p>
-            Soy <strong>Jano Maciel</strong>, programador y fundador de CollarMascotaQR. Como amante de los animales, sufrí en carne propia la angustia de perder a una mascota. 
+            Soy <strong>Jano Maciel</strong>, programador y fundador de EncuentraME. Como amante de los animales, sufrí en carne propia la angustia de perder a una mascota. 
             La incertidumbre, la desesperación y la impotencia fueron emociones que nunca quiero que nadie más experimente.
           </p>
           <p>
-          Fue entonces cuando decidí crear 
-          una solución real, accesible y efectiva: un collar con un código QR que pueda reunir de lo antes posible a una mascota perdida con su familia.
+            Fue entonces cuando decidí crear 
+            una solución real, accesible y efectiva: un collar con un código QR que pueda reunir de lo antes posible a una mascota perdida con su familia.
           </p>
         </div>
       </section>
@@ -37,7 +37,7 @@ const About = () => {
         <div className="mission-content">
           <h2>Una misión que nace del corazón</h2>
           <p>
-            <strong>CollarMascotaQR nace de una necesidad real: </strong>reducir la cantidad de mascotas perdidas y ayudar a sus dueños a reencontrarse con ellas en tiempo récord. 
+            <strong>EncuentraME nace de una necesidad real: </strong>reducir la cantidad de mascotas perdidas y ayudar a sus dueños a reencontrarse con ellas en tiempo récord. 
             La tecnología nos permite estar conectados, y ahora también puede ser el puente que traiga de vuelta a nuestros compañeros peludos.
           </p>
         </div>
@@ -45,7 +45,7 @@ const About = () => {
 
       {/* Sección Beneficios - Con iconos y más visual */}
       <section className="benefits-section">
-        <h2>¿Por qué las familias eligen CollarMascotaQR?</h2>
+        <h2>¿Por qué las familias eligen EncuentraME?</h2>
         <div className="benefits-grid">
           <div className="benefit-item">
             <div className="benefit-icon"><FaPaw /></div>

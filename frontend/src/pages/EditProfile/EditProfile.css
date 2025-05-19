@@ -54,24 +54,9 @@
     box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2);
     outline: none;
   }
+
   
-  .card button {
-    display: block;
-    width: 100%;
-    background-color: #3b82f6;
-    color: white;
-    padding: 0.75rem;
-    border-radius: 0.5rem;
-    font-size: 1rem;
-    font-weight: 600;
-    cursor: pointer;
-    transition: background-color 0.3s ease;
-    margin-top: 1rem;
-  }
-  
-  .card button:hover {
-    background-color: #2563eb;
-  }
+
   
   .error {
     font-size: 0.875rem;
@@ -90,7 +75,6 @@
     height: 80px;
     border-radius: 100%;
     object-fit: cover;
-    border: 2px solid #3b82f6;
     margin-bottom: 1rem;
   }
   
@@ -160,7 +144,7 @@
   .submit-btn {
     width: 100%;
     padding: 0.75rem;
-    background-color: #2563eb;
+    background-color: #ffeb3b;
     color: white;
     border: none;
     border-radius: 4px;
@@ -168,10 +152,7 @@
     cursor: pointer;
     transition: background-color 0.2s;
   }
-  
-  .submit-btn:hover {
-    background-color: #1d4ed8;
-  }
+
   
   .error-message {
     color: #dc2626;
@@ -191,7 +172,6 @@
   
   .loading-spinner {
     border: 4px solid #f3f3f3;
-    border-top: 4px solid #2563eb;
     border-radius: 50%;
     width: 40px;
     height: 40px;

@@ -1,48 +1,18 @@
-/* Estilos Generales */
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-}
-
-body {
-  font-family: 'Arial', sans-serif;
-  background: #f5f1e9; /* Beige pastel como fondo */
-  color: #4a3c31; /* Marrón pastel para texto */
-  line-height: 1.6;
-  overflow-x: hidden;
-}
-
 /* Contenedor Principal */
 .pet-management-container {
   position: absolute;
-  top: 60px; /* Altura del header, ajusta si es necesario */
+  top: 70px; /* Space for fixed header */
   left: 0;
   width: 100vw;
-  height: calc(100vh - 60px); /* Resta la altura del header */
-  background: linear-gradient(135deg, #f5f1e9 0%, #d9c6a5 100%); /* Gradiente beige a marrón pastel claro */
+  height: calc(100vh - 70px); /* Adjust for header */
+  background: #ffffff; /* White background */
   overflow-y: auto;
   display: flex;
   justify-content: center;
   align-items: flex-start;
-  padding: 2rem;
-  z-index: 1; /* Menor que el header */
-}
-
-/* Fondo con olas y animales */
-.pet-management-container::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: url('data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 320"%3E%3Cpath fill="%234a3c31" fill-opacity="0.2" d="M0,224L60,213.3C120,203,240,181,360,170.7C480,160,600,160,720,165.3C840,171,960,181,1080,186.7C1200,192,1320,192,1380,192L1440,192L1440,320L1380,320C1320,320,1200,320,1080,320C960,320,840,320,720,320C600,320,480,320,360,320C240,320,120,320,60,320L0,320Z"%3E%3C/path%3E%3C/svg%3E'),
-              url('data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 50 50"%3E%3Cpath d="M25 10c5 5 10 0 15 5s5 10 0 15-10 5-15 0-5-10 0-15z" fill="%23f4b084" opacity="0.1"/%3E%3C/svg%3E');
-  background-repeat: repeat-x, repeat;
-  background-position: bottom, center;
-  z-index: 0;
-  animation: waveMove 10s infinite linear;
+  padding: 1.5rem;
+  z-index: 1;
+  font-family: 'Poppins', sans-serif;
 }
 
 /* Contenido */
@@ -50,90 +20,115 @@ body {
   position: relative;
   z-index: 1;
   width: 100%;
-  padding: 2rem;
-  background: rgba(255, 255, 255, 0.9); /* Blanco con transparencia */
-  border-radius: 20px;
-  animation: fadeInUp 0.8s ease-out;
+  max-width: 1200px;
+  padding: 1.5rem;
+  background: #ffffff; /* White */
+  border-radius: 10px;
 }
 
 /* Título */
 .pet-management-content h2 {
-  font-size: 3rem;
-  font-weight: 800;
+  font-size: 2rem;
+  font-weight: 700;
   text-align: center;
-  color: #87a8d0; /* Azul pastel */
-  margin-bottom: 2rem;
+  color: #000000; /* Black */
+  margin-bottom: 1.5rem;
   text-transform: uppercase;
-  letter-spacing: 2px;
 }
 
-/* Botón */
-.add-pet-button {
-  background: linear-gradient(135deg, #f4b084 0%, #e89b6b 100%); /* Gradiente naranja pastel */
-  color: #fff;
-  border: none;
-  padding: 1rem 2.5rem;
-  cursor: pointer;
-  font-size: 1.3rem;
-  font-weight: 700;
-  display: block;
-  margin: 0 auto 2rem;
-  box-shadow: 0 8px 20px rgba(74, 60, 49, 0.3); /* Sombra marrón pastel */
-  border-radius: 50px;
+/* Location Prompt */
+.location-prompt {
+  background: #ffeb3b; /* Intense yellow */
+  border: 1px solid #000000; /* Black border */
+  color: #000000; /* Black text */
+  padding: 1rem;
+  border-radius: 8px;
+  margin-bottom: 1rem;
+  text-align: center;
+}
+
+.location-button {
+  padding: 0.5rem 1rem;
+  border-radius: 8px;
+  font-weight: 600;
   transition: all 0.3s ease;
 }
 
-.add-pet-button:hover {
-  background: linear-gradient(135deg, #e89b6b 0%, #d98652 100%); /* Naranja más oscuro */
-  transform: translateY(-5px);
-  box-shadow: 0 10px 30px rgba(74, 60, 49, 0.4);
+.grant-button {
+  background: #ff9800; /* Intense orange */
+  color: #ffffff; /* White */
+}
+
+.grant-button:hover {
+  background: #ffeb3b; /* Intense yellow */
+  color: #000000; /* Black */
+}
+
+.deny-button {
+  background: #ffffff; /* White */
+  color: #000000; /* Black */
+  border: 1px solid #000000; /* Black border */
+}
+
+.deny-button:hover {
+  background: #ffeb3b; /* Intense yellow */
+  color: #000000; /* Black */
 }
 
 /* Mensaje de Carga */
 .loading-message {
   text-align: center;
-  padding: 2rem;
-  background: rgba(255, 255, 255, 0.95);
-  border-radius: 15px;
-  font-size: 1.2rem;
-  color: #4a3c31; /* Marrón pastel */
-  box-shadow: 0 8px 20px rgba(74, 60, 49, 0.1); /* Sombra suave */
-  backdrop-filter: blur(5px);
+  padding: 1rem;
+  background: #ffffff; /* White */
+  border-radius: 8px;
+  font-size: 1rem;
+  color: #000000; /* Black */
 }
 
 .loading-message i {
-  font-size: 3rem;
-  color: #87a8d0; /* Azul pastel */
-  margin-bottom: 1rem;
+  font-size: 2rem;
+  color: #ff9800; /* Intense orange */
+  margin-bottom: 0.5rem;
   display: block;
   animation: spin 2s infinite linear;
 }
 
 /* Mensaje de Error */
 .error-message {
-  color: #fff;
+  color: #000000; /* Black */
   text-align: center;
-  margin-top: 2rem;
-  font-size: 1.2rem;
-  font-weight: 700;
-  padding: 1.5rem;
-  border-radius: 15px;
-  background: linear-gradient(135deg, #e87676 0%, rgba(232, 118, 118, 0.8) 100%); /* Rojo pastel */
-  box-shadow: 0 8px 20px rgba(74, 60, 49, 0.3); /* Sombra marrón pastel */
+  margin-top: 1rem;
+  font-size: 1rem;
+  font-weight: 500;
+  padding: 1rem;
+  border-radius: 8px;
+  background: #ff9800; /* Intense orange */
+}
+
+/* Mensaje de Éxito */
+.success-message {
+  color: #000000; /* Black */
+  text-align: center;
+  margin-top: 1rem;
+  font-size: 1rem;
+  font-weight: 500;
+  padding: 1rem;
+  border-radius: 8px;
+  background: #ffeb3b; /* Intense yellow */
 }
 
 /* Historial de Escaneo */
 .scan-history {
-  margin-top: 2rem;
-  padding: 1.5rem;
-  background: #f5f1e9; /* Beige pastel */
-  border-radius: 15px;
-  border: 2px dashed #87a8d0; /* Borde azul pastel */
+  margin-top: 1rem;
+  padding: 1rem;
+  background: #ffffff; /* White */
+  border-radius: 8px;
+  border: 1px solid #000000; /* Black border */
 }
 
 .scan-history h3 {
   font-size: 1.5rem;
-  color: #4a3c31; /* Marrón pastel */
+  color: #000000; /* Black */
   margin-bottom: 1rem;
 }
 
@@ -144,30 +139,17 @@ body {
 
 .scan-history li {
   padding: 0.5rem 0;
-  border-bottom: 1px solid rgba(74, 60, 49, 0.2); /* Marrón pastel claro */
+  border-bottom: 1px solid rgba(0, 0, 0, 0.1); /* Light black border */
 }
 
 /* Tarjeta de Mascota (Pet Card) */
 .pet-card {
-  padding: 1.5rem;
-  border-radius: 15px;
-  box-shadow: 0 8px 20px rgba(74, 60, 49, 0.1); /* Sombra marrón pastel */
-  margin: 1rem;
-  border-left: 4px solid #f4b084; /* Borde naranja pastel */
-  position: relative;
-  overflow: hidden;
-  animation: slideIn 0.8s ease-out;
-  background: #ffffff; /* Fondo blanco */
-}
-
-.pet-card::before {
-  content: '🐾';
-  position: absolute;
-  top: 10px;
-  right: 10px;
-  font-size: 2rem;
-  color: #87a8d0; /* Azul pastel para huellitas */
-  opacity: 0.2;
+  padding: 1rem;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1); /* Subtle shadow */
+  margin: 0.5rem;
+  border-left: 3px solid #ff9800; /* Intense orange */
+  background: #ffffff; /* White */
 }
 
 .pet-card-content {
@@ -176,96 +158,72 @@ body {
 }
 
 .pet-card h3 {
-  font-size: 1.5rem;
-  color: #87a8d0; /* Azul pastel */
+  font-size: 1.3rem;
+  color: #000000; /* Black */
   margin-bottom: 0.5rem;
 }
 
 .pet-card p {
-  color: #4a3c31; /* Marrón pastel */
-  margin: 0.5rem 0;
+  color: #000000; /* Black */
+  margin: 0.3rem 0;
+  font-size: 0.9rem;
 }
 
 .pet-card .qr-code {
   display: block;
-  margin: 1rem auto;
-  max-width: 150px;
-  padding: 1rem;
-  background: linear-gradient(135deg, #f5f1e9, #d9c6a5); /* Gradiente beige a marrón pastel */
-  border-radius: 10px;
-  box-shadow: 0 5px 15px rgba(74, 60, 49, 0.1); /* Sombra marrón pastel */
+  margin: 0.5rem auto;
+  max-width: 120px;
+  border-radius: 8px;
 }
 
 .pet-card button {
-  background: #87a8d0; /* Azul pastel */
-  color: #fff;
+  background: #ff9800; /* Intense orange */
+  color: #ffffff; /* White */
   border: none;
-  padding: 0.8rem 1.5rem;
+  padding: 0.5rem 1rem;
   border-radius: 8px;
   cursor: pointer;
-  font-size: 1rem;
-  margin: 0.5rem 0;
-  box-shadow: 0 4px 12px rgba(74, 60, 49, 0.3); /* Sombra marrón pastel */
+  font-size: 0.9rem;
+  margin: 0.3rem 0;
   transition: all 0.3s ease;
 }
 
 .pet-card button:hover {
-  background: #7393b8; /* Azul pastel más oscuro */
-  transform: translateY(-2px);
-  box-shadow: 0 6px 18px rgba(74, 60, 49, 0.4);
+  background: #ffeb3b; /* Intense yellow */
+  color: #000000; /* Black */
 }
 
 .pet-card button:disabled {
-  background: #d9c6a5; /* Marrón pastel claro */
+  background: #cccccc; /* Gray */
+  color: #666666; /* Dark gray */
   cursor: not-allowed;
-  box-shadow: none;
 }
 
 /* Animaciones */
-@keyframes waveMove {
-  0% { background-position: 0 bottom, 0 0; }
-  100% { background-position: 1440px bottom, 50px 50px; }
-}
-
-@keyframes fadeInUp {
-  from { opacity: 0; transform: translateY(20px); }
-  to { opacity: 1; transform: translateY(0); }
-}
-
 @keyframes spin {
   0% { transform: rotate(0deg); }
   100% { transform: rotate(360deg); }
 }
 
-@keyframes slideIn {
-  from { opacity: 0; transform: translateX(-20px); }
-  to { opacity: 1; transform: translateX(0); }
-}
-
 /* Estilos Responsivos */
 @media (max-width: 768px) {
   .pet-management-container {
-    top: 60px;
-    height: calc(100vh - 60px);
-    padding: 1.5rem;
+    top: 70px;
+    height: calc(100vh - 70px);
+    padding: 1rem;
   }
 
   .pet-management-content {
-    padding: 1.5rem;
+    padding: 1rem;
   }
 
   .pet-management-content h2 {
-    font-size: 2.2rem;
+    font-size: 1.8rem;
   }
 
-  .add-pet-button {
-    font-size: 1.1rem;
-    padding: 0.8rem 2rem;
-  }
-
-  .loading-message, .error-message {
-    font-size: 1.1rem;
-    padding: 1.5rem;
+  .loading-message, .error-message, .success-message {
+    font-size: 0.9rem;
+    padding: 0.8rem;
   }
 
   .scan-history h3 {
@@ -273,10 +231,10 @@ body {
   }
 
   .pet-card {
-    margin: 0.5rem;
+    margin: 0.3rem;
   }
 
   .pet-card .qr-code {
-    max-width: 120px;
+    max-width: 100px;
   }
 }

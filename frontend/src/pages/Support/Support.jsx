@@ -1,10 +1,11 @@
 import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
-import { API_URL } from '../../services/api'; // Importa la URL base de tu API
+import { useNavigate } from 'react-router-dom'; // Cambiamos el import
+import { API_URL } from '../../services/api';
 import axios from 'axios';
 import './Support.css';
 
 const Support = () => {
+  const navigate = useNavigate(); // Añadimos esto
   const [formData, setFormData] = useState({
     name: '',
     email: '',
@@ -32,17 +33,26 @@ const Support = () => {
         message,
       });
       setSubmitted(true);
-      setFormData({ name: '', email: '', message: '' }); // Reinicia el formulario
+      setFormData({ name: '', email: '', message: '' });
     } catch (err) {
       setError(err.response?.data?.error || 'Error al enviar el mensaje');
     }
+  };
+
+  // Añadimos esta función
+  const handleNavigateHome = () => {
+    window.location.href = '/';
   };
 
   return (
     <div className="support-container">
       {/* Sección Hero */}
       <section className="support-hero">
-        <h1>Soporte CollarMascotaQR</h1>
+        <div className="hero-shapes">
+          <div className="shape shape-1"></div>
+          <div className="shape shape-2"></div>
+        </div>
+        <h1>Soporte Encuéntrame</h1>
         <p>Estamos aquí para ayudarte en cualquier momento</p>
       </section>
 
@@ -55,65 +65,67 @@ const Support = () => {
           </p>
 
           {/* Formulario de Correo */}
-          <form className="support-form" onSubmit={handleSubmit}>
-            <div className="form-group">
-              <label htmlFor="name">Nombre</label>
-              <input
-                type="text"
-                id="name"
-                name="name"
-                value={formData.name}
-                onChange={handleChange}
-                required
-                placeholder="Tu nombre"
-              />
-            </div>
-            <div className="form-group">
-              <label htmlFor="email">Correo Electrónico</label>
-              <input
-                type="email"
-                id="email"
-                name="email"
-                value={formData.email}
-                onChange={handleChange}
-                required
-                placeholder="tu@email.com"
-              />
-            </div>
-            <div className="form-group">
-              <label htmlFor="message">Mensaje</label>
-              <textarea
-                id="message"
-                name="message"
-                value={formData.message}
-                onChange={handleChange}
-                required
-                placeholder="¿En qué podemos ayudarte?"
-                rows="5"
-              />
-            </div>
-            <button type="submit" className="submit-button">
-              Enviar Mensaje
-            </button>
-            {submitted && (
-              <p className="success-message">
-                ¡Gracias por contactarnos! Tu mensaje ha sido enviado con éxito.
-              </p>
-            )}
-            {error && <p className="error-message">{error}</p>}
-          </form>
+          <div className="support-card">
+            <form className="support-form" onSubmit={handleSubmit}>
+              <div className="form-group">
+                <label htmlFor="name">Nombre</label>
+                <input
+                  type="text"
+                  id="name"
+                  name="name"
+                  value={formData.name}
+                  onChange={handleChange}
+                  required
+                  placeholder="Tu nombre"
+                />
+              </div>
+              <div className="form-group">
+                <label htmlFor="email">Correo Electrónico</label>
+                <input
+                  type="email"
+                  id="email"
+                  name="email"
+                  value={formData.email}
+                  onChange={handleChange}
+                  required
+                  placeholder="tu@email.com"
+                />
+              </div>
+              <div className="form-group">
+                <label htmlFor="message">Mensaje</label>
+                <textarea
+                  id="message"
+                  name="message"
+                  value={formData.message}
+                  onChange={handleChange}
+                  required
+                  placeholder="¿En qué podemos ayudarte?"
+                  rows="5"
+                />
+              </div>
+              <button type="submit" className="submit-button">
+                Enviar Mensaje
+              </button>
+              {submitted && (
+                <p className="success-message">
+                  ¡Gracias por contactarnos! Tu mensaje ha sido enviado con éxito.
+                </p>
+              )}
+              {error && <p className="error-message">{error}</p>}
+            </form>
+          </div>
 
           {/* Enlace a Instagram */}
-          <div className="social-contact">
+          <div className="support-card social-contact">
             <h3>Síguenos en Instagram</h3>
             <p>Conéctate con nosotros y únete a nuestra comunidad de amantes de las mascotas.</p>
             <a
-              href="https://www.instagram.com/collarmascotaqr"
+              href="https://www.instagram.com/encuentrameqr"
               target="_blank"
               rel="noopener noreferrer"
               className="instagram-button"
             >
-              <i className="fab fa-instagram"></i> @CollarMascotaQR
+              @encuentrameQR
             </a>
           </div>
         </div>
@@ -121,9 +133,23 @@ const Support = () => {
 
       {/* Sección CTA */}
       <section className="support-cta">
+        <div className="cta-shapes">
+          <div className="shape cta-shape"></div>
+        </div>
         <h2>¿Necesitas Más Ayuda?</h2>
         <p>Estamos disponibles 24/7 para asegurarnos de que tú y tu mascota estén bien.</p>
-        <Link to="/" className="cta-button">Volver al Inicio</Link>
+        <button 
+          onClick={handleNavigateHome}
+          className="cta-button"
+          style={{
+            border: 'none',
+            cursor: 'pointer',
+            padding: '10px 20px',
+            fontSize: '16px'
+          }}
+        >
+          Volver al Inicio
+        </button>
       </section>
     </div>
   );

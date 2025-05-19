@@ -9,7 +9,7 @@ const Header = () => {
   const [menuActive, setMenuActive] = useState(false);
 
   const handleLogout = () => {
-    setMenuActive(false); // Cerrar menú
+    setMenuActive(false);
     logout();
     navigate('/');
   };
@@ -19,14 +19,17 @@ const Header = () => {
   };
 
   const handleNavClick = () => {
-    setMenuActive(false); // Cerrar menú cuando se hace clic en cualquier enlace
+    setMenuActive(false);
   };
 
   return (
     <header className="header">
       <div className="header-container">
         <div className="logo">
-          <Link to="/" onClick={handleNavClick}>CollarMascotaQR</Link>
+          <Link to="/" onClick={handleNavClick}>
+            <span className="logo-text">ENCUENTRAME</span>
+            <span className="logo-tagline">Tu Mascota, Siempre Segura</span>
+          </Link>
         </div>
         <div className="hamburger" onClick={toggleMenu}>☰</div>
         <nav className={`nav ${menuActive ? 'active' : ''}`}>

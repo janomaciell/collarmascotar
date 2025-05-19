@@ -41,9 +41,6 @@ const PetPage = () => {
         const petData = await getPetByUuid(uuid);
         setPet(petData);
         setIsLoading(false);
-        
-        // No solicitamos geolocalización automáticamente
-        // Lo haremos mediante un botón explícito
       } catch (err) {
         console.error('Error al obtener datos de la mascota:', err);
         setError('No se pudo obtener la información de la mascota. Por favor, intenta de nuevo.');
@@ -106,9 +103,11 @@ const PetPage = () => {
 
   return (
     <div className="pet-page-container">
-      <header className="pet-page-header">
+      <header className={`pet-page-header ${pet.is_lost ? 'lost' : 'found'}`}>
         <div className="logo">
-          <h1>{pet.is_lost ? "MASCOTA PERDIDA" : `ENCONTRASTE A ${pet.name}`}</h1>
+          <h1>
+            {pet.is_lost ? "MASCOTA PERDIDA" : `ENCONTRASTE A ${pet.name}`} - ENCUÉNTRAME
+          </h1>
         </div>
       </header>
 
@@ -155,7 +154,6 @@ const PetPage = () => {
           <PetIntro name={pet.name} isLost={pet.is_lost} />
         </section>
 
-        {/* El resto del componente permanece igual */}
         <section className="pet-details" aria-label="Detalles de la mascota">
           <div className="detail-card" aria-labelledby="about-me">
             <h2 id="about-me">🐾 Sobre mí</h2>
@@ -277,13 +275,13 @@ const PetPage = () => {
           )}
         </section>
 
-        <section className="marketing-banner" aria-label="Promoción de CollarMascotaQR">
+        <section className="marketing-banner" aria-label="Promoción de Encuéntrame">
           <h2>¿Quieres proteger a tu mascota como a {pet.name}?</h2>
           <p>
-            Con CollarMascotaQR, tu mejor amigo siempre estará seguro. Escanea, conecta y protege con un solo clic.
+            Con Encuéntrame, tu mejor amigo siempre estará seguro. Escanea, conecta y protege con un solo clic.
           </p>
-          <a href="/register" className="cta-button" aria-label="Registrarse en CollarMascotaQR">
-            ¡Consigue tu collar ahora!
+          <a href="/register" className="cta-button" aria-label="Registrarse en Encuéntrame">
+            ¡Consigue tu Encuéntrame ahora!
           </a>
         </section>
       </main>

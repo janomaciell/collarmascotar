@@ -1,6 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { getPets, createPet, updatePetLostStatus, getScanHistory, updateUserLocation, generateLostPoster } from '../../services/api';
-import PetForm from '../../components/PetForm/PetForm';
 import PetList from '../../components/PetList/PetList';
 import HeatMapComponent from '../../components/HeatMapComponent/HeatMapComponent';
 import './PetManagement.css';
@@ -108,13 +107,13 @@ const ScanHistoryDetail = ({ scanHistory, userLocation, pet }) => {
         <>
           <ul className="space-y-2">
             {scanHistory.map((scan, index) => (
-              <li key={index} className="flex justify-between items-center p-2 bg-gray-50 rounded">
+              <li key={index} className="flex justify-between items-center p-2 bg-gray-100 rounded">
                 <span>{new Date(scan.timestamp).toLocaleString()}</span>
                 <a
                   href={`https://www.google.com/maps?q=${scan.latitude},${scan.longitude}`}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="text-blue-500 hover:underline"
+                  className="text-black hover:text-orange-500"
                 >
                   Ver en Google Maps
                 </a>
@@ -138,7 +137,7 @@ const ScanHistoryDetail = ({ scanHistory, userLocation, pet }) => {
                       href={`https://www.google.com/maps?q=${loc.center.lat},${loc.center.lng}`}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="text-blue-500 hover:underline"
+                      className="text-black hover:text-orange-500"
                     >
                       Lat: {loc.center.lat.toFixed(4)}, Lng: {loc.center.lng.toFixed(4)}
                     </a>
@@ -264,29 +263,6 @@ const PetManagement = () => {
     }
   };
 
-  const handleCreatePet = async (petData) => {
-    try {
-      if (petData.photo instanceof File) {
-        const originalName = petData.photo.name;
-        const extension = originalName.split('.').pop();
-        const baseName = originalName.substring(0, originalName.lastIndexOf('.'));
-        const maxBaseLength = 95 - extension.length;
-        const truncatedBaseName = baseName.length > maxBaseLength ? baseName.substring(0, maxBaseLength) : baseName;
-        const truncatedName = `${truncatedBaseName}.${extension}`;
-        const newFile = new File([petData.photo], truncatedName, { type: petData.photo.type });
-        petData.photo = newFile;
-      }
-
-      const newPet = await createPet(petData);
-      setPets([...pets, newPet]);
-      setSuccessMessage('Mascota creada exitosamente');
-      setTimeout(() => setSuccessMessage(''), 3000);
-    } catch (err) {
-      setError('Error al crear la mascota: ' + (err.photo?.[0] || err.detail || err.message || err));
-      console.error('Error en handleCreatePet:', err);
-    }
-  };
-
   const handleToggleLost = async (petId, currentStatus) => {
     if (!currentStatus && !userLocation) {
       setError('Se necesita tu ubicación para enviar alertas. Por favor, otorga permiso de geolocalización.');
@@ -335,33 +311,33 @@ const PetManagement = () => {
     poster.style.width = '210mm';
     poster.style.height = '297mm';
     poster.style.background = '#fff';
-    poster.style.fontFamily = 'Arial, sans-serif';
+    poster.style.fontFamily = 'Poppins, sans-serif';
     poster.style.padding = '10mm';
     poster.style.boxSizing = 'border-box';
-    poster.style.border = '2px solid #f4b084';
+    poster.style.border = '1px solid #000000';
 
     poster.innerHTML = `
-      <div style="text-align: center; background: linear-gradient(135deg, #87a8d0, #f4b084); padding: 10mm; color: white;">
+      <div style="text-align: center; background: #ff9800; padding: 10mm; color: #ffffff;">
         <h1 style="margin: 0; font-size: 36px; text-transform: uppercase;">¡Mascota Perdida!</h1>
         <div style="height: 40px; margin-top: 10px;">
           <span style="font-size: 14px; opacity: 0.8;">[CollarMascotaQR - Próximamente Logo]</span>
         </div>
       </div>
       <div style="display: flex; flex-direction: column; align-items: center; padding: 10mm;">
-        <img src="${pet.photo || 'https://via.placeholder.com/300'}" alt="Foto de ${pet.name}" style="width: 150mm; height: 150mm; object-fit: cover; border-radius: 5px; border: 2px solid #87a8d0;" />
+        <img src="${pet.photo || 'https://via.placeholder.com/300'}" alt="Foto de ${pet.name}" style="width: 150mm; height: 150mm; object-fit: cover; border-radius: 5px; border: 1px solid #000000;" />
         <div style="margin-top: 10mm; text-align: center; width: 100%;">
-          <p style="font-size: 24px; color: #4a3c31; margin: 5px 0;"><strong>Nombre:</strong> ${pet.name}</p>
-          <p style="font-size: 20px; color: #666; margin: 5px 0;"><strong>Raza:</strong> ${pet.breed || 'No especificada'}</p>
-          <p style="font-size: 20px; color: #666; margin: 5px 0;<strong>Edad:</strong> ${pet.age} años</p>
-          <p style="font-size: 20px; color: #666; margin: 5px 0;"><strong>Última vez vista:</strong> ${pet.last_seen_date ? new Date(pet.last_seen_date).toLocaleString() : new Date().toLocaleString()}</p>
-          <p style="font-size: 20px; color: #666; margin: 5px 0;"><strong>Contacto:</strong> ${pet.phone || 'No disponible'}</p>
+          <p style="font-size: 24px; color: #000000; margin: 5px 0;"><strong>Nombre:</strong> ${pet.name}</p>
+          <p style="font-size: 20px; color: #000000; margin: 5px 0;"><strong>Raza:</strong> ${pet.breed || 'No especificada'}</p>
+          <p style="font-size: 20px; color: #000000; margin: 5px 0;"><strong>Edad:</strong> ${pet.age} años</p>
+          <p style="font-size: 20px; color: #000000; margin: 5px 0;"><strong>Última vez vista:</strong> ${pet.last_seen_date ? new Date(pet.last_seen_date).toLocaleString() : new Date().toLocaleString()}</p>
+          <p style="font-size: 20px; color: #000000; margin: 5px 0;"><strong>Contacto:</strong> ${pet.phone || 'No disponible'}</p>
         </div>
         <div style="margin-top: 10mm;">
           <img src="${pet.qr_code}" alt="QR de ${pet.name}" style="width: 60mm; height: 60mm;" />
-          <p style="font-size: 16px; color: #777; margin-top: 5px;">Escanea el QR para más información</p>
+          <p style="font-size: 16px; color: #000000; margin-top: 5px;">Escanea el QR para más información</p>
         </div>
       </div>
-      <div style="position: absolute; bottom: 10mm; width: 100%; text-align: center; font-size: 12px; color: #777;">
+      <div style="position: absolute; bottom: 10mm; width: 100%; text-align: center; font-size: 12px; color: #000000;">
         <p>© 2025 CollarMascotaQR - Ayúdanos a encontrar a ${pet.name}</p>
       </div>
     `;
@@ -468,21 +444,21 @@ const PetManagement = () => {
         <h2>Gestión de Mascotas</h2>
 
         {showLocationPrompt && (
-          <div className="location-prompt bg-yellow-100 border border-yellow-400 text-yellow-700 px-4 py-3 rounded mb-4">
+          <div className="location-prompt">
             <p className="mb-2">
               Necesitamos tu ubicación para enviar alertas sobre mascotas perdidas. ¿Nos das permiso?
             </p>
             <div className="flex gap-2">
               <button
                 onClick={updateLocation}
-                className="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600"
+                className="location-button grant-button"
                 aria-label="Otorgar permiso de ubicación"
               >
                 Otorgar Permiso
               </button>
               <button
                 onClick={() => setShowLocationPrompt(false)}
-                className="px-4 py-2 bg-gray-200 text-gray-800 rounded-md hover:bg-gray-300"
+                className="location-button deny-button"
                 aria-label="Rechazar permiso de ubicación"
               >
                 No, gracias
@@ -504,7 +480,7 @@ const PetManagement = () => {
               onShowHistory={fetchScanHistory}
             />
             {selectedPetId && (
-              <div className="scan-history bg-white p-4 rounded-lg shadow mt-4">
+              <div className="scan-history">
                 <div className="flex justify-between items-center">
                   <h3 className="text-xl font-semibold mb-2">Historial de Escaneos</h3>
                   <button
@@ -513,7 +489,7 @@ const PetManagement = () => {
                       setScanHistory([]);
                       setError('');
                     }}
-                    className="text-gray-500 hover:text-gray-700"
+                    className="text-black hover:text-orange-500"
                   >
                     Cerrar
                   </button>
@@ -529,12 +505,12 @@ const PetManagement = () => {
         )}
 
         {error && (
-          <div className="error-message bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">
+          <div className="error-message">
             {error}
           </div>
         )}
         {successMessage && (
-          <div className="success-message bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded mb-4">
+          <div className="success-message">
             {successMessage}
           </div>
         )}

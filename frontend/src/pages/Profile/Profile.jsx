@@ -11,7 +11,7 @@ const Profile = () => {
   const [pets, setPets] = useState([]);
   const [isLoadingPets, setIsLoadingPets] = useState(true);
   const [isLoadingUser, setIsLoadingUser] = useState(true);
-  const [loading, setLoading] = useState(true); // Agregar estado loading
+  const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const [isModalOpen, setIsModalOpen] = useState(false);
 
@@ -91,7 +91,6 @@ const Profile = () => {
       setIsLoadingUser(true);
       setIsLoadingPets(true);
 
-      // Ejecutar las peticiones en paralelo
       const [userResponse, petsResponse] = await Promise.all([
         fetch(`${API_URL}/users/me/`, {
           headers: { Authorization: `Token ${localStorage.getItem('token')}` },
@@ -99,21 +98,17 @@ const Profile = () => {
         getPets()
       ]);
 
-      // Verificar y procesar respuesta del usuario
       if (!userResponse.ok) {
         throw new Error('Error al cargar datos del usuario');
       }
       const userData = await userResponse.json();
       setUserData(userData);
       
-      // Procesar respuesta de mascotas
       setPets(petsResponse || []);
 
-      // Actualizar ubicación en segundo plano
       updateLocation().catch(err => 
         console.warn('Error actualizando ubicación:', err)
       );
-
     } catch (err) {
       console.error('Error en fetchData:', err);
       setError('Error al cargar los datos. Por favor, intenta de nuevo.');
@@ -146,7 +141,7 @@ const Profile = () => {
   const openModal = () => setIsModalOpen(true);
   const closeModal = () => {
     setIsModalOpen(false);
-    fetchUserData(); // Refrescar datos tras editar
+    fetchUserData();
   };
 
   const memoizedPets = useMemo(() => pets, [pets]);
@@ -154,7 +149,7 @@ const Profile = () => {
   if (loading) {
     return (
       <div className="loading flex justify-center items-center h-screen">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-500"></div>
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-orange-500"></div>
       </div>
     );
   }
@@ -162,17 +157,16 @@ const Profile = () => {
   return (
     <div className="profile-container max-w-3xl mx-auto p-4">
       <div className="profile-header flex justify-between items-center mb-6">
-        <h1 className="text-2xl font-bold text-gray-800">Mi Perfil</h1>
+        <h1 className="text-2xl font-bold">Mi Perfil - Encuéntrame</h1>
 
-        
       </div>
 
       {error && (
-        <div className="error-message bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4 flex justify-between items-center">
+        <div className="error-message px-4 py-3 rounded mb-4 flex justify-between items-center">
           <span>{error}</span>
           <button
             onClick={handleRetry}
-            className="text-red-700 underline hover:text-red-900"
+            className="underline hover:text-yellow-300"
             aria-label="Reintentar carga de datos"
           >
             Reintentar
@@ -182,20 +176,20 @@ const Profile = () => {
 
       <div className="profile-content space-y-6">
         {/* Info del usuario */}
-        <div className="profile-section card bg-white rounded-lg shadow-md p-6">
-          <h2 className="text-xl font-semibold text-gray-800 mb-4">
-            <i className="fas fa-user mr-2"></i> Información Personal
+        <div className="profile-section card p-6">
+          <h2 className="text-xl font-semibold mb-4">
+            Información Personal
           </h2>
           {userData && (
             <>
-              <p className="text-gray-600 mb-2"><strong>Usuario:</strong> {userData.username}</p>
-              <p className="text-gray-600 mb-2"><strong>Email:</strong> {userData.email}</p>
-              <p className="text-gray-600 mb-2">
+              <p className="mb-2"><strong>Usuario:</strong> {userData.username}</p>
+              <p className="mb-2"><strong>Email:</strong> {userData.email}</p>
+              <p className="mb-2">
                 <strong>Nombre:</strong> {userData.first_name} {userData.last_name}
               </p>
-              <p className="text-gray-600 mb-4"><strong>Teléfono:</strong> {userData.phone || 'No especificado'}</p>
+              <p className="mb-4"><strong>Teléfono:</strong> {userData.phone || 'No especificado'}</p>
               <button
-                className="edit-btn px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 w-full sm:w-auto"
+                className="edit-btn px-4 py-2 rounded-md w-full sm:w-auto"
                 onClick={openModal}
                 aria-label="Editar perfil"
               >
@@ -206,9 +200,9 @@ const Profile = () => {
         </div>
 
         {/* Mascotas */}
-        <div className="profile-section card bg-white rounded-lg shadow-md p-6">
-          <h2 className="text-xl font-semibold text-gray-800 mb-4">
-            <i className="fas fa-paw mr-2"></i> Mis Mascotas
+        <div className="profile-section card p-6">
+          <h2 className="text-xl font-semibold mb-4">
+            Mis Mascotas
           </h2>
           {isLoadingPets ? (
             <div className="animate-pulse flex space-x-4">
@@ -229,10 +223,10 @@ const Profile = () => {
                     width="50"
                     height="50"
                   />
-                  <span className="text-gray-600">
+                  <span>
                     {pet.name}{' '}
                     {pet.is_lost && (
-                      <span className="lost-tag text-red-500 text-sm font-semibold">
+                      <span className="lost-tag text-sm font-semibold">
                         (Perdida)
                       </span>
                     )}
@@ -241,39 +235,16 @@ const Profile = () => {
               ))}
             </ul>
           ) : (
-            <p className="text-gray-600">No tienes mascotas registradas.</p>
+            <p>No tienes mascotas registradas.</p>
           )}
           <button
-            className="add-pet-btn mt-4 px-4 py-2 bg-green-500 text-white rounded-md hover:bg-green-600 w-full sm:w-auto"
+            className="add-pet-btn mt-4 px-4 py-2 rounded-md w-full sm:w-auto"
             onClick={() => navigate('/pets')}
             aria-label="Gestionar mascotas"
           >
             Gestionar Mascotas
           </button>
         </div>
-
-        {/* Secciones futuras: Notificaciones y Suscripciones
-        <div className="profile-section card bg-white rounded-lg shadow-md p-6">
-          <h2 className="text-xl font-semibold text-gray-800 mb-4">
-            <i className="fas fa-bell mr-2"></i> Notificaciones
-          </h2>
-          <NotificationSettings />
-        </div>
-
-        <div className="profile-section card bg-white rounded-lg shadow-md p-6">
-          <h2 className="text-xl font-semibold text-gray-800 mb-4">
-            <i className="fas fa-crown mr-2"></i> Mi Suscripción
-          </h2>
-          <p className="text-gray-600 mb-4">Plan actual: Básico (próximamente más detalles)</p>
-          <Link
-            to="/subscriptions"
-            className="text-blue-500 hover:underline"
-            aria-label="Gestionar suscripción"
-          >
-            Gestionar Suscripción
-          </Link>
-        </div>
-        */}
       </div>
 
       {isModalOpen && <EditProfileModal onClose={closeModal} />}

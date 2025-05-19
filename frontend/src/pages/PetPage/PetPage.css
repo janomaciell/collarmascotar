@@ -7,8 +7,8 @@
 
 body {
   font-family: 'Poppins', sans-serif;
-  background: #f5f1e9; /* Fondo beige cálido */
-  color: #4a3c31; /* Marrón oscuro */
+  background: #ffffff; /* White background */
+  color: #000000; /* Black text */
   line-height: 1.6;
   overflow-x: hidden;
 }
@@ -21,65 +21,44 @@ body {
 
 /* Header */
 .pet-page-header {
-  background: #ff4444; /* Rojo para mascota perdida */
   padding: 1rem;
   text-align: center;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
   position: sticky;
   top: 0;
   z-index: 1000;
 }
 
+.pet-page-header.lost {
+  background: #ff9800; /* Intense orange for lost */
+  color: #ffffff; /* White text */
+}
+
 .pet-page-header.found {
-  background: #4CAF50; /* Verde para mascota encontrada */
+  background: #ffeb3b; /* Intense yellow for found */
+  color: #000000; /* Black text */
 }
 
 .pet-page-header .logo h1 {
   font-size: 1.75rem;
-  color: #fff;
   font-weight: 700;
   letter-spacing: 1px;
   text-transform: uppercase;
 }
 
-/* Animaciones */
-@keyframes pulse {
-  0%, 100% {
-    opacity: 1;
-  }
-  50% {
-    opacity: 0.7;
-  }
-}
-
-@keyframes fadeInOut {
-  0%, 45% {
-    opacity: 1;
-  }
-  50%, 95% {
-    opacity: 0;
-  }
-  100% {
-    opacity: 1;
-  }
-}
-
 /* Sección Principal */
 .pet-profile {
   max-width: 1000px;
-  margin: 1.5rem auto;
+  margin: 1rem auto;
 }
 
 /* Alerta de mascota perdida */
 .lost-alert {
-  background: #ff4444;
-  color: #fff;
+  background: #ff9800; /* Intense orange */
+  color: #ffffff; /* White text */
   padding: 1rem;
   border-radius: 8px;
   text-align: center;
-  margin-bottom: 1.5rem;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
-  animation: pulse 2s infinite;
+  margin-bottom: 1rem;
 }
 
 .lost-alert h2 {
@@ -92,23 +71,10 @@ body {
   font-size: 0.9rem;
 }
 
-/* Notificación de geolocalización */
-.geo-notification {
-  max-width: 600px;
-  margin: 1rem auto;
-  padding: 1rem;
-  background: #fef3c7; /* Fondo amarillo claro */
-  color: #92400e; /* Marrón oscuro */
-  border-radius: 8px;
-  text-align: center;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-  font-size: 0.9rem;
-}
-
 /* Sección Héroe */
 .pet-hero {
   text-align: center;
-  margin-bottom: 2rem;
+  margin-bottom: 1.5rem;
 }
 
 .pet-photo {
@@ -119,52 +85,44 @@ body {
   max-width: 100%;
   height: auto;
   border-radius: 8px;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+  border: 1px solid #000000; /* Black border */
 }
 
-.pet-hero h1 {
-  font-size: 2rem;
-  font-weight: 700;
-  color: #4a3c31;
-  margin-bottom: 0.5rem;
-}
-
-.pet-hero .intro-text {
-  padding: 3rem;
-  font-size: 1rem;
-  color: #4a3c31;
-  margin: 0 auto;
+/* Estilos para PetIntro */
+.intro-text {
+  font-size: 1.2rem;
+  line-height: 1.6;
+  color: #000000; /* Black */
+  text-align: center;
+  margin: 1rem auto;
+  padding: 1rem;
+  background: #ffffff; /* White */
+  border-radius: 8px;
+  border: 1px solid #000000; /* Black border */
 }
 
 /* Sección de Detalles */
 .pet-details {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-  gap: 1.5rem;
-  margin-bottom: 2rem;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
 }
 
 .detail-card {
-  background: #fff;
-  padding: 1.25rem;
+  background: #ffffff; /* White */
+  padding: 1rem;
   border-radius: 8px;
-  border: 2px solid #87a8d0; /* Borde azul pastel */
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-  transition: transform 0.2s ease, border-color 0.2s ease;
-}
-
-.detail-card:hover {
-  transform: translateY(-4px);
-  border-color: #f4b084; /* Naranja pastel al hover */
+  border: 1px solid #000000; /* Black border */
 }
 
 .detail-card h2 {
   font-size: 1.25rem;
   font-weight: 600;
-  color: #4a3c31;
-  margin-bottom: 0.75rem;
-  border-bottom: 2px solid #f4b084;
-  padding-bottom: 0.5rem;
+  color: #000000; /* Black */
+  margin-bottom: 0.5rem;
+  border-bottom: 1px solid #ff9800; /* Intense orange */
+  padding-bottom: 0.3rem;
 }
 
 .detail-card ul {
@@ -174,28 +132,27 @@ body {
 
 .detail-card ul li {
   font-size: 0.9rem;
-  margin-bottom: 0.5rem;
-  color: #4a3c31;
+  margin-bottom: 0.3rem;
+  color: #000000; /* Black */
 }
 
 .detail-card ul li strong {
-  color: #87a8d0;
+  color: #ff9800; /* Intense orange */
   font-weight: 600;
 }
 
 .detail-card p {
   font-size: 0.9rem;
-  color: #4a3c31;
+  color: #000000; /* Black */
 }
 
 .detail-card a {
-  color: #3b82f6;
+  color: #000000; /* Black */
   text-decoration: none;
-  transition: color 0.2s ease;
 }
 
 .detail-card a:hover {
-  color: #2563eb;
+  color: #ff9800; /* Intense orange */
   text-decoration: underline;
 }
 
@@ -204,8 +161,8 @@ body {
   display: flex;
   flex-wrap: wrap;
   justify-content: center;
-  gap: 1rem;
-  margin-bottom: 2rem;
+  gap: 0.75rem;
+  margin-bottom: 1.5rem;
 }
 
 .call-button,
@@ -213,91 +170,76 @@ body {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  padding: 0.75rem 1.5rem;
+  padding: 0.5rem 1rem;
   border-radius: 9999px;
   font-size: 0.9rem;
   font-weight: 600;
   text-decoration: none;
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  transition: all 0.3s ease;
   min-width: 160px;
 }
 
-.call-button.primary {
-  background: #4CAF50; /* Verde para el dueño */
-  color: #fff;
-}
-
-.call-button.secondary {
-  background: #2196F3; /* Azul para el veterinario */
-  color: #fff;
-}
-
-.email-button {
-  background: #f4b084; /* Naranja pastel */
-  color: #fff;
-}
-
+.call-button.primary,
 .call-button.whatsapp {
-  background: #25D366; /* Verde WhatsApp */
-  color: #fff;
+  background: #ff9800; /* Intense orange */
+  color: #ffffff; /* White */
 }
 
-.call-button:hover,
+.call-button.secondary,
+.email-button {
+  background: #ffffff; /* White */
+  color: #000000; /* Black */
+  border: 1px solid #000000; /* Black border */
+}
+
+.call-button.primary:hover,
+.call-button.whatsapp:hover {
+  background: #ffeb3b; /* Intense yellow */
+  color: #000000; /* Black */
+}
+
+.call-button.secondary:hover,
 .email-button:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+  background: #ffeb3b; /* Intense yellow */
+  color: #000000; /* Black */
 }
 
 /* Banner de Marketing */
 .marketing-banner {
-  background: linear-gradient(135deg, #f4b084, #e89b6b); /* Gradiente naranja */
-  padding: 1.5rem;
+  background: #ff9800; /* Intense orange */
+  padding: 1rem;
   text-align: center;
-  color: #fff;
+  color: #ffffff; /* White */
   border-radius: 8px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
-  margin-bottom: 2rem;
+  margin-bottom: 1rem;
 }
 
 .marketing-banner h2 {
   font-size: 1.5rem;
   font-weight: 600;
-  margin-bottom: 0.75rem;
+  margin-bottom: 0.5rem;
 }
 
 .marketing-banner p {
   font-size: 0.9rem;
-  margin-bottom: 1rem;
+  margin-bottom: 0.75rem;
 }
 
 .marketing-banner .cta-button {
   display: inline-flex;
-  padding: 0.75rem 1.5rem;
-  background: #fff;
-  color: #f4b084;
+  padding: 0.5rem 1rem;
+  background: #ffeb3b; /* Intense yellow */
+  color: #000000; /* Black */
   font-size: 0.9rem;
   font-weight: 600;
   border-radius: 9999px;
   text-decoration: none;
-  transition: background 0.2s ease, color 0.2s ease, transform 0.2s ease;
+  transition: all 0.3s ease;
 }
 
 .marketing-banner .cta-button:hover {
-  background: #87a8d0;
-  color: #fff;
-  transform: translateY(-2px);
-}
-
-/* Footer */
-.pet-page-footer {
-  background: #4a3c31;
-  color: #fff;
-  text-align: center;
-  padding: 1rem;
-}
-
-.pet-page-footer p {
-  font-size: 0.8rem;
+  background: #ffffff; /* White */
+  color: #ff9800; /* Intense orange */
 }
 
 /* Loading y Error */
@@ -308,17 +250,17 @@ body {
   justify-content: center;
   min-height: 50vh;
   text-align: center;
-  color: #666;
+  color: #000000; /* Black */
 }
 
 .spinner {
   width: 40px;
   height: 40px;
   border: 4px solid #e5e7eb;
-  border-top: 4px solid #4CAF50;
+  border-top: 4px solid #ff9800; /* Intense orange */
   border-radius: 50%;
   animation: spin 1s linear infinite;
-  margin-bottom: 1rem;
+  margin-bottom: 0.75rem;
 }
 
 @keyframes spin {
@@ -329,159 +271,99 @@ body {
 
 .error-container {
   max-width: 600px;
-  margin: 2rem auto;
-  padding: 1.5rem;
-  background: #fff3f3;
-  color: #ff4444;
+  margin: 1rem auto;
+  padding: 1rem;
+  background: #ff9800; /* Intense orange */
+  color: #000000; /* Black */
   border-radius: 8px;
   text-align: center;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
   font-size: 0.9rem;
-}
-
-/* Estilos para PetIntro */
-.intro-text {
-  font-size: 1.2rem;
-  line-height: 1.6;
-  color: #4a3c31;
-  text-align: center;
-  margin: 2rem auto;
-  padding: 1.5rem;
-  background: linear-gradient(to bottom, rgba(255, 255, 255, 0.9), rgba(255, 255, 255, 0.7));
-  border-radius: 12px;
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-  animation: fadeInUp 0.5s ease-out;
-}
-
-.intro-text.lost {
-  color: #d32f2f;
-  background: linear-gradient(to bottom, rgba(255, 244, 244, 0.9), rgba(255, 235, 235, 0.7));
-  border: 2px solid #ffcdd2;
-  font-weight: 500;
-}
-
-@keyframes fadeInUp {
-  from {
-    opacity: 0;
-    transform: translateY(20px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
 }
 
 /* Estilos para el banner de solicitud de ubicación */
 .location-request-banner {
-  background: linear-gradient(135deg, #e3f2fd, #bbdefb);
-  padding: 2rem;
-  margin: 2rem auto;
-  border-radius: 12px;
+  background: #ffeb3b; /* Intense yellow */
+  padding: 1rem;
+  margin: 1rem auto;
+  border-radius: 8px;
   text-align: center;
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
   max-width: 800px;
-  animation: slideIn 0.5s ease-out;
-  border: 2px solid #90caf9;
+  border: 1px solid #000000; /* Black border */
 }
 
 .location-request-banner p {
-  font-size: 1.2rem;
-  color: #1565c0;
-  margin-bottom: 1.5rem;
-  line-height: 1.6;
-  font-weight: 500;
+  font-size: 1.1rem;
+  color: #000000; /* Black */
+  margin-bottom: 0.75rem;
+  line-height: 1.5;
 }
 
 .location-request-button {
-  background: #2196f3;
-  color: white;
+  background: #ff9800; /* Intense orange */
+  color: #ffffff; /* White */
   border: none;
-  padding: 1rem 2rem;
+  padding: 0.5rem 1rem;
   border-radius: 50px;
-  font-size: 1.1rem;
+  font-size: 1rem;
   font-weight: 600;
   cursor: pointer;
   transition: all 0.3s ease;
   display: inline-flex;
   align-items: center;
-  gap: 0.75rem;
-  box-shadow: 0 4px 12px rgba(33, 150, 243, 0.3);
+  gap: 0.5rem;
 }
 
 .location-request-button:hover {
-  background: #1976d2;
-  transform: translateY(-2px);
-  box-shadow: 0 6px 15px rgba(33, 150, 243, 0.4);
-}
-
-.location-request-button:active {
-  transform: translateY(1px);
-  box-shadow: 0 2px 8px rgba(33, 150, 243, 0.3);
+  background: #ffeb3b; /* Intense yellow */
+  color: #000000; /* Black */
 }
 
 /* Estilos para el banner de error de ubicación */
 .location-error-banner {
-  background: #ffebee;
-  color: #c62828;
-  padding: 1.5rem;
-  margin: 1.5rem auto;
-  border-radius: 12px;
+  background: #ff9800; /* Intense orange */
+  color: #000000; /* Black */
+  padding: 1rem;
+  margin: 1rem auto;
+  border-radius: 8px;
   text-align: center;
   max-width: 800px;
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-  border: 2px solid #ef9a9a;
+  border: 1px solid #000000; /* Black border */
 }
 
 .location-error-banner p {
-  margin-bottom: 1rem;
-  font-size: 1.1rem;
+  margin-bottom: 0.75rem;
+  font-size: 1rem;
 }
 
 .location-retry-button {
-  background: #f44336;
-  color: white;
-  border: none;
-  padding: 0.8rem 1.5rem;
+  background: #ffffff; /* White */
+  color: #000000; /* Black */
+  border: 1px solid #000000; /* Black border */
+  padding: 0.5rem 1rem;
   border-radius: 50px;
-  font-size: 1rem;
+  font-size: 0.9rem;
   font-weight: 500;
   cursor: pointer;
   transition: all 0.3s ease;
 }
 
 .location-retry-button:hover {
-  background: #d32f2f;
-  transform: translateY(-2px);
-}
-
-/* Animación para el banner */
-@keyframes slideIn {
-  from {
-    opacity: 0;
-    transform: translateY(-20px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
+  background: #ffeb3b; /* Intense yellow */
+  color: #000000; /* Black */
 }
 
 /* Responsividad */
 @media (max-width: 768px) {
   .pet-page-container {
-    padding: 0.75rem;
+    padding: 0.5rem;
   }
 
   .pet-page-header .logo h1 {
     font-size: 1.5rem;
   }
 
-  .pet-hero h1 {
-    font-size: 1.75rem;
-  }
-
   .pet-hero .intro-text {
-    font-size: 0.9rem;
+    font-size: 1rem;
   }
 
   .pet-photo img {
@@ -493,7 +375,7 @@ body {
   }
 
   .detail-card {
-    padding: 1rem;
+    padding: 0.75rem;
   }
 
   .detail-card h2 {
@@ -520,26 +402,14 @@ body {
   }
 
   .marketing-banner .cta-button {
-    padding: 0.6rem 1.25rem;
+    padding: 0.5rem 1rem;
     font-size: 0.85rem;
-  }
-
-  .geo-notification {
-    margin: 0.75rem 1rem;
-    font-size: 0.85rem;
-  }
-
-  .intro-text {
-    font-size: 1.1rem;
-    padding: 1rem;
-    margin: 1.5rem auto;
-    max-width: 90%;
   }
 
   .location-request-banner,
   .location-error-banner {
-    margin: 1rem;
-    padding: 1.5rem;
+    margin: 0.75rem;
+    padding: 0.75rem;
   }
 
   .location-request-banner p {
@@ -550,18 +420,14 @@ body {
   .location-retry-button {
     width: 100%;
     justify-content: center;
-    padding: 0.8rem 1.5rem;
-    font-size: 1rem;
+    padding: 0.5rem 1rem;
+    font-size: 0.9rem;
   }
 }
 
 @media (max-width: 480px) {
-  .pet-hero h1 {
-    font-size: 1.5rem;
-  }
-
   .pet-hero .intro-text {
-    font-size: 0.85rem;
+    font-size: 0.9rem;
   }
 
   .pet-photo img {
@@ -581,25 +447,13 @@ body {
     font-size: 0.85rem;
   }
 
-  .geo-notification {
-    padding: 0.75rem;
-    font-size: 0.8rem;
-  }
-
-  .intro-text {
-    font-size: 1rem;
-    padding: 0.8rem;
-    margin: 1rem auto;
-    line-height: 1.4;
-  }
-
   .location-request-banner p {
     font-size: 0.9rem;
   }
 
   .location-request-button,
   .location-retry-button {
-    padding: 0.7rem 1.2rem;
-    font-size: 0.9rem;
+    padding: 0.5rem 1rem;
+    font-size: 0.85rem;
   }
 }

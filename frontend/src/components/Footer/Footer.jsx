@@ -7,7 +7,7 @@ const Footer = () => {
     <footer className="footer">
       <div className="footer-container">
         <div className="footer-section">
-          <h3>CollarMascotaQR</h3>
+          <h3>EncuentraME <span className="paw-icon">🐾</span></h3>
           <p>Protección inteligente para tu mejor amigo.</p>
         </div>
         <div className="footer-section">
@@ -26,7 +26,7 @@ const Footer = () => {
         </div>
       </div>
       <div className="footer-bottom">
-        <p>© {new Date().getFullYear()} CollarMascotaQR. Todos los derechos reservados.</p>
+        <p>© {new Date().getFullYear()} EncuentraME. Todos los derechos reservados.</p>
       </div>
     </footer>
   );

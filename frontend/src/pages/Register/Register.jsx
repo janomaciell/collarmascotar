@@ -67,7 +67,6 @@ const Register = () => {
     
     try {
       await register(formData);
-      // Registro exitoso
       setTimeout(() => navigate('/login'), 1000);
     } catch (err) {
       console.error(err);
@@ -79,13 +78,13 @@ const Register = () => {
 
   return (
     <div className="register-page">
-      <h1 className="register-title">Regístrate en CollarMascotaQR</h1>
-      <h2 className="register-subtitle">Completa el formulario para crear tu cuenta</h2>
+      <h1>Regístrate en Encuéntrame</h1>
+      <p>Completa el formulario para crear tu cuenta</p>
       
       <div className="register-form-container">
         <form className="register-form" onSubmit={handleSubmit}>
           {errors.general && (
-            <div className="error-message general-error">{errors.general}</div>
+            <div className="error-message">{errors.general}</div>
           )}
           
           <div className="form-group">

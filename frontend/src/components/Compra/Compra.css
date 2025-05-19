@@ -93,12 +93,10 @@ h2 {
 }
 
 .option-card:hover {
-  border-color: #f4b084;
   transform: translateY(-5px);
 }
 
 .option-card.selected {
-  border-color: #f4b084;
   background: #fff5f0;
 }
 
@@ -110,7 +108,6 @@ h2 {
 .option-card .price {
   font-size: 1.2rem;
   font-weight: bold;
-  color: #f4b084;
   margin-top: 0.5rem;
 }
 
@@ -136,7 +133,6 @@ textarea {
 }
 
 .submit-button {
-  background: #f4b084;
   color: #fff;
   border: none;
   padding: 1rem;
@@ -148,7 +144,6 @@ textarea {
 }
 
 .submit-button:hover {
-  background: #e4a074;
   transform: translateY(-3px);
 }
 

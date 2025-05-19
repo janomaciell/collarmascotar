@@ -1,305 +1,445 @@
 .support-container {
   margin: 0 auto;
+  background-color: #ffffff; /* White background */
+  margin-top: 70px; /* Space for fixed nav */
+  font-family: 'Poppins', sans-serif;
   position: relative;
   overflow: hidden;
-  background-color: #ffffff;
-  margin-top: 70px; 
-  }
-  
-  /* Hero Section */
+}
+
+/* Hero Section */
+.support-hero {
+  text-align: center;
+  padding: 6rem 2rem;
+  background: #ff9800; /* Intense orange */
+  position: relative;
+  margin-bottom: 5rem;
+  color: #000000; /* Black text */
+  overflow: hidden;
+}
+
+.hero-shapes {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 0;
+}
+
+.shape {
+  position: absolute;
+  border-radius: 50%;
+  opacity: 0.2;
+  animation: float 6s infinite ease-in-out;
+  background: #ffeb3b; /* Intense yellow */
+}
+
+.shape-1 {
+  width: 200px;
+  height: 200px;
+  top: -50px;
+  left: -50px;
+}
+
+.shape-2 {
+  width: 150px;
+  height: 150px;
+  bottom: -30px;
+  right: -30px;
+}
+
+.support-hero h1 {
+  font-size: 4.5rem;
+  color: #000000; /* Black */
+  margin-bottom: 1rem;
+  position: relative;
+  z-index: 1;
+  font-weight: 800;
+  text-transform: uppercase;
+}
+
+.support-hero p {
+  font-size: 1.8rem;
+  color: #000000; /* Black */
+  font-style: italic;
+  position: relative;
+  z-index: 1;
+  max-width: 650px;
+  margin: 0 auto;
+}
+
+/* Contact Section */
+.contact-section {
+  margin-bottom: 5rem;
+}
+
+.contact-content {
+  max-width: 800px;
+  margin: 0 auto;
+  text-align: center;
+}
+
+.contact-content h2 {
+  font-size: 2.5rem;
+  color: #000000; /* Black */
+  margin-bottom: 2rem;
+  position: relative;
+  display: inline-block;
+  font-weight: 700;
+}
+
+.contact-content h2:after {
+  content: "";
+  position: absolute;
+  bottom: -10px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 80px;
+  height: 3px;
+  background: #ffeb3b; /* Intense yellow */
+}
+
+.contact-content p {
+  font-size: 1.2rem;
+  color: #000000; /* Black */
+  margin-bottom: 2rem;
+}
+
+/* Support Card */
+.support-card {
+  background: #ffffff; /* White */
+  padding: 3rem;
+  border-radius: 20px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+  max-width: 800px;
+  margin: 0 auto 2rem;
+  border-left: 5px solid #ff9800; /* Intense orange */
+  transition: transform 0.3s ease;
+}
+
+.support-card:hover {
+  transform: translateY(-10px);
+}
+
+/* Formulario */
+.support-form {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.form-group {
+  text-align: left;
+}
+
+.form-group label {
+  display: block;
+  font-size: 1.1rem;
+  color: #000000; /* Black */
+  margin-bottom: 0.5rem;
+}
+
+.form-group input,
+.form-group textarea {
+  width: 100%;
+  padding: 0.8rem;
+  border: 1px solid #000000; /* Black border */
+  border-radius: 8px;
+  font-size: 1rem;
+  color: #000000; /* Black */
+}
+
+.form-group textarea {
+  resize: vertical;
+}
+
+.submit-button {
+  padding: 1rem 2rem;
+  background: #ff9800; /* Intense orange */
+  color: #ffffff; /* White */
+  border: none;
+  border-radius: 50px;
+  font-size: 1.1rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.submit-button:hover {
+  background: #ffeb3b; /* Intense yellow */
+  color: #000000; /* Black */
+}
+
+.success-message {
+  color: #000000; /* Black */
+  background: #ffeb3b; /* Intense yellow */
+  margin-top: 1rem;
+  font-size: 1rem;
+  padding: 1rem;
+  border-radius: 8px;
+}
+
+.error-message {
+  color: #000000; /* Black */
+  background: #ff9800; /* Intense orange */
+  margin-top: 1rem;
+  font-size: 1rem;
+  padding: 1rem;
+  border-radius: 8px;
+}
+
+/* Social Contact (Instagram) */
+.social-contact {
+  margin-top: 3rem;
+}
+
+.social-contact h3 {
+  font-size: 1.8rem;
+  color: #000000; /* Black */
+  margin-bottom: 1rem;
+  font-weight: 700;
+}
+
+.social-contact p {
+  font-size: 1.1rem;
+  color: #000000; /* Black */
+  margin-bottom: 1.5rem;
+}
+
+.instagram-button {
+  display: inline-flex;
+  align-items: center;
+  padding: 1rem 2rem;
+  background: #ff9800; /* Intense orange */
+  color: #ffffff; /* White */
+  border-radius: 50px;
+  text-decoration: none;
+  font-weight: 700;
+  transition: all 0.3s ease;
+}
+
+.instagram-button:hover {
+  background: #ffeb3b; /* Intense yellow */
+  color: #000000; /* Black */
+}
+
+/* CTA Section */
+.support-cta {
+  text-align: center;
+  padding: 5rem 2rem;
+  background: #ffeb3b;
+  color: #000000;
+  position: relative;
+  overflow: hidden;
+}
+
+.cta-shapes {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 1; /* Bajamos el z-index */
+}
+
+.cta-shape {
+  width: 180px;
+  height: 180px;
+  background: #ff9800; /* Intense orange */
+  border-radius: 50%;
+  opacity: 0.15;
+  position: absolute;
+  right: -50px;
+  top: -50px;
+  animation: pulse 4s infinite;
+  z-index: 1; /* Aseguramos que esté detrás del contenido */
+}
+
+.support-cta h2,
+.support-cta p {
+  position: relative;
+  z-index: 2; /* Aseguramos que el texto esté por encima de las formas */
+}
+
+.cta-button {
+  position: relative;
+  z-index: 3; /* Aseguramos que el botón esté en la capa superior */
+  background-color: #ff9800;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  padding: 12px 24px;
+  font-size: 16px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  text-decoration: none;
+  display: inline-block;
+  margin-top: 20px;
+}
+
+.cta-button:hover {
+  background-color: #f57c00;
+  transform: translateY(-2px);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+}
+
+.cta-button:active {
+  transform: translateY(0);
+}
+
+/* Animations */
+@keyframes float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-20px); }
+}
+
+@keyframes pulse {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.1); }
+}
+
+/* Responsive Design */
+@media (max-width: 1200px) {
   .support-hero {
-    text-align: center;
-    padding: 6rem 2rem; /* Reducido de 10rem */
-    background: linear-gradient(135deg, #f5f1e9 30%, #d9c6a5 100%);
-    position: relative;
-    margin-bottom: 5rem;
-    box-shadow: 0 15px 30px rgba(0, 0, 0, 0.1);
-    overflow: hidden;   
+    padding: 5rem 1.5rem;
   }
-  
+}
+
+@media (max-width: 992px) {
   .support-hero h1 {
-    font-size: 4.5rem;
-    color: #87a8d0;
-    margin-bottom: 1rem;
-    position: relative;
-    z-index: 1;
-    text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
-    font-weight: 800;
+    font-size: 3.5rem;
   }
-  
+
   .support-hero p {
-    font-size: 1.8rem;
-    color: #4a3c31;
-    font-style: italic;
-    position: relative;
-    z-index: 1;
-    max-width: 650px;
-    margin: 0 auto;
+    font-size: 1.5rem;
   }
-  
-  /* Contact Section */
-  .contact-section {
-    margin-bottom: 4rem;
-  }
-  
-  .contact-content {
-    max-width: 800px;
-    margin: 0 auto;
-    text-align: center;
-  }
-  
+
   .contact-content h2 {
-    font-size: 2.5rem;
-    color: #87a8d0;
-    margin-bottom: 1rem;
+    font-size: 2rem;
   }
-  
-  .contact-content p {
-    font-size: 1.2rem;
-    color: #666;
-    margin-bottom: 2rem;
-  }
-  
-  /* Formulario */
-  .support-form {
-    display: flex;
-    flex-direction: column;
-    gap: 1.5rem;
-    background: #ffffff;
+
+  .support-card {
     padding: 2rem;
-    border-radius: 15px;
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
   }
-  
-  .form-group {
-    text-align: left;
+
+  .support-cta {
+    padding: 4rem 1.5rem;
   }
-  
-  .form-group label {
-    display: block;
+}
+
+@media (max-width: 768px) {
+  .support-container {
+    margin-top: 60px;
+  }
+
+  .support-hero {
+    padding: 4rem 1rem;
+  }
+
+  .support-hero h1 {
+    font-size: 2.2rem;
+  }
+
+  .support-hero p {
     font-size: 1.1rem;
-    color: #4a3c31;
-    margin-bottom: 0.5rem;
   }
-  
+
+  .contact-section {
+    padding: 0 1rem;
+  }
+
+  .contact-content h2 {
+    font-size: 1.8rem;
+  }
+
+  .contact-content p {
+    font-size: 1rem;
+  }
+
+  .support-card {
+    padding: 1.5rem;
+  }
+
+  .form-group label {
+    font-size: 1rem;
+  }
+
   .form-group input,
   .form-group textarea {
+    padding: 0.7rem;
+    font-size: 0.9rem;
+  }
+
+  .submit-button {
     width: 100%;
     padding: 0.8rem;
-    border: 1px solid #d9c6a5;
-    border-radius: 8px;
-    font-size: 1rem;
-    color: #333;
-  }
-  
-  .form-group textarea {
-    resize: vertical;
-  }
-  
-  .submit-button {
-    padding: 1rem 2rem;
-    background: #f4b084;
-    color: #ffffff;
-    border: none;
-    border-radius: 50px;
-    font-size: 1.1rem;
-    cursor: pointer;
-    transition: all 0.3s ease;
-  }
-  
-  .submit-button:hover {
-    background: #e89b6b;
-    transform: translateY(-3px);
-    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
-  }
-  
-  .success-message {
-    color: #2e7d32;
-    margin-top: 1rem;
     font-size: 1rem;
   }
-  
-  /* Social Contact (Instagram) */
+
   .social-contact {
-    margin-top: 3rem;
+    margin-top: 2rem;
   }
-  
+
   .social-contact h3 {
-    font-size: 1.8rem;
-    color: #87a8d0;
-    margin-bottom: 1rem;
+    font-size: 1.5rem;
   }
-  
+
   .social-contact p {
-    font-size: 1.1rem;
-    color: #666;
-    margin-bottom: 1.5rem;
+    font-size: 0.9rem;
   }
-  
+
   .instagram-button {
-    display: inline-flex;
-    align-items: center;
-    padding: 1rem 2rem;
-    background: #f4b084;
-    color: #ffffff;
-    border-radius: 50px;
-    text-decoration: none;
-    font-weight: 700;
-    transition: all 0.3s ease;
+    width: 100%;
+    padding: 0.8rem;
+    font-size: 0.9rem;
   }
-  
-  .instagram-button i {
-    margin-right: 0.5rem;
-    font-size: 1.2rem;
-  }
-  
-  .instagram-button:hover {
-    background: #e89b6b;
-    transform: translateY(-3px);
-    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
-  }
-  
-  /* CTA Section */
+
   .support-cta {
-    text-align: center;
-    padding: 4rem;
-    background: #87a8d0;
-    color: #ffffff;
+    padding: 3.5rem 1rem;
   }
-  
+
   .support-cta h2 {
-    font-size: 2.5rem;
-    margin-bottom: 1rem;
+    font-size: 2.2rem;
   }
-  
+
   .support-cta p {
-    font-size: 1.2rem;
-    margin-bottom: 2rem;
+    font-size: 1.1rem;
   }
-  
-  .support-cta .cta-button {
-    display: inline-block;
-    padding: 1rem 3rem;
-    background: #f4b084;
-    color: #ffffff;
-    border-radius: 50px;
-    text-decoration: none;
-    font-weight: 700;
-    transition: all 0.3s ease;
-  }
-  
-  .support-cta .cta-button:hover {
-    transform: translateY(-5px);
-    background: #e89b6b;
-    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
-  }
-  
-  /* Responsive Design */
-  @media (max-width: 768px) {
 
-    .support-hero {
-      padding: 2rem 1rem;
-      margin-bottom: 2rem;
-    }
-  
-    .support-hero h1 {
-      font-size: 2rem;
-      line-height: 1.3;
-      padding: 0 1rem;
-      margin-bottom: 1rem;
-    }
-  
-    .support-hero p {
-      font-size: 1.1rem;
-      line-height: 1.5;
-      padding: 0 1rem;
-      max-width: 100%;
-    }
+  .cta-button {
+    padding: 1rem 2.5rem;
+    font-size: 1.1rem;
+  }
+}
 
-  
-    .contact-content h2 {
-      font-size: 1.8rem;
-      margin-bottom: 0.8rem;
-    }
-  
-    .contact-content p {
-      font-size: 1rem;
-      line-height: 1.5;
-      margin-bottom: 1.5rem;
-    }
-  
-    .form-group label {
-      font-size: 1rem;
-    }
-  
-    .form-group input,
-    .form-group textarea {
-      padding: 0.7rem;
-      font-size: 0.9rem;
-    }
-  
-    .submit-button {
-      width: 100%;
-      padding: 0.8rem;
-      font-size: 1rem;
-    }
-  
-    .social-contact {
-      margin-top: 2rem;
-      padding: 0 1rem;
-    }
-  
-    .social-contact h3 {
-      font-size: 1.5rem;
-    }
-  
-    .social-contact p {
-      font-size: 0.9rem;
-    }
-  
-    .instagram-button {
-      width: 100%;
-      justify-content: center;
-      padding: 0.8rem;
-      font-size: 0.9rem;
-    }
-  
-    .support-cta {
-      padding: 2rem 1rem;
-    }
-  
-    .support-cta h2 {
-      font-size: 1.8rem;
-      line-height: 1.3;
-      margin-bottom: 0.8rem;
-    }
-  
-    .support-cta p {
-      font-size: 1rem;
-      line-height: 1.5;
-      margin-bottom: 1.5rem;
-      padding: 0 1rem;
-    }
-  
-    .support-cta .cta-button {
-      width: 90%;
-      padding: 0.8rem 2rem;
-      font-size: 1rem;
-    }
+@media (max-width: 480px) {
+  .support-hero {
+    padding: 3rem 1rem;
   }
-  
-  /* Ajustes adicionales para pantallas muy pequeñas */
-  @media (max-width: 360px) {
-    .support-hero p {
-      font-size: 1rem;
-    }
-  
-    .contact-content h2 {
-      font-size: 1.5rem;
-    }
-  
-    .form-group input,
-    .form-group textarea {
-      font-size: 0.85rem;
-    }
+
+  .support-hero h1 {
+    font-size: 2rem;
   }
+
+  .support-hero p {
+    font-size: 1rem;
+  }
+
+  .contact-content h2 {
+    font-size: 1.5rem;
+  }
+
+  .support-card p {
+    font-size: 1rem;
+  }
+
+  .form-group input,
+  .form-group textarea {
+    font-size: 0.85rem;
+  }
+
+  .support-cta h2 {
+    font-size: 1.8rem;
+  }
+}

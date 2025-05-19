@@ -3,10 +3,8 @@ import { Link } from 'react-router-dom';
 import './Home.css';
 
 // Imágenes de ejemplo (puedes reemplazarlas con assets locales)
-const heroIllustration = 'https://images.unsplash.com/photo-1583511655826-05700d52f4d9?ixlib=rb-4.0.3&auto=format&fit=crop&w=1350&q=80';
-const promiseImage = 'https://images.unsplash.com/photo-1598133894008-61f7fdb8cc3a?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80';
+const promiseImage = 'https://images.unsplash.com/photo-1583511655826-05700d52f4d9?ixlib=rb-4.0.3&auto=format&fit=crop&w=1350&q=80';
 
-// Datos dinámicos para testimonios
 const testimonials = [
   { text: "Mi perro se perdió y gracias al collar QR lo recuperé en horas. ¡Increíble!", author: "Ana G." },
   { text: "El historial médico en el QR salvó a mi perrito en una emergencia.", author: "Juan P." },
@@ -14,20 +12,32 @@ const testimonials = [
 
 const Home = () => {
   return (
-    <main className="home-container">
+    <div className="home-wrapper">
+      {/* Navigation Bar */}
+
+
       {/* Sección Héroe */}
       <section className="hero-section" aria-label="Introducción a CollarMascotaQR">
-        <div className="hero-content">
-          <h1>Protege a tu mejor amigo</h1>
+        <div className="hero-content centered">
+          <h1>PROTEGE A TU MEJOR AMIGO</h1>
           <p>CollarMascotaQR: La solución inteligente para mantener a tu mascota segura y siempre contigo.</p>
+          {/* Sección Héroe 
+          <div className="hero-counter">
+            <span>+50,000</span> Mascotas protegidas
+          </div>
+          */}
           <div className="hero-buttons">
             <Link to="/about" className="secondary-button">Descubre más</Link>
             <Link to="/compra" className="cta-button">¡Compra ahora!</Link>
           </div>
         </div>
-        <div className="hero-image">
-          <img src={heroIllustration} alt="Perro con collar QR para identificación" loading="lazy" />
-        </div>
+      </section>
+
+      {/* Sección Join Our Community */}
+      <section className="join-section" aria-label="Unirse a la comunidad">
+        <h2>ÚNETE A NUESTRA COMUNIDAD</h2>
+        <p>Sé parte de una comunidad creciente de amantes de las mascotas que aseguran que sus amigos peludos estén siempre seguros.</p>
+        <Link to="/login" className="join-button">Únete Aquí</Link>
       </section>
 
       {/* Sección Promesa */}
@@ -43,7 +53,7 @@ const Home = () => {
 
       {/* Sección Cómo Funciona */}
       <section className="how-it-works-section" aria-label="Cómo funciona">
-        <h2>¿Cómo funciona CollarMascotaQR?</h2>
+        <h2>¿CÓMO FUNCIONA COLLARMASCOTAQR?</h2>
         <div className="how-it-works-grid">
           <article className="how-it-works-item">
             <span className="step-number">1</span>
@@ -60,40 +70,22 @@ const Home = () => {
         </div>
       </section>
 
-      {/* Sección Servicios (Ventajas del QR) */}
+      {/* Sección Servicios */}
       <section className="services-section" aria-label="Beneficios">
-        <h2>Beneficios que amarás</h2>
+        <h2>BENEFICIOS QUE AMARÁS</h2>
         <div className="services-grid">
-          <article className="service-item">
-            <span className="service-icon">📍</span>
-            <p>Ubicación actualizada si se pierde</p>
-          </article>
-          <article className="service-item">
-            <span className="service-icon">📋</span>
-            <p>Libreta sanitaria digital</p>
-          </article>
-          <article className="service-item">
-            <span className="service-icon">🏥</span>
-            <p>Datos del veterinario siempre a mano</p>
-          </article>
-          <article className="service-item">
-            <span className="service-icon">🔒</span>
-            <p>Privacidad y seguridad garantizadas</p>
-          </article>
-          <article className="service-item">
-            <span className="service-icon">📞</span>
-            <p>Contacto directo con el dueño</p>
-          </article>
-          <article className="service-item">
-            <span className="service-icon">🐾</span>
-            <p>Fácil de usar y duradero</p>
-          </article>
+          <article className="service-item"><span className="service-icon">📍</span><p>Ubicación actualizada si se pierde</p></article>
+          <article className="service-item"><span className="service-icon">📋</span><p>Libreta sanitaria digital</p></article>
+          <article className="service-item"><span className="service-icon">🏥</span><p>Datos del veterinario siempre a mano</p></article>
+          <article className="service-item"><span className="service-icon">🔒</span><p>Privacidad y seguridad garantizadas</p></article>
+          <article className="service-item"><span className="service-icon">📞</span><p>Contacto directo con el dueño</p></article>
+          <article className="service-item"><span className="service-icon">🐾</span><p>Fácil de usar y duradero</p></article>
         </div>
       </section>
 
       {/* Sección Testimonios */}
       <section className="testimonials-section" aria-label="Testimonios de clientes">
-        <h2>Lo que dicen nuestros clientes</h2>
+        <h2>LO QUE DICEN NUESTROS CLIENTES</h2>
         <div className="testimonials-grid">
           {testimonials.map((testimonial, index) => (
             <article key={index} className="testimonial-item">
@@ -104,16 +96,16 @@ const Home = () => {
         </div>
       </section>
 
-      {/* Call to Action Final */}
+      {/* CTA Final */}
       <section className="cta-final-section" aria-label="Llamado a la acción final">
-        <h2>¡No esperes más!</h2>
+        <h2>¡NO ESPERES MÁS!</h2>
         <p>Protege a tu mascota hoy con CollarMascotaQR y vive con la tranquilidad que mereces.</p>
         <Link to="/compra" className="cta-button">Pide el tuyo ahora</Link>
       </section>
 
       {/* Botón Flotante */}
       <Link to="/compra" className="floating-cta">¡Pide el tuyo!</Link>
-    </main>
+    </div>
   );
 };
 

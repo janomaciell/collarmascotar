@@ -1,7 +1,9 @@
+/* Footer Styles */
 .footer {
-  background-color: #87a8d0; /* Beige pastel */
-  color: #4a3c31;
+  background-color: #ff9800; /* Intense orange background */
+  color: #000000; /* Black text for readability */
   padding-top: 3rem;
+  font-family: 'Poppins', sans-serif;
 }
 
 .footer-container {
@@ -21,12 +23,22 @@
 
 .footer-section h3 {
   font-size: 1.4rem;
-  color: #4a3c31; /* Azul pastel */
+  color: #000000; /* Black for headings */
+  font-weight: 700;
   margin-bottom: 1rem;
+  position: relative;
+  display: inline-block;
+}
+
+.paw-icon {
+  color: #ffeb3b; /* Intense yellow for the paw icon */
+  font-size: 1.2rem;
+  margin-left: 0.5rem;
 }
 
 .footer-section p {
   font-size: 1rem;
+  color: #000000; /* Black for body text */
 }
 
 .footer-links {
@@ -40,23 +52,26 @@
 }
 
 .footer-links a {
-  color: #4a3c31;
+  color: #000000; /* Black for links */
   text-decoration: none;
+  font-weight: 500;
   transition: color 0.3s;
 }
 
 .footer-links a:hover {
-  color: #f4b084; /* Naranja pastel */
+  color: #ffeb3b; /* Intense yellow on hover */
 }
 
 .footer-bottom {
-  background-color: #d9c6a5; /* Beige más oscuro */
+  background-color: #ffffff; /* White background for the bottom section */
   padding: 1rem 2rem;
   text-align: center;
   font-size: 0.9rem;
-  color: #4a3c31;
+  color: #000000; /* Black text */
+  border-top: 1px solid #000000; /* Subtle black border for separation */
 }
 
+/* Responsive Styles */
 @media (max-width: 768px) {
   .footer-container {
     flex-direction: column;
@@ -65,5 +80,10 @@
 
   .footer-section {
     margin-bottom: 2rem;
+  }
+
+  .footer-bottom {
+    padding: 1rem;
+    font-size: 0.8rem;
   }
 }
