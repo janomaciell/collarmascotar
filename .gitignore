@@ -62,3 +62,8 @@ local_settings.py
 venv/
 env/
 ENV/
+# Archivos de configuración de Docker
+docker-compose.override.yml
+docker-compose.local.yml
+# Archivos de configuración de IDE
+.idea/  
