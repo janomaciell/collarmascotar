@@ -12,6 +12,7 @@
     "shell": "python manage.py shell"
   },
   "dependencies": {
+    "@supabase/supabase-js": "^2.49.8",
     "axios": "^1.8.1"
   }
 }
