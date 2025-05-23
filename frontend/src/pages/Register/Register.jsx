@@ -14,6 +14,7 @@ const Register = () => {
   });
   const [errors, setErrors] = useState({});
   const [submitting, setSubmitting] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -78,7 +79,7 @@ const Register = () => {
 
   return (
     <div className="register-page">
-      <h1>Regístrate en Encuéntrame</h1>
+      <h1>Regístrate en Encuentrame</h1>
       <p>Completa el formulario para crear tu cuenta</p>
       
       <div className="register-form-container">
@@ -141,14 +142,23 @@ const Register = () => {
           
           <div className="form-group">
             <label htmlFor="password">Contraseña</label>
-            <input
-              type="password"
-              id="password"
-              name="password"
-              value={formData.password}
-              onChange={handleChange}
-              className={errors.password ? "error" : ""}
-            />
+            <div className="password-input-container">
+              <input
+                type={showPassword ? "text" : "password"}
+                id="password"
+                name="password"
+                value={formData.password}
+                onChange={handleChange}
+                className={errors.password ? "error" : ""}
+              />
+              <button 
+                type="button"
+                className="toggle-password"
+                onClick={() => setShowPassword(!showPassword)}
+              >
+                {showPassword ? "👁️" : "👁️‍🗨️"}
+              </button>
+            </div>
             {errors.password && <span className="error-text">{errors.password}</span>}
             <small>Debe tener al menos 8 caracteres y 1 número</small>
           </div>
