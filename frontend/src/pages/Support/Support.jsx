@@ -1,11 +1,11 @@
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom'; // Cambiamos el import
+import { useNavigate } from 'react-router-dom';
 import { API_URL } from '../../services/api';
 import axios from 'axios';
 import './Support.css';
 
 const Support = () => {
-  const navigate = useNavigate(); // Añadimos esto
+  const navigate = useNavigate();
   const [formData, setFormData] = useState({
     name: '',
     email: '',
@@ -39,7 +39,6 @@ const Support = () => {
     }
   };
 
-  // Añadimos esta función
   const handleNavigateHome = () => {
     window.location.href = '/';
   };
@@ -52,7 +51,7 @@ const Support = () => {
           <div className="shape shape-1"></div>
           <div className="shape shape-2"></div>
         </div>
-        <h1>Soporte Encuéntrame</h1>
+        <h1>Soporte</h1>
         <p>Estamos aquí para ayudarte en cualquier momento</p>
       </section>
 
@@ -111,7 +110,7 @@ const Support = () => {
                   ¡Gracias por contactarnos! Tu mensaje ha sido enviado con éxito.
                 </p>
               )}
-              {error && <p className="error-message">{error}</p>}
+              {error && <p className="errorWELL-message">{error}</p>}
             </form>
           </div>
 
@@ -141,12 +140,6 @@ const Support = () => {
         <button 
           onClick={handleNavigateHome}
           className="cta-button"
-          style={{
-            border: 'none',
-            cursor: 'pointer',
-            padding: '10px 20px',
-            fontSize: '16px'
-          }}
         >
           Volver al Inicio
         </button>

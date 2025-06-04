@@ -13,23 +13,22 @@ import Footer from './components/Footer/Footer';
 import PrivateRoute from './components/PrivateRoute/PrivateRoute';
 import About from './pages/About/About';
 import Support from './pages/Support/Support';
-import NotificationPromptModal from './components/NotificationPromptModal/NotificationPromptModal'; // Importamos el modal
-import './App.css';
-import Analytics from "./components/Analytics";
+import NotificationPromptModal from './components/NotificationPromptModal/NotificationPromptModal';
+import LostPoster from './pages/LostPoster/LostPoster'; // Import the LostPoster component
+import Analytics from './components/Analytics';
 import EditProfile from './pages/EditProfile/EditProfile';
 import Compra from './components/Compra/Compra';
 import QRRegistrationPage from './pages/QRRegistrationPage/QRRegistrationPage';
 import QRRedirectPage from './pages/QRRedirectPage/QRRedirectPage';
+import './App.css';
 
 function App() {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
 
-  // Verificar si el usuario está autenticado al cargar la app
   useEffect(() => {
     const token = localStorage.getItem('token');
-    setIsAuthenticated(!!token); // Si hay token, el usuario está autenticado
+    setIsAuthenticated(!!token);
 
-    // Escuchar cambios en el token (por ejemplo, al iniciar/cerrar sesión)
     const handleStorageChange = () => {
       const newToken = localStorage.getItem('token');
       setIsAuthenticated(!!newToken);
@@ -89,10 +88,10 @@ function App() {
             <Route path="/compra" element={<Compra />} />
             <Route path="/register-pet/:uuid" element={<QRRegistrationPage />} />
             <Route path="/qr/:uuid" element={<QRRedirectPage />} />
+            <Route path="/lost-poster/:petId" element={<LostPoster />} /> {/* Add this route */}
           </Routes>
         </main>
         <Footer />
-        {/* Mostrar el modal solo si el usuario está autenticado */}
         {isAuthenticated && <NotificationPromptModal />}
       </div>
     </Router>

@@ -1,9 +1,9 @@
 /* Footer Styles */
 .footer {
-  background-color: #ff9800; /* Intense orange background */
-  color: #000000; /* Black text for readability */
+  background-color: #94618E; /* GRAPE background */
+  color: #ffffff; /* White text for readability */
   padding-top: 3rem;
-  font-family: 'Poppins', sans-serif;
+  font-family: 'Arial', sans-serif; /* Fuente similar a la de la imagen */
 }
 
 .footer-container {
@@ -23,7 +23,7 @@
 
 .footer-section h3 {
   font-size: 1.4rem;
-  color: #000000; /* Black for headings */
+  color: #ffffff; /* White for headings */
   font-weight: 700;
   margin-bottom: 1rem;
   position: relative;
@@ -31,14 +31,14 @@
 }
 
 .paw-icon {
-  color: #ffeb3b; /* Intense yellow for the paw icon */
+  color: #F88EE7; /* SHELL for the paw icon */
   font-size: 1.2rem;
   margin-left: 0.5rem;
 }
 
 .footer-section p {
   font-size: 1rem;
-  color: #000000; /* Black for body text */
+  color: #ffffff; /* White for body text */
 }
 
 .footer-links {
@@ -52,23 +52,23 @@
 }
 
 .footer-links a {
-  color: #000000; /* Black for links */
+  color: #ffffff; /* White for links */
   text-decoration: none;
   font-weight: 500;
   transition: color 0.3s;
 }
 
 .footer-links a:hover {
-  color: #ffeb3b; /* Intense yellow on hover */
+  color: #F88EE7; /* SHELL on hover */
 }
 
 .footer-bottom {
-  background-color: #ffffff; /* White background for the bottom section */
+  background-color: #F4DECB; /* SAND background for the bottom section */
   padding: 1rem 2rem;
   text-align: center;
   font-size: 0.9rem;
-  color: #000000; /* Black text */
-  border-top: 1px solid #000000; /* Subtle black border for separation */
+  color: #49274A; /* EGGPLANT text */
+  border-top: 1px solid #49274A; /* EGGPLANT border for separation */
 }
 
 /* Responsive Styles */

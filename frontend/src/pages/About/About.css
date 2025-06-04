@@ -2,21 +2,21 @@
   margin: 0 auto;
   position: relative;
   overflow: hidden;
-  background-color: #ffffff; /* White background */
+  background-color: #F4DECB; /* SAND background */
   margin-top: 70px; /* Space for fixed nav */
-  font-family: 'Poppins', sans-serif;
+  font-family: 'Arial', sans-serif; /* Fuente elegante similar a la imagen */
 }
 
 /* Hero Section */
 .about-hero {
   text-align: center;
   padding: 6rem 2rem;
-  background: #ff9800; /* Intense orange background */
+  background: #94618E; /* GRAPE background */
   position: relative;
   margin-bottom: 5rem;
   box-shadow: 0 15px 30px rgba(0, 0, 0, 0.1);
   overflow: hidden;
-  color: #000000; /* Black text */
+  color: #ffffff; /* White text */
 }
 
 .hero-shapes {
@@ -38,7 +38,7 @@
 .shape-1 {
   width: 200px;
   height: 200px;
-  background: #ffeb3b; /* Intense yellow */
+  background: #F88EE7; /* SHELL for shapes */
   top: -50px;
   left: -50px;
 }
@@ -46,14 +46,14 @@
 .shape-2 {
   width: 150px;
   height: 150px;
-  background: #ffeb3b; /* Intense yellow */
+  background: #F88EE7; /* SHELL for shapes */
   bottom: -30px;
   right: -30px;
 }
 
 .about-hero h1 {
   font-size: 4.5rem;
-  color: #000000; /* Black */
+  color: #ffffff; /* White */
   margin-bottom: 1rem;
   position: relative;
   z-index: 1;
@@ -64,7 +64,7 @@
 
 .about-hero p {
   font-size: 1.8rem;
-  color: #000000; /* Black */
+  color: #ffffff; /* White */
   font-style: italic;
   position: relative;
   z-index: 1;
@@ -77,12 +77,12 @@
   margin-bottom: 5rem;
   text-align: center;
   padding: 4rem 2rem;
-  background: #ffffff; /* White */
+  background: #F4DECB; /* SAND */
 }
 
 .story-section h2 {
   font-size: 2.5rem;
-  color: #000000; /* Black */
+  color: #49274A; /* EGGPLANT */
   margin-bottom: 2rem;
   position: relative;
   display: inline-block;
@@ -96,7 +96,7 @@
   transform: translateX(-50%);
   width: 80px;
   height: 3px;
-  background: #ffeb3b; /* Intense yellow */
+  background: #F88EE7; /* SHELL */
 }
 
 .story-card {
@@ -106,7 +106,7 @@
   box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
   max-width: 800px;
   margin: 0 auto;
-  border-left: 5px solid #ff9800; /* Intense orange */
+  border-left: 5px solid #49274A; /* EGGPLANT */
   transition: transform 0.3s ease;
   text-align: left;
 }
@@ -116,7 +116,7 @@
 }
 
 .story-card p {
-  color: #000000; /* Black */
+  color: #49274A; /* EGGPLANT */
   font-size: 1.2rem;
   line-height: 1.8;
   margin-bottom: 1.5rem;
@@ -134,22 +134,22 @@
   margin-bottom: 5rem;
   position: relative;
   padding: 6rem 5rem;
-  background: #ffffff; /* White */
+  background: #F4DECB; /* SAND */
 }
 
 .mission-content {
   flex: 1;
 }
 
-.mission-content h2 {
+.mission-content h2 dilution {
   font-size: 2.5rem;
-  color: #000000; /* Black */
+  color: #49274A; /* EGGPLANT */
   margin-bottom: 1.5rem;
 }
 
 .mission-content p {
   font-size: 1.2rem;
-  color: #000000; /* Black */
+  color: #49274A; /* EGGPLANT */
   line-height: 1.8;
   margin-bottom: 1.5rem;
 }
@@ -157,7 +157,7 @@
 .mission-shape {
   width: 180px;
   height: 180px;
-  background: #ffeb3b; /* Intense yellow */
+  background: #F88EE7; /* SHELL */
   border-radius: 50%;
   opacity: 0.15;
   position: absolute;
@@ -166,17 +166,57 @@
   animation: pulse 4s infinite;
 }
 
+/* Vision Section */
+.vision-section {
+  display: flex;
+  align-items: center;
+  gap: 3rem;
+  margin-bottom: 5rem;
+  position: relative;
+  padding: 6rem 5rem;
+  background: #F4DECB; /* SAND */
+}
+
+.vision-content {
+  flex: 1;
+}
+
+.vision-content h2 {
+  font-size: 2.5rem;
+  color: #49274A; /* EGGPLANT */
+  margin-bottom: 1.5rem;
+}
+
+.vision-content p {
+  font-size: 1.2rem;
+  color: #49274A; /* EGGPLANT */
+  line-height: 1.8;
+  margin-bottom: 1.5rem;
+}
+
+.vision-shape {
+  width: 180px;
+  height: 180px;
+  background: #F88EE7; /* SHELL */
+  border-radius: 50%;
+  opacity: 0.15;
+  position: absolute;
+  left: -50px;
+  bottom: -50px;
+  animation: pulse 4s infinite;
+}
+
 /* Benefits Section */
 .benefits-section {
   margin: 0;
   padding: 6rem 5rem;
   text-align: center;
-  background: #ffffff; /* White */
+  background: #F4DECB; /* SAND */
 }
 
 .benefits-section h2 {
   font-size: 2.5rem;
-  color: #000000; /* Black */
+  color: #49274A; /* EGGPLANT */
   margin-bottom: 4rem;
   position: relative;
   display: inline-block;
@@ -190,7 +230,7 @@
   transform: translateX(-50%);
   width: 80px;
   height: 3px;
-  background: #ff9800; /* Intense orange */
+  background: #F88EE7; /* SHELL */
 }
 
 .benefits-grid {
@@ -213,15 +253,15 @@
 }
 
 .benefit-item:nth-child(1) {
-  background: linear-gradient(to bottom right, #ffffff, rgba(255, 235, 59, 0.1)); /* Intense yellow gradient */
+  background: linear-gradient(to bottom right, #ffffff, rgba(248, 238, 7, 0.1)); /* SHELL gradient */
 }
 
 .benefit-item:nth-child(2) {
-  background: linear-gradient(to bottom right, #ffffff, rgba(255, 235, 59, 0.15)); /* Intense yellow gradient */
+  background: linear-gradient(to bottom right, #ffffff, rgba(248, 238, 7, 0.15)); /* SHELL gradient */
 }
 
 .benefit-item:nth-child(3) {
-  background: linear-gradient(to bottom right, #ffffff, rgba(255, 235, 59, 0.1)); /* Intense yellow gradient */
+  background: linear-gradient(to bottom right, #ffffff, rgba(248, 238, 7, 0.1)); /* SHELL gradient */
 }
 
 .benefit-item:before {
@@ -231,7 +271,7 @@
   left: 0;
   right: 0;
   height: 5px;
-  background: #ff9800; /* Intense orange */
+  background: #49274A; /* EGGPLANT */
   z-index: -1;
 }
 
@@ -243,17 +283,17 @@
 .benefit-icon {
   font-size: 3rem;
   margin-bottom: 1.5rem;
-  color: #ff9800; /* Intense orange */
+  color: #F88EE7; /* SHELL */
 }
 
 .benefit-item h3 {
-  color: #000000; /* Black */
+  color: #49274A; /* EGGPLANT */
   font-size: 1.5rem;
   margin-bottom: 1rem;
 }
 
 .benefit-item p {
-  color: #000000; /* Black */
+  color: #49274A; /* EGGPLANT */
   font-size: 1.1rem;
   line-height: 1.6;
 }
@@ -262,8 +302,8 @@
 .about-cta {
   text-align: center;
   padding: 5rem 2rem;
-  background: #ff9800; /* Intense orange */
-  color: #000000; /* Black */
+  background: #94618E; /* GRAPE */
+  color: #ffffff; /* White */
   position: relative;
   overflow: hidden;
   box-shadow: 0 15px 40px rgba(0, 0, 0, 0.1);
@@ -287,8 +327,8 @@
 .cta-button {
   display: inline-block;
   padding: 1.2rem 3rem;
-  background: #ffffff; /* White */
-  color: #000000; /* Black */
+  background: #49274A; /* EGGPLANT */
+  color: #ffffff; /* White */
   border-radius: 50px;
   text-decoration: none;
   font-weight: 700;
@@ -298,8 +338,8 @@
 }
 
 .cta-button:hover {
-  background: #ffeb3b; /* Intense yellow */
-  color: #000000; /* Black */
+  background: #F88EE7; /* SHELL */
+  color: #49274A; /* EGGPLANT */
   transform: scale(1.05);
 }
 
@@ -325,7 +365,7 @@
     padding: 5rem 3rem;
   }
   
-  .mission-section {
+  .mission-section, .vision-section {
     padding: 5rem 3rem;
   }
 }
@@ -343,7 +383,7 @@
     font-size: 1.5rem;
   }
   
-  .mission-section {
+  .mission-section, .vision-section {
     padding: 4rem 2rem;
   }
 }
@@ -376,13 +416,13 @@
     padding: 2rem;
   }
 
-  .mission-section {
+  .mission-section, .vision-section {
     flex-direction: column;
     text-align: center;
     padding: 3rem 1.5rem;
   }
 
-  .mission-shape {
+  .mission-shape, .vision-shape {
     display: none;
   }
 
@@ -428,18 +468,21 @@
   
   .story-section h2,
   .mission-content h2,
+  .vision-content h2,
   .benefits-section h2 {
     font-size: 2rem;
   }
   
   .mission-section,
+  .vision-section,
   .benefits-section,
   .story-section {
     padding: 3rem 1rem;
   }
   
   .story-card p,
-  .mission-content p {
+  .mission-content p,
+  .vision-content p {
     font-size: 1rem;
   }
   

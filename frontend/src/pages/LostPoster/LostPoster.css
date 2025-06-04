@@ -1,44 +1,61 @@
-.lost-poster-page {
-  background: #f5f1e9; /* Beige pastel como fondo */
-  min-height: 100vh;
-  padding: 2rem;
-  font-family: 'Poppins', sans-serif;
+/* Importación de fuentes */
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800;900&family=Open+Sans:wght@300;400;500;600;700&display=swap');
+
+:root {
+  --grape: #94618E;
+  --eggplant: #49274A;
+  --sand: #F4DECB;
+  --shell: #F8EE7;
+  --blanco: #ffffff;
+  --negro: #000000;
+  --sombra-fuerte: rgba(0, 0, 0, 0.3);
 }
 
+/* Estilos generales */
+.lost-poster-page {
+  padding-top: 80px;
+  background: var(--sand);
+  min-height: 100vh;
+  font-family: 'Open Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+}
+
+/* Botones de acción */
 .poster-actions {
-  max-width: 1200px;
+  max-width: 800px;
   margin: 0 auto 2rem;
   display: flex;
   justify-content: center;
   gap: 1rem;
   flex-wrap: wrap;
+  position: relative;
 }
 
 .back-button,
 .download-button,
 .share-button {
-  background-color: #87a8d0; /* Azul pastel */
-  color: white;
+  background: var(--eggplant);
+  color: var(--blanco);
   border: none;
   padding: 1rem 2rem;
   border-radius: 50px;
   cursor: pointer;
   font-size: 1.1rem;
   font-weight: 600;
+  font-family: 'Montserrat', sans-serif;
   transition: all 0.3s ease;
-  box-shadow: 0 5px 15px rgba(74, 60, 49, 0.2); /* Sombra marrón pastel */
+  box-shadow: 0 4px 15px var(--sombra-fuerte);
 }
 
 .back-button:hover,
 .download-button:hover,
 .share-button:hover {
-  background-color: #7393b8; /* Azul pastel más oscuro */
-  transform: translateY(-3px);
-  box-shadow: 0 8px 20px rgba(74, 60, 49, 0.3);
+  background: var(--grape);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px var(--sombra-fuerte);
 }
 
 .download-button:disabled {
-  background-color: #d9c6a5; /* Marrón pastel claro */
+  background: #d1d5db;
   cursor: not-allowed;
   box-shadow: none;
 }
@@ -47,238 +64,349 @@
   position: absolute;
   top: 100%;
   right: 0;
-  background-color: #ffffff;
-  border-radius: 10px;
-  box-shadow: 0 5px 20px rgba(74, 60, 49, 0.2);
+  background: var(--blanco);
+  border-radius: 15px;
+  box-shadow: 0 10px 30px var(--sombra-fuerte);
   z-index: 10;
-  padding: 10px;
+  padding: 1rem;
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 0.5rem;
 }
 
 .share-options button {
   padding: 0.75rem 1.5rem;
   border: none;
-  border-radius: 8px;
+  border-radius: 10px;
   cursor: pointer;
-  font-size: 1rem;
   font-weight: 600;
   transition: all 0.3s ease;
 }
 
-.whatsapp-button {
-  background-color: #25d366;
-  color: white;
-}
+.whatsapp-button { background: #25d366; color: var(--blanco); }
+.facebook-button { background: #4267b2; color: var(--blanco); }
+.twitter-button { background: #1da1f2; color: var(--blanco); }
+.copy-button { background: var(--sand); color: var(--eggplant); }
 
-.facebook-button {
-  background-color: #4267b2;
-  color: white;
-}
-
-.twitter-button {
-  background-color: #1da1f2;
-  color: white;
-}
-
-.copy-button {
-  background-color: #f5f1e9; /* Beige pastel */
-  color: #4a3c31; /* Marrón pastel */
-}
-
-.share-options button:hover {
-  opacity: 0.9;
-  transform: translateY(-2px);
-}
-
+/* Contenedor del póster */
 .lost-poster-container {
-  max-width: 800px; /* Ancho optimizado para A4 */
+  max-width: 794px; /* A4 width */
   margin: 0 auto;
   padding: 2rem;
 }
 
 .lost-poster {
-  background: #ffffff; /* Fondo blanco para impresión */
-  padding: 2.5rem;
-  border-radius: 15px;
-  text-align: center;
-  border: 2px dashed #f4b084; /* Borde naranja pastel */
-  box-shadow: 0 10px 30px rgba(74, 60, 49, 0.1);
-  animation: fadeInUp 0.8s ease-out;
-}
-
-.poster-header {
-  background: #e87676; /* Rojo pastel para destacar */
-  padding: 1.5rem;
-  border-radius: 10px 10px 0 0;
-  position: relative;
-}
-
-.poster-header .logo {
-  width: 80px;
-  height: auto;
-  position: absolute;
-  top: 1rem;
-  left: 1rem;
+  background: var(--blanco);
+  width: 210mm;
+  height: 297mm;
+  margin: 0 auto;
+  box-shadow: 0 20px 40px var(--sombra-fuerte);
   border-radius: 10px;
-  border: 2px solid #ffffff;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
 }
 
-.poster-header h1 {
-  font-size: 2.8rem;
-  color: #ffffff;
+/* Encabezado con Branding */
+.poster-header {
+  display: flex;
+  flex-direction: column;
+}
+
+.brand-container {
+  background-color: var(--sand);
+  padding: 1rem;
+}
+
+.brand-logo-section {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.brand-logo {
+  width: 60px;
+  height: 60px;
+  object-fit: contain;
+}
+
+.brand-text {
+  display: flex;
+  flex-direction: column;
+}
+
+.brand-name {
+  font-family: 'Montserrat', sans-serif;
+  font-weight: 900;
+  font-size: 2rem;
+  color: var(--eggplant);
   margin: 0;
+  line-height: 1;
+}
+
+.brand-slogan {
+  font-family: 'Open Sans', sans-serif;
+  font-weight: 400;
+  font-style: italic;
+  font-size: 1rem;
+  color: var(--grape);
+  margin: 0.25rem 0 0;
+}
+
+.poster-title {
+  background-color: var(--eggplant);
+  padding: 0.5rem;
+  text-align: center;
+}
+
+.poster-title h2 {
+  font-family: 'Montserrat', sans-serif;
   font-weight: 800;
+  font-size: 1.5rem;
+  color: var(--sand);
+  margin: 0;
   text-transform: uppercase;
   letter-spacing: 2px;
 }
 
-.poster-content {
+/* Foto de la Mascota */
+.pet-photo-container {
   display: flex;
-  flex-direction: row;
-  padding: 2rem;
-  gap: 2rem;
-  background: #f5f1e9; /* Beige pastel */
+  justify-content: center;
 }
 
-.poster-image {
-  flex: 1;
+.pet-photo {
+  width: 40%;
+  max-width: 500px;
+  height: auto;
+  object-fit: cover;
+  border-radius: 15px;
+  border: 8px solid var(--sand);
+  box-shadow: 0 4px 15px var(--sombra-fuerte);
+}
+
+/* Nombre de la Mascota */
+.pet-name-container {
+  background-color: var(--grape);
+  padding: 0.75rem;
   text-align: center;
 }
 
-.poster-image img {
-  max-width: 250px;
-  border-radius: 15px;
-  border: 3px solid #f4b084; /* Naranja pastel */
-  box-shadow: 0 5px 15px rgba(74, 60, 49, 0.2);
+.pet-name {
+  font-family: 'Montserrat', sans-serif;
+  font-weight: 800;
+  font-size: 1.5rem;
+  color: var(--blanco);
+  margin: 0;
+  text-transform: uppercase;
 }
 
-.poster-details {
-  flex: 1;
-  text-align: left;
-}
-
-.poster-details h2 {
-  font-size: 2rem;
-  color: #87a8d0; /* Azul pastel */
-  margin-bottom: 1rem;
-  font-weight: 700;
+/* Detalles de la Mascota */
+.pet-details {
+  background-color: var(--sand);
+  padding: 1rem;
+  display: flex;
+  flex-direction: column;
 }
 
 .detail-row {
   display: flex;
-  margin-bottom: 0.75rem;
-  font-size: 1.1rem;
+  justify-content: space-between;
+  gap: 1rem;
 }
 
-.detail-label {
+.detail-item {
+  flex: 1;
+  display: flex;
+  align-items: flex-start;
+  gap: 0.5rem;
+  background-color: rgba(255, 255, 255, 0.7);
+  padding: 0.75rem;
+  border-radius: 8px;
+}
+
+.detail-icon {
+  font-size: 1.5rem;
+}
+
+.detail-text {
+  flex: 1;
+}
+
+.detail-text strong {
+  display: block;
+  font-family: 'Montserrat', sans-serif;
+  font-weight: 700;
+  font-size: 0.9rem;
+  color: var(--eggplant);
+  margin-bottom: 0.25rem;
+}
+
+.detail-text p {
+  margin: 0;
+  font-family: 'Open Sans', sans-serif;
+  font-size: 1rem;
+  color: var(--negro);
+}
+
+/* Mensaje Motivacional */
+.motivational-message {
+  text-align: center;
+  background-color: rgba(148, 97, 142, 0.1);
+}
+
+.motivational-message p {
+  font-family: 'Montserrat', sans-serif;
   font-weight: 600;
-  color: #4a3c31; /* Marrón pastel */
-  min-width: 120px;
+  font-size: 1.5rem;
+  font-style: italic;
+  color: var(--eggplant);
 }
 
-.detail-value {
-  color: #4a3c31; /* Marrón pastel */
+/* Sección de Contacto y QR */
+
+
+.contact-section {
+  flex: 3;
+  background-color: var(--grape);
+  padding: 1rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.contact-section h3 {
+  font-family: 'Montserrat', sans-serif;
+  font-weight: 700;
+  color: var(--blanco);
+  margin-bottom: 1rem;
+  text-align: center;
+  text-transform: uppercase;
 }
 
 .contact-info {
-  margin-top: 1.5rem;
-  padding: 1rem;
-  background: #ffffff;
-  border-radius: 10px;
-  box-shadow: 0 5px 15px rgba(74, 60, 49, 0.1);
+  display: flex;
+  gap: 1rem;
+  justify-content: center;
 }
 
-.contact-info h3 {
-  font-size: 1.3rem;
-  color: #87a8d0; /* Azul pastel */
-  margin-bottom: 0.75rem;
+.contact-item {
+  flex: 1;
+  min-width: 350px;
+  max-width: 300px;
+  display: flex;
+  align-items: center;
+  justify-content: start;
+  background-color: rgba(255, 255, 255, 0.9);
+  border-radius: 8px;
+  gap: 1rem;
 }
 
-.phone,
-.email {
+
+.contact-icon {
+  font-size: 1.5rem;
+  color: var(--eggplant);
+}
+
+.contact-item strong {
+  font-family: 'Montserrat', sans-serif;
+  font-weight: 700;
   font-size: 1.2rem;
-  font-weight: 600;
-  color: #4a3c31; /* Marrón pastel */
-  margin: 0.5rem 0;
+  color: var(--eggplant);
 }
 
-.poster-qr {
-  padding: 1.5rem;
-  background: #f5f1e9; /* Beige pastel */
-  border-top: 1px solid #d9c6a5; /* Separador marrón pastel claro */
-}
 
-.poster-qr img {
-  max-width: 150px;
-  border-radius: 10px;
-  border: 2px solid #f4b084; /* Naranja pastel */
-  margin-bottom: 0.75rem;
-}
 
-.poster-qr p {
-  font-size: 1.1rem;
-  color: #4a3c31; /* Marrón pastel */
-  font-weight: 500;
-}
-
+/* Pie de Página */
 .poster-footer {
-  padding: 1rem;
-  background: #87a8d0; /* Azul pastel */
-  border-radius: 0 0 10px 10px;
-}
-
-.poster-footer p {
-  font-size: 1.1rem;
-  color: #ffffff;
-  margin: 0.5rem 0;
-}
-
-.poster-footer .brand {
-  font-size: 1rem;
-  font-weight: 600;
-  color: #ffffff;
-}
-
-.loading,
-.error-container,
-.not-found {
+  padding: 0.75rem;
+  background-color: var(--eggplant);
   text-align: center;
-  padding: 2rem;
-  font-size: 1.2rem;
-  color: #4a3c31; /* Marrón pastel */
-  background: #f5f1e9; /* Beige pastel */
-  border-radius: 15px;
-  box-shadow: 0 5px 20px rgba(74, 60, 49, 0.1);
+}
+
+.footer-text {
+  font-family: 'Open Sans', sans-serif;
+  font-size: 0.9rem;
+  color: var(--blanco);
+  margin: 0;
+}
+
+.footer-text strong {
+  font-family: 'Montserrat', sans-serif;
+  font-weight: 700;
+}
+
+/* Estados de carga y error */
+.loading, .error-container, .not-found {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 50vh;
+  font-family: 'Montserrat', sans-serif;
+  font-weight: 600;
+  font-size: 1.5rem;
+  color: var(--eggplant);
 }
 
 .error-container {
-  color: #e87676; /* Rojo pastel */
+  color: #e53e3e;
 }
 
-/* Animaciones */
-@keyframes fadeInUp {
-  from { opacity: 0; transform: translateY(20px); }
-  to { opacity: 1; transform: translateY(0); }
-}
-
-/* Estilos Responsivos */
-@media (max-width: 768px) {
-  .poster-content {
+/* Responsivo */
+@media (max-width: 830px) {
+  .lost-poster {
+    width: 100%;
+    height: auto;
+    min-height: 297mm;
+  }
+  
+  .detail-row {
     flex-direction: column;
-    padding: 1.5rem;
   }
-
-  .poster-image img {
-    max-width: 200px;
+  
+  .contact-qr-section {
+    flex-direction: column;
   }
-
-  .poster-header h1 {
-    font-size: 2rem;
+  
+  .pet-photo {
+    max-width: 100%;
   }
+}
 
-  .poster-details h2 {
-    font-size: 1.6rem;
+/* Estilos para impresión */
+@media print {
+  .poster-actions {
+    display: none;
+  }
+  
+  .lost-poster-container {
+    padding: 0;
+  }
+  
+  .lost-poster {
+    box-shadow: none;
+    border-radius: 0;
+  }
+  
+  .brand-container {
+    background-color: #f0e6d2 !important; /* Versión imprimible del color sand */
+  }
+  
+  .poster-title {
+    background-color: #333 !important; /* Versión imprimible del color eggplant */
+  }
+  
+  .pet-name-container {
+    background-color: #666 !important; /* Versión imprimible del color grape */
+  }
+  
+  .contact-section {
+    background-color: #666 !important; /* Versión imprimible del color grape */
+  }
+  
+  .poster-footer {
+    background-color: #333 !important; /* Versión imprimible del color eggplant */
   }
 }

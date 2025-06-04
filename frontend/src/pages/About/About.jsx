@@ -16,7 +16,7 @@ const About = () => {
         <p>Porque cada minuto cuenta cuando tu mejor amigo se pierde</p>
       </section>
 
-      {/* Sección Historia Personal - Más emotiva */}
+      {/* Sección Historia Personal */}
       <section className="story-section">
         <h2>Mi Historia</h2>
         <div className="story-card">
@@ -31,11 +31,11 @@ const About = () => {
         </div>
       </section>
 
-      {/* Sección Misión - Más impactante */}
+      {/* Sección Misión */}
       <section className="mission-section">
         <div className="mission-shape"></div>
         <div className="mission-content">
-          <h2>Una misión que nace del corazón</h2>
+          <h2>Nuestra Misión</h2>
           <p>
             <strong>EncuentraME nace de una necesidad real: </strong>reducir la cantidad de mascotas perdidas y ayudar a sus dueños a reencontrarse con ellas en tiempo récord. 
             La tecnología nos permite estar conectados, y ahora también puede ser el puente que traiga de vuelta a nuestros compañeros peludos.
@@ -43,7 +43,19 @@ const About = () => {
         </div>
       </section>
 
-      {/* Sección Beneficios - Con iconos y más visual */}
+      {/* Sección Visión */}
+      <section className="vision-section">
+        <div className="vision-shape"></div>
+        <div className="vision-content">
+          <h2>Nuestra Visión</h2>
+          <p>
+            Queremos un mundo donde ninguna mascota se pierda para siempre y donde cada familia pueda disfrutar de la tranquilidad de saber que su mejor amigo siempre estará protegido. 
+            Con EncuentraME, aspiramos a liderar una comunidad global de amantes de las mascotas que confían en la tecnología para mantener a sus compañeros seguros.
+          </p>
+        </div>
+      </section>
+
+      {/* Sección Beneficios */}
       <section className="benefits-section">
         <h2>¿Por qué las familias eligen EncuentraME?</h2>
         <div className="benefits-grid">
@@ -65,7 +77,7 @@ const About = () => {
         </div>
       </section>
 
-      {/* Sección CTA - Más urgente y emocional */}
+      {/* Sección CTA */}
       <section className="about-cta">
         <h2>No esperes a vivir lo que yo viví</h2>
         <p>

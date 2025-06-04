@@ -71,20 +71,38 @@ export const createPet = async (petData) => {
 export const getPetByUuid = async (uuid) => {
   try {
     console.log(`Attempting to fetch pet with UUID: ${uuid}`);
-    // Usamos la misma ruta que devuelve qr_redirect
-    const response = await axios.get(`${API_URL}/qr/${uuid}/`);
-    
-    if (response.data.status === 'assigned' && response.data.pet_data) {
-      console.log("Pet data retrieved successfully:", response.data.pet_data);
-      return response.data.pet_data;
+    const response = await axios.get(`${API_URL}/pets/uuid/${uuid}/`);
+    if (response.data.status === 'success' && response.data.data) {
+      console.log("Pet data retrieved successfully:", response.data.data);
+      return response.data.data;
     } else {
-      throw new Error('QR no válido o no encontrado');
+      throw new Error('Mascota no encontrada');
     }
   } catch (error) {
     console.error('Error fetching pet data:', error);
     throw new Error(error.response?.data?.message || 'Error al obtener datos de la mascota');
   }
 };
+
+const getFullImageUrl = (relativePath) => {
+  if (!relativePath) return 'https://via.placeholder.com/300x300/9333ea/ffffff?text=Sin+Foto';
+  
+  // Si ya es una URL completa, devolverla tal como está
+  if (relativePath.startsWith('http')) return relativePath;
+  
+  // Si es una ruta relativa, construir la URL completa
+  return `${API_BASE}${relativePath}`;
+};
+
+export const getPetById = async (id) => {
+  try {
+    const response = await axios.get(`${API_URL}/pets/${id}/`);
+    return response.data;
+  } catch (error) {
+    throw error.response?.data || error.message;
+  }
+};
+
 
 
 export const getScanHistory = async (petId) => {

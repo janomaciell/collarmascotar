@@ -149,24 +149,25 @@ const Profile = () => {
   if (loading) {
     return (
       <div className="loading flex justify-center items-center h-screen">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-orange-500"></div>
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-eggplant"></div>
       </div>
     );
   }
 
   return (
-    <div className="profile-container max-w-3xl mx-auto p-4">
-      <div className="profile-header flex justify-between items-center mb-6">
-        <h1 className="text-2xl font-bold">Mi Perfil - Encuéntrame</h1>
+    <div className="profile-container max-w-4xl mx-auto p-6">
+      <div className="profile-header flex justify-between items-center mb-8 relative overflow-hidden">
+        <h1 className="text-3xl font-bold text-white z-10">Mi Perfil - Encuéntrame</h1>
 
+        <div className="header-shape"></div>
       </div>
 
       {error && (
-        <div className="error-message px-4 py-3 rounded mb-4 flex justify-between items-center">
-          <span>{error}</span>
+        <div className="error-message px-4 py-3 rounded-lg mb-6 flex justify-between items-center">
+          <span className="text-white">{error}</span>
           <button
             onClick={handleRetry}
-            className="underline hover:text-yellow-300"
+            className="underline hover:text-shell text-white"
             aria-label="Reintentar carga de datos"
           >
             Reintentar
@@ -174,22 +175,20 @@ const Profile = () => {
         </div>
       )}
 
-      <div className="profile-content space-y-6">
+      <div className="profile-content grid grid-cols-1 md:grid-cols-2 gap-6">
         {/* Info del usuario */}
         <div className="profile-section card p-6">
-          <h2 className="text-xl font-semibold mb-4">
+          <h2 className="text-xl font-semibold mb-4 text-eggplant">
             Información Personal
           </h2>
           {userData && (
             <>
-              <p className="mb-2"><strong>Usuario:</strong> {userData.username}</p>
-              <p className="mb-2"><strong>Email:</strong> {userData.email}</p>
-              <p className="mb-2">
-                <strong>Nombre:</strong> {userData.first_name} {userData.last_name}
-              </p>
-              <p className="mb-4"><strong>Teléfono:</strong> {userData.phone || 'No especificado'}</p>
+              <p className="mb-2"><strong className="text-eggplant">Usuario:</strong> {userData.username}</p>
+              <p className="mb-2"><strong className="text-eggplant">Email:</strong> {userData.email}</p>
+              <p className="mb-2"><strong className="text-eggplant">Nombre:</strong> {userData.first_name} {userData.last_name}</p>
+              <p className="mb-4"><strong className="text-eggplant">Teléfono:</strong> {userData.phone || 'No especificado'}</p>
               <button
-                className="edit-btn px-4 py-2 rounded-md w-full sm:w-auto"
+                className="edit-btn px-4 py-2 rounded-full w-full md:w-auto"
                 onClick={openModal}
                 aria-label="Editar perfil"
               >
@@ -201,20 +200,20 @@ const Profile = () => {
 
         {/* Mascotas */}
         <div className="profile-section card p-6">
-          <h2 className="text-xl font-semibold mb-4">
+          <h2 className="text-xl font-semibold mb-4 text-eggplant">
             Mis Mascotas
           </h2>
           {isLoadingPets ? (
             <div className="animate-pulse flex space-x-4">
-              <div className="rounded-full bg-slate-200 h-10 w-10"></div>
+              <div className="rounded-full bg-gray-200 h-10 w-10"></div>
               <div className="flex-1 space-y-6 py-1">
-                <div className="h-2 bg-slate-200 rounded"></div>
+                <div className="h-2 bg-gray-200 rounded"></div>
               </div>
             </div>
           ) : memoizedPets && memoizedPets.length > 0 ? (
-            <ul className="pet-list space-y-4">
+            <ul className="pet-list space-y-3">
               {memoizedPets.map((pet) => (
-                <li key={pet.id} className="flex items-center gap-4">
+                <li key={pet.id} className="flex items-center gap-4 p-2 rounded-lg bg-white hover:bg-sand transition-colors">
                   <img
                     src={pet.photo || 'https://via.placeholder.com/50'}
                     alt={`Foto de ${pet.name}`}
@@ -223,10 +222,10 @@ const Profile = () => {
                     width="50"
                     height="50"
                   />
-                  <span>
+                  <span className="text-eggplant">
                     {pet.name}{' '}
                     {pet.is_lost && (
-                      <span className="lost-tag text-sm font-semibold">
+                      <span className="lost-tag text-sm font-semibold bg-eggplant text-white">
                         (Perdida)
                       </span>
                     )}
@@ -235,10 +234,10 @@ const Profile = () => {
               ))}
             </ul>
           ) : (
-            <p>No tienes mascotas registradas.</p>
+            <p className="text-eggplant">No tienes mascotas registradas.</p>
           )}
           <button
-            className="add-pet-btn mt-4 px-4 py-2 rounded-md w-full sm:w-auto"
+            className="add-pet-btn mt-4 px-4 py-2 rounded-full w-full md:w-auto"
             onClick={() => navigate('/pets')}
             aria-label="Gestionar mascotas"
           >

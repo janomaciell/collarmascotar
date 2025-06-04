@@ -1,18 +1,28 @@
+/* Variables de color */
+:root {
+  --grape: #94618E;
+  --eggplant: #49274A;
+  --sand: #F4DECB;
+  --shell: #F8EE7;
+  --blanco: #ffffff;
+  --sombra: rgba(0, 0, 0, 0.1);
+}
+
 /* Contenedor Principal */
 .pet-management-container {
   position: absolute;
-  top: 70px; /* Space for fixed header */
+  top: 70px;
   left: 0;
   width: 100vw;
-  height: calc(100vh - 70px); /* Adjust for header */
-  background: #ffffff; /* White background */
+  height: calc(100vh - 70px);
+  background: var(--sand); /* SAND background */
   overflow-y: auto;
   display: flex;
   justify-content: center;
   align-items: flex-start;
   padding: 1.5rem;
+  font-family: 'Arial', sans-serif;
   z-index: 1;
-  font-family: 'Poppins', sans-serif;
 }
 
 /* Contenido */
@@ -21,114 +31,127 @@
   z-index: 1;
   width: 100%;
   max-width: 1200px;
-  padding: 1.5rem;
-  background: #ffffff; /* White */
-  border-radius: 10px;
+  padding: 2rem;
+  background: var(--blanco);
+  border-radius: 20px;
+  box-shadow: 0 6px 20px var(--sombra);
+  animation: fadeIn 0.8s ease-in-out;
 }
 
-/* Título */
-.pet-management-content h2 {
-  font-size: 2rem;
-  font-weight: 700;
+/* Encabezado */
+.pet-management-header {
+  background: linear-gradient(135deg, var(--grape), #8a557f);
+  padding: 1.5rem;
+  border-radius: 15px;
+  margin-bottom: 2rem;
+  box-shadow: 0 4px 15px var(--sombra);
+  position: relative;
+  overflow: hidden;
+}
+
+.pet-management-header h2 {
+  font-size: 2.5rem;
+  font-weight: 800;
   text-align: center;
-  color: #000000; /* Black */
-  margin-bottom: 1.5rem;
+  color: var(--blanco);
+  margin: 0;
   text-transform: uppercase;
 }
 
 /* Location Prompt */
 .location-prompt {
-  background: #ffeb3b; /* Intense yellow */
-  border: 1px solid #000000; /* Black border */
-  color: #000000; /* Black text */
-  padding: 1rem;
-  border-radius: 8px;
-  margin-bottom: 1rem;
+  background: var(--eggplant);
+  border: 1px solid var(--shell);
+  color: var(--blanco);
+  padding: 1.5rem;
+  border-radius: 15px;
+  margin-bottom: 1.5rem;
   text-align: center;
+  box-shadow: 0 4px 12px var(--sombra);
 }
 
 .location-button {
-  padding: 0.5rem 1rem;
-  border-radius: 8px;
+  padding: 0.75rem 1.5rem;
+  border-radius: 50px;
   font-weight: 600;
   transition: all 0.3s ease;
+  font-size: 1rem;
 }
 
 .grant-button {
-  background: #ff9800; /* Intense orange */
-  color: #ffffff; /* White */
+  background: var(--eggplant);
+  color: var(--blanco);
+  border: 1px solid var(--shell);
 }
 
 .grant-button:hover {
-  background: #ffeb3b; /* Intense yellow */
-  color: #000000; /* Black */
+  background: var(--shell);
+  color: var(--eggplant);
 }
 
 .deny-button {
-  background: #ffffff; /* White */
-  color: #000000; /* Black */
-  border: 1px solid #000000; /* Black border */
+  background: var(--blanco);
+  color: var(--eggplant);
+  border: 1px solid var(--eggplant);
 }
 
 .deny-button:hover {
-  background: #ffeb3b; /* Intense yellow */
-  color: #000000; /* Black */
+  background: var(--shell);
+  color: var(--eggplant);
 }
 
 /* Mensaje de Carga */
 .loading-message {
   text-align: center;
-  padding: 1rem;
-  background: #ffffff; /* White */
-  border-radius: 8px;
-  font-size: 1rem;
-  color: #000000; /* Black */
-}
-
-.loading-message i {
-  font-size: 2rem;
-  color: #ff9800; /* Intense orange */
-  margin-bottom: 0.5rem;
-  display: block;
-  animation: spin 2s infinite linear;
+  padding: 2rem;
+  background: var(--blanco);
+  border-radius: 15px;
+  font-size: 1.1rem;
+  color: var(--eggplant);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+  box-shadow: 0 4px 12px var(--sombra);
 }
 
 /* Mensaje de Error */
 .error-message {
-  color: #000000; /* Black */
-  text-align: center;
-  margin-top: 1rem;
-  font-size: 1rem;
+  background: var(--eggplant);
+  color: var(--blanco);
+  padding: 1.2rem;
+  border-radius: 15px;
+  margin-top: 1.5rem;
   font-weight: 500;
-  padding: 1rem;
-  border-radius: 8px;
-  background: #ff9800; /* Intense orange */
+  text-align: center;
+  box-shadow: 0 4px 12px var(--sombra);
 }
 
 /* Mensaje de Éxito */
 .success-message {
-  color: #000000; /* Black */
-  text-align: center;
-  margin-top: 1rem;
-  font-size: 1rem;
+  background: var(--shell);
+  color: var(--eggplant);
+  padding: 1.2rem;
+  border-radius: 15px;
+  margin-top: 1.5rem;
   font-weight: 500;
-  padding: 1rem;
-  border-radius: 8px;
-  background: #ffeb3b; /* Intense yellow */
+  text-align: center;
+  box-shadow: 0 4px 12px var(--sombra);
 }
 
 /* Historial de Escaneo */
 .scan-history {
-  margin-top: 1rem;
-  padding: 1rem;
-  background: #ffffff; /* White */
-  border-radius: 8px;
-  border: 1px solid #000000; /* Black border */
+  margin-top: 1.5rem;
+  padding: 1.5rem;
+  background: var(--blanco);
+  border-radius: 15px;
+  border: 1px solid var(--shell);
+  box-shadow: 0 4px 12px var(--sombra);
 }
 
 .scan-history h3 {
-  font-size: 1.5rem;
-  color: #000000; /* Black */
+  font-size: 1.8rem;
+  color: var(--eggplant);
   margin-bottom: 1rem;
 }
 
@@ -138,78 +161,62 @@
 }
 
 .scan-history li {
-  padding: 0.5rem 0;
-  border-bottom: 1px solid rgba(0, 0, 0, 0.1); /* Light black border */
-}
-
-/* Tarjeta de Mascota (Pet Card) */
-.pet-card {
-  padding: 1rem;
-  border-radius: 8px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1); /* Subtle shadow */
-  margin: 0.5rem;
-  border-left: 3px solid #ff9800; /* Intense orange */
-  background: #ffffff; /* White */
-}
-
-.pet-card-content {
-  position: relative;
-  z-index: 1;
-}
-
-.pet-card h3 {
-  font-size: 1.3rem;
-  color: #000000; /* Black */
-  margin-bottom: 0.5rem;
-}
-
-.pet-card p {
-  color: #000000; /* Black */
-  margin: 0.3rem 0;
-  font-size: 0.9rem;
-}
-
-.pet-card .qr-code {
-  display: block;
-  margin: 0.5rem auto;
-  max-width: 120px;
-  border-radius: 8px;
-}
-
-.pet-card button {
-  background: #ff9800; /* Intense orange */
-  color: #ffffff; /* White */
-  border: none;
-  padding: 0.5rem 1rem;
-  border-radius: 8px;
-  cursor: pointer;
-  font-size: 0.9rem;
-  margin: 0.3rem 0;
+  padding: 0.75rem 0;
+  border-bottom: 1px solid var(--shell);
   transition: all 0.3s ease;
 }
 
-.pet-card button:hover {
-  background: #ffeb3b; /* Intense yellow */
-  color: #000000; /* Black */
-}
-
-.pet-card button:disabled {
-  background: #cccccc; /* Gray */
-  color: #666666; /* Dark gray */
-  cursor: not-allowed;
+.scan-history li:hover {
+  background: rgba(73, 39, 74, 0.05);
 }
 
 /* Animaciones */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
 @keyframes spin {
   0% { transform: rotate(0deg); }
   100% { transform: rotate(360deg); }
 }
 
 /* Estilos Responsivos */
-@media (max-width: 768px) {
+@media (min-width: 768px) {
   .pet-management-container {
-    top: 70px;
-    height: calc(100vh - 70px);
+    padding: 2rem;
+  }
+
+  .pet-management-content {
+    padding: 2.5rem;
+  }
+
+  .pet-management-header h2 {
+    font-size: 3rem;
+  }
+
+  .location-prompt {
+    padding: 2rem;
+  }
+
+  .loading-message, .error-message, .success-message {
+    font-size: 1.2rem;
+    padding: 1.5rem;
+  }
+
+  .scan-history h3 {
+    font-size: 2rem;
+  }
+}
+
+@media (max-width: 767px) {
+  .pet-management-container {
+    top: 60px;
+    height: calc(100vh - 60px);
     padding: 1rem;
   }
 
@@ -217,24 +224,20 @@
     padding: 1rem;
   }
 
-  .pet-management-content h2 {
-    font-size: 1.8rem;
+  .pet-management-header h2 {
+    font-size: 2rem;
+  }
+
+  .location-prompt {
+    padding: 1rem;
   }
 
   .loading-message, .error-message, .success-message {
-    font-size: 0.9rem;
-    padding: 0.8rem;
+    font-size: 0.95rem;
+    padding: 1rem;
   }
 
   .scan-history h3 {
-    font-size: 1.3rem;
-  }
-
-  .pet-card {
-    margin: 0.3rem;
-  }
-
-  .pet-card .qr-code {
-    max-width: 100px;
+    font-size: 1.5rem;
   }
 }

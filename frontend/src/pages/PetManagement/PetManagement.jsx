@@ -6,6 +6,7 @@ import './PetManagement.css';
 import html2canvas from 'html2canvas';
 import jsPDF from 'jspdf';
 import { API_URL } from '../../services/api';
+import { useNavigate } from 'react-router-dom';
 
 const calculateDistance = (lat1, lon1, lat2, lon2) => {
   const R = 6371;
@@ -113,7 +114,7 @@ const ScanHistoryDetail = ({ scanHistory, userLocation, pet }) => {
                   href={`https://www.google.com/maps?q=${scan.latitude},${scan.longitude}`}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="text-black hover:text-orange-500"
+                  className="text-eggplant hover:text-shell"
                 >
                   Ver en Google Maps
                 </a>
@@ -122,13 +123,13 @@ const ScanHistoryDetail = ({ scanHistory, userLocation, pet }) => {
           </ul>
 
           <div className="mt-6">
-            <h3 className="text-xl font-semibold mb-4">Mapa de Calor de Escaneos</h3>
+            <h3 className="text-xl font-semibold mb-4 text-eggplant">Mapa de Calor de Escaneos</h3>
             <HeatMapComponent scanHistory={scanHistory} />
           </div>
 
           {frequentLocations.length > 0 && (
             <div className="mt-4">
-              <h4 className="font-semibold">Ubicaciones Frecuentes:</h4>
+              <h4 className="font-semibold text-eggplant">Ubicaciones Frecuentes:</h4>
               <ul className="space-y-1">
                 {frequentLocations.map((loc, idx) => (
                   <li key={idx}>
@@ -137,7 +138,7 @@ const ScanHistoryDetail = ({ scanHistory, userLocation, pet }) => {
                       href={`https://www.google.com/maps?q=${loc.center.lat},${loc.center.lng}`}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="text-black hover:text-orange-500"
+                      className="text-eggplant hover:text-shell"
                     >
                       Lat: {loc.center.lat.toFixed(4)}, Lng: {loc.center.lng.toFixed(4)}
                     </a>
@@ -149,7 +150,7 @@ const ScanHistoryDetail = ({ scanHistory, userLocation, pet }) => {
           {pattern && <p className="mt-4 italic text-gray-600">{pattern.message}</p>}
         </>
       ) : (
-        <p>No hay escaneos registrados para {pet.name}.</p>
+        <p className="text-eggplant">No hay escaneos registrados para {pet.name}.</p>
       )}
     </div>
   );
@@ -166,6 +167,7 @@ const PetManagement = () => {
   const [locationPermission, setLocationPermission] = useState('prompt');
   const [showLocationPrompt, setShowLocationPrompt] = useState(false);
   const alertRadius = 5;
+  const navigate = useNavigate();
 
   useEffect(() => {
     fetchPets();
@@ -275,13 +277,9 @@ const PetManagement = () => {
       setPets(pets.map((pet) => (pet.id === petId ? updatedPet : pet)));
 
       if (!currentStatus) {
-        const pet = pets.find((p) => p.id === petId);
-        const posterUrl = await generateLostPosterLocal(pet);
         await sendLostNotification(petId);
-        const posterResponse = await uploadPosterToBackend(petId, posterUrl);
-        if (posterResponse?.id) {
-          viewSharedPoster(posterResponse.id);
-        }
+        const petToNavigate = pets.find(pet => pet.id === petId) || updatedPet;
+        navigate(`/lost-poster/${petToNavigate.qr_uuid}`);
       }
     } catch (err) {
       setError('Error al actualizar estado: ' + (err.message || err));
@@ -441,14 +439,16 @@ const PetManagement = () => {
   return (
     <div className="pet-management-container">
       <div className="pet-management-content">
-        <h2>Gestión de Mascotas</h2>
+        <div className="pet-management-header">
+          <h2>Gestión de Mascotas</h2>
+        </div>
 
         {showLocationPrompt && (
           <div className="location-prompt">
-            <p className="mb-2">
+            <p className="mb-2 text-eggplant">
               Necesitamos tu ubicación para enviar alertas sobre mascotas perdidas. ¿Nos das permiso?
             </p>
-            <div className="flex gap-2">
+            <div className="flex gap-2 justify-center">
               <button
                 onClick={updateLocation}
                 className="location-button grant-button"
@@ -469,8 +469,8 @@ const PetManagement = () => {
 
         {isLoading ? (
           <div className="loading-message">
-            <i className="fas fa-spinner"></i>
-            <p>Cargando mascotas...</p>
+            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-eggplant"></div>
+            <p className="text-eggplant">Cargando mascotas...</p>
           </div>
         ) : (
           <>
@@ -481,15 +481,15 @@ const PetManagement = () => {
             />
             {selectedPetId && (
               <div className="scan-history">
-                <div className="flex justify-between items-center">
-                  <h3 className="text-xl font-semibold mb-2">Historial de Escaneos</h3>
+                <div className="flex justify-between items-center mb-4">
+                  <h3 className="text-xl font-semibold text-eggplant">Historial de Escaneos</h3>
                   <button
                     onClick={() => {
                       setSelectedPetId(null);
                       setScanHistory([]);
                       setError('');
                     }}
-                    className="text-black hover:text-orange-500"
+                    className="text-eggplant hover:text-shell"
                   >
                     Cerrar
                   </button>
@@ -506,12 +506,12 @@ const PetManagement = () => {
 
         {error && (
           <div className="error-message">
-            {error}
+            <span className="text-white">{error}</span>
           </div>
         )}
         {successMessage && (
           <div className="success-message">
-            {successMessage}
+            <span className="text-eggplant">{successMessage}</span>
           </div>
         )}
       </div>

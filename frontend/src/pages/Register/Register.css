@@ -1,59 +1,78 @@
 /* Variables de color */
 :root {
-  --amarillo-intenso: #ffeb3b;
-  --naranja-intenso: #ff9800;
+  --grape: #94618E;
+  --eggplant: #49274A;
+  --sand: #F4DECB;
+  --shell: #F8EE7;
   --blanco: #ffffff;
-  --negro: #000000;
-  --sombra: rgba(0, 0, 0, 0.1);
+  --sombra: rgba(0, 0, 0, 0.15);
 }
 
+/* Estilo general de la página */
 .register-page {
-  padding-top: 4rem;
   min-height: 100vh;
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: center;
-  background: var(--blanco);
-  font-family: 'Poppins', sans-serif;
+  background: var(--sand); /* SAND background */
+  font-family: 'Arial', sans-serif;
+  position: relative;
+  overflow: hidden;
+  padding-top: 1rem;
+  padding: 2rem;
 }
 
-.register-page h1 {
-  font-size: 2.5rem;
-  color: var(--negro);
-  margin-bottom: 1.5rem;
-  background-color: #ff9800;
-  padding: 3rem;
+/* Sección Hero (Título y subtítulo) */
+.register-hero {
+  text-align: center;
+  padding: 2rem 1rem;
+  margin-bottom: 2rem;
+  position: relative;
+  width: 100%;
+  max-width: 800px;
+  z-index: 1;
+  animation: fadeIn 1s ease-in-out;
+}
+
+.register-hero h1 {
+  font-size: 3rem;
+  color: var(--blanco); /* White text */
+  background-color: var(--grape); /* GRAPE background */
+  padding: 1.5rem 2rem;
+  border-radius: 25px;
   font-weight: 800;
   letter-spacing: -0.5px;
+  box-shadow: 0 4px 15px var(--sombra);
+  display: inline-block;
 }
 
-.register-page p {
-  font-size: 1.1rem;
-  color: var(--negro);
-  margin-bottom: 2rem;
+.register-hero p {
+  font-size: 1.2rem;
+  color: var(--eggplant); /* EGGPLANT */
+  margin-top: 1rem;
   text-align: center;
-  max-width: 500px;
+  max-width: 600px;
   line-height: 1.6;
-  opacity: 0.8;
+  opacity: 0.9;
 }
 
-/* Form Container */
+/* Contenedor del formulario */
 .register-form-container {
   width: 100%;
-  max-width: 440px;
+  max-width: 500px; /* Aumentado para mejor espaciado en PC */
   margin: 0 auto;
   padding: 2.5rem;
-  background: var(--blanco);
-  border-radius: 20px;
-  box-shadow: 0 8px 30px var(--sombra);
+  background: var(--blanco); /* White background */
+  border-radius: 30px;
+  box-shadow: 0 8px 25px var(--sombra);
+  animation: slideUp 0.8s ease-in-out;
 }
 
 /* Formulario de registro */
 .register-form {
   display: flex;
   flex-direction: column;
-  gap: 1.8rem;
+  gap: 2rem; /* Más espaciado entre campos */
 }
 
 /* Estilos para los campos de formulario */
@@ -63,41 +82,43 @@
 
 .form-group label {
   display: block;
-  margin-bottom: 0.8rem;
-  color: var(--negro);
+  margin-bottom: 0.6rem;
+  color: var(--eggplant); /* EGGPLANT */
   font-weight: 600;
-  font-size: 0.95rem;
+  font-size: 1rem;
 }
 
 .form-group input {
   width: 100%;
-  padding: 1.2rem;
+  padding: 1rem 1.2rem;
   border: 2px solid transparent;
-  background: rgba(0, 0, 0, 0.03);
-  border-radius: 12px;
+  background: rgba(73, 39, 74, 0.05); /* Slight EGGPLANT tint */
+  border-radius: 15px;
   font-size: 1rem;
-  color: var(--negro);
+  color: var(--eggplant); /* EGGPLANT */
   transition: all 0.3s ease;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
 }
 
 .form-group input:focus {
   outline: none;
-  border-color: var(--amarillo-intenso);
+  border-color: var(--shell); /* SHELL */
   background: var(--blanco);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
 }
 
 .form-group input::placeholder {
-  color: var(--negro);
-  opacity: 0.6;
+  color: var(--eggplant); /* EGGPLANT */
+  opacity: 0.5;
 }
 
 .form-group input.error {
-  border-color: var(--naranja-intenso);
+  border-color: var(--eggplant); /* EGGPLANT */
 }
 
 /* Mensaje de error en campos individuales */
 .error-text {
-  color: var(--naranja-intenso);
+  color: var(--eggplant); /* EGGPLANT */
   font-size: 0.85rem;
   margin-top: 0.5rem;
   font-weight: 500;
@@ -105,45 +126,47 @@
 
 /* Mensaje de error general */
 .error-message {
-  color: var(--negro);
-  background: rgba(255, 152, 0, 0.1);
+  color: var(--blanco); /* White */
+  background: var(--eggplant); /* EGGPLANT */
   padding: 1rem;
   border-radius: 12px;
   margin-bottom: 1.5rem;
   font-weight: 500;
   font-size: 0.9rem;
+  text-align: center;
 }
 
 /* Texto informativo debajo del campo de contraseña */
 .form-group small {
-  color: var(--negro);
-  font-size: 0.75rem;
-  margin-top: 0.2rem;
+  color: var(--eggplant); /* EGGPLANT */
+  font-size: 0.8rem;
+  margin-top: 0.3rem;
+  display: block;
 }
 
 /* Botón de enviar */
 .register-button {
-  background: var(--naranja-intenso);
-  color: var(--blanco);
+  background: var(--eggplant); /* EGGPLANT */
+  color: var(--blanco); /* White */
   border: none;
   padding: 1.2rem;
-  font-size: 1rem;
+  font-size: 1.1rem;
   font-weight: 600;
-  border-radius: 12px;
+  border-radius: 50px; /* Más redondeado para un look moderno */
   cursor: pointer;
   transition: all 0.3s ease;
   margin-top: 1rem;
 }
 
 .register-button:hover {
-  background: var(--amarillo-intenso);
-  color: var(--negro);
-  transform: translateY(-2px);
-  box-shadow: 0 4px 15px var(--sombra);
+  background: var(--shell); /* SHELL */
+  color: var(--eggplant); /* EGGPLANT */
+  transform: translateY(-3px);
+  box-shadow: 0 6px 20px var(--sombra);
 }
 
 .register-button:disabled {
-  background: rgba(0, 0, 0, 0.1);
+  background: rgba(73, 39, 74, 0.3); /* Faded EGGPLANT */
   cursor: not-allowed;
   transform: none;
 }
@@ -151,13 +174,13 @@
 /* Enlace para login */
 .login-link {
   text-align: center;
-  margin-top: 2rem;
-  color: var(--negro);
-  font-size: 0.95rem;
+  margin: 2rem 0;
+  color: var(--eggplant); /* EGGPLANT */
+  font-size: 1rem;
 }
 
 .login-link a {
-  color: var(--naranja-intenso);
+  color: var(--eggplant); /* EGGPLANT */
   text-decoration: none;
   font-weight: 600;
   margin-left: 0.5rem;
@@ -165,7 +188,8 @@
 }
 
 .login-link a:hover {
-  color: var(--amarillo-intenso);
+  color: var(--shell); /* SHELL */
+  text-decoration: underline;
 }
 
 /* Password Input Styles */
@@ -181,48 +205,153 @@
 
 .toggle-password {
   position: absolute;
-  right: 10px;
+  right: 15px;
   background: none;
   border: none;
   cursor: pointer;
   padding: 0;
-  font-size: 1.2rem;
+  font-size: 1.3rem;
+  color: var(--eggplant); /* EGGPLANT */
+  transition: all 0.3s ease;
 }
 
 .toggle-password:hover {
-  opacity: 0.8;
+  color: var(--shell); /* SHELL */
+  transform: scale(1.1);
 }
 
 .toggle-password:focus {
   outline: none;
 }
 
+/* Animaciones */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
 /* Estilos responsivos */
+@media (min-width: 769px) {
+  .register-page {
+    
+    padding: 4rem 2rem;
+    justify-content: center;
+  }
+
+  .register-hero {
+    padding: 3rem 2rem;
+    margin-bottom: 3rem;
+  }
+
+  .register-hero h1 {
+    font-size: 3.5rem;
+    padding: 2rem 3rem;
+  }
+
+  .register-hero p {
+    font-size: 1.4rem;
+  }
+
+  .register-form-container {
+    padding: 3rem;
+    max-width: 550px; /* Más ancho en PC para mejor proporción */
+  }
+
+  .form-group input {
+    padding: 1.2rem 1.5rem;
+    font-size: 1.1rem;
+  }
+
+  .register-button {
+    padding: 1.3rem;
+    font-size: 1.2rem;
+  }
+}
+
 @media (max-width: 768px) {
   .register-page {
-    padding-top: 4rem;
+    padding: 2rem 1rem;
+    
+    justify-content: flex-start;
+  }
+
+  .register-hero {
+    padding: 1.5rem 1rem;
+    margin-bottom: 1.5rem;
+  }
+
+  .register-hero h1 {
+    font-size: 2.2rem;
+    padding: 1.2rem 1.5rem;
+  }
+
+  .register-hero p {
+    font-size: 1.1rem;
   }
 
   .register-form-container {
     padding: 2rem;
+    max-width: 90%;
   }
 
-  .register-page h1 {
-    font-size: 2rem;
+  .form-group input {
+    padding: 1rem 1.2rem;
+    font-size: 1rem;
+  }
+
+  .register-button {
+    padding: 1.1rem;
+    font-size: 1.1rem;
   }
 }
 
 @media (max-width: 480px) {
-  .register-form-container {
-    box-shadow: none;
-    padding: 1.5rem;
+  .register-page {
+    padding: 1.5rem 0.5rem;
   }
 
-  .register-page h1 {
+  .register-hero h1 {
     font-size: 1.8rem;
+    padding: 1rem 1.2rem;
+  }
+
+  .register-hero p {
+    font-size: 1rem;
+  }
+
+  .register-form-container {
+    padding: 1.5rem;
+    box-shadow: none; /* Sin sombra en mobile para un look más limpio */
   }
 
   .form-group input {
+    padding: 0.9rem 1rem;
+    font-size: 0.95rem;
+  }
+
+  .register-button {
     padding: 1rem;
+    font-size: 1rem;
+  }
+
+  .login-link {
+    font-size: 0.9rem;
   }
 }

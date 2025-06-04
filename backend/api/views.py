@@ -121,29 +121,28 @@ class PetViewSet(viewsets.ModelViewSet):
 @api_view(['GET'])
 @permission_classes([AllowAny])
 def get_pet_by_uuid(request, uuid):
-    """
-    Obtiene los datos de una mascota por su UUID
-    """
-    try:
-        # Intentar obtener la mascota por UUID
-        pet = Pet.objects.get(qr_uuid=uuid)
-        
-        # Serializar los datos
-        serializer = PetSerializer(pet)
-        return Response({
-            'status': 'success',
-            'data': serializer.data
-        })
-    except Pet.DoesNotExist:
-        return Response({
-            'status': 'error',
-            'message': 'Mascota no encontrada'
-        }, status=status.HTTP_404_NOT_FOUND)
-    except Exception as e:
-        return Response({
-            'status': 'error',
-            'message': str(e)
-        }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+  try:
+    pet = Pet.objects.get(qr_uuid=uuid)
+    serializer = PetSerializer(pet)
+    return Response({
+      'status': 'success',
+      'data': serializer.data
+    })
+  except Pet.DoesNotExist:
+    return Response({
+      'status': 'error',
+      'message': 'Mascota no encontrada'
+    }, status=status.HTTP_404_NOT_FOUND)
+  except ValueError as e:
+    return Response({
+      'status': 'error',
+      'message': f'Invalid UUID format: {str(e)}'
+    }, status=status.HTTP_400_BAD_REQUEST)
+  except Exception as e:
+    return Response({
+      'status': 'error',
+      'message': str(e)
+    }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 @api_view(['POST'])
 @permission_classes([permissions.AllowAny])

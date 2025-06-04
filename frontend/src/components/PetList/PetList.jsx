@@ -16,24 +16,8 @@ const PetList = ({ pets, onToggleLost, onShowHistory }) => {
                 {pet.breed && <p><strong>Raza:</strong> {pet.breed}</p>}
                 <p><strong>Teléfono:</strong> {pet.phone}</p>
               </div>
-              <div className="pet-qr">
-                {pet.qr_code && (
-                  <>
-                    <img
-                      src={pet.qr_code}
-                      alt={`Código QR de ${pet.name}`}
-                      className="qr-image"
-                    />
-                    <a
-                      href={pet.qr_code}
-                      download={`qr_${pet.name}.png`}
-                      className="download-button"
-                    >
-                      Descargar QR
-                    </a>
-                  </>
-                )}
-              </div>
+              
+
               <div className="pet-actions">
                 <button
                   className={`toggle-lost-btn ${pet.is_lost ? 'is-lost' : ''}`}

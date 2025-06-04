@@ -1,8 +1,8 @@
 .support-container {
   margin: 0 auto;
-  background-color: #ffffff; /* White background */
+  background-color: #F4DECB; /* SAND background */
   margin-top: 70px; /* Space for fixed nav */
-  font-family: 'Poppins', sans-serif;
+  font-family: 'Arial', sans-serif; /* Fuente elegante similar a la imagen */
   position: relative;
   overflow: hidden;
 }
@@ -11,10 +11,10 @@
 .support-hero {
   text-align: center;
   padding: 6rem 2rem;
-  background: #ff9800; /* Intense orange */
+  background: #94618E; /* GRAPE background */
   position: relative;
   margin-bottom: 5rem;
-  color: #000000; /* Black text */
+  color: #ffffff; /* White text */
   overflow: hidden;
 }
 
@@ -32,7 +32,7 @@
   border-radius: 50%;
   opacity: 0.2;
   animation: float 6s infinite ease-in-out;
-  background: #ffeb3b; /* Intense yellow */
+  background: #F88EE7; /* SHELL for shapes */
 }
 
 .shape-1 {
@@ -51,7 +51,7 @@
 
 .support-hero h1 {
   font-size: 4.5rem;
-  color: #000000; /* Black */
+  color: #ffffff; /* White */
   margin-bottom: 1rem;
   position: relative;
   z-index: 1;
@@ -61,7 +61,7 @@
 
 .support-hero p {
   font-size: 1.8rem;
-  color: #000000; /* Black */
+  color: #ffffff; /* White */
   font-style: italic;
   position: relative;
   z-index: 1;
@@ -71,7 +71,8 @@
 
 /* Contact Section */
 .contact-section {
-  margin-bottom: 5rem;
+  margin-bottom: 2rem;
+  background: #F4DECB; /* SAND */
 }
 
 .contact-content {
@@ -82,7 +83,7 @@
 
 .contact-content h2 {
   font-size: 2.5rem;
-  color: #000000; /* Black */
+  color: #49274A; /* EGGPLANT */
   margin-bottom: 2rem;
   position: relative;
   display: inline-block;
@@ -97,12 +98,12 @@
   transform: translateX(-50%);
   width: 80px;
   height: 3px;
-  background: #ffeb3b; /* Intense yellow */
+  background: #F88EE7; /* SHELL */
 }
 
 .contact-content p {
   font-size: 1.2rem;
-  color: #000000; /* Black */
+  color: #49274A; /* EGGPLANT */
   margin-bottom: 2rem;
 }
 
@@ -114,7 +115,7 @@
   box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
   max-width: 800px;
   margin: 0 auto 2rem;
-  border-left: 5px solid #ff9800; /* Intense orange */
+  border-left: 5px solid #49274A; /* EGGPLANT */
   transition: transform 0.3s ease;
 }
 
@@ -136,7 +137,7 @@
 .form-group label {
   display: block;
   font-size: 1.1rem;
-  color: #000000; /* Black */
+  color: #49274A; /* EGGPLANT */
   margin-bottom: 0.5rem;
 }
 
@@ -144,10 +145,10 @@
 .form-group textarea {
   width: 100%;
   padding: 0.8rem;
-  border: 1px solid #000000; /* Black border */
+  border: 1px solid #49274A; /* EGGPLANT border */
   border-radius: 8px;
   font-size: 1rem;
-  color: #000000; /* Black */
+  color: #49274A; /* EGGPLANT */
 }
 
 .form-group textarea {
@@ -156,7 +157,7 @@
 
 .submit-button {
   padding: 1rem 2rem;
-  background: #ff9800; /* Intense orange */
+  background: #49274A; /* EGGPLANT */
   color: #ffffff; /* White */
   border: none;
   border-radius: 50px;
@@ -166,13 +167,13 @@
 }
 
 .submit-button:hover {
-  background: #ffeb3b; /* Intense yellow */
-  color: #000000; /* Black */
+  background: #F88EE7; /* SHELL */
+  color: #49274A; /* EGGPLANT */
 }
 
 .success-message {
-  color: #000000; /* Black */
-  background: #ffeb3b; /* Intense yellow */
+  color: #49274A; /* EGGPLANT */
+  background: #F88EE7; /* SHELL */
   margin-top: 1rem;
   font-size: 1rem;
   padding: 1rem;
@@ -180,8 +181,8 @@
 }
 
 .error-message {
-  color: #000000; /* Black */
-  background: #ff9800; /* Intense orange */
+  color: #ffffff; /* White */
+  background: #49274A; /* EGGPLANT */
   margin-top: 1rem;
   font-size: 1rem;
   padding: 1rem;
@@ -195,14 +196,14 @@
 
 .social-contact h3 {
   font-size: 1.8rem;
-  color: #000000; /* Black */
+  color: #49274A; /* EGGPLANT */
   margin-bottom: 1rem;
   font-weight: 700;
 }
 
 .social-contact p {
   font-size: 1.1rem;
-  color: #000000; /* Black */
+  color: #49274A; /* EGGPLANT */
   margin-bottom: 1.5rem;
 }
 
@@ -210,7 +211,7 @@
   display: inline-flex;
   align-items: center;
   padding: 1rem 2rem;
-  background: #ff9800; /* Intense orange */
+  background: #49274A; /* EGGPLANT */
   color: #ffffff; /* White */
   border-radius: 50px;
   text-decoration: none;
@@ -219,16 +220,16 @@
 }
 
 .instagram-button:hover {
-  background: #ffeb3b; /* Intense yellow */
-  color: #000000; /* Black */
+  background: #F88EE7; /* SHELL */
+  color: #49274A; /* EGGPLANT */
 }
 
 /* CTA Section */
 .support-cta {
   text-align: center;
   padding: 5rem 2rem;
-  background: #ffeb3b;
-  color: #000000;
+  background: #94618E; /* GRAPE */
+  color: #ffffff; /* White */
   position: relative;
   overflow: hidden;
 }
@@ -239,38 +240,38 @@
   left: 0;
   width: 100%;
   height: 100%;
-  z-index: 1; /* Bajamos el z-index */
+  z-index: 1;
 }
 
 .cta-shape {
   width: 180px;
   height: 180px;
-  background: #ff9800; /* Intense orange */
+  background: #F88EE7; /* SHELL */
   border-radius: 50%;
   opacity: 0.15;
   position: absolute;
   right: -50px;
   top: -50px;
   animation: pulse 4s infinite;
-  z-index: 1; /* Aseguramos que esté detrás del contenido */
+  z-index: 1;
 }
 
 .support-cta h2,
 .support-cta p {
   position: relative;
-  z-index: 2; /* Aseguramos que el texto esté por encima de las formas */
+  z-index: 2;
 }
 
 .cta-button {
   position: relative;
-  z-index: 3; /* Aseguramos que el botón esté en la capa superior */
-  background-color: #ff9800;
-  color: white;
+  z-index: 3;
+  background: #49274A; /* EGGPLANT */
+  color: #ffffff; /* White */
   border: none;
-  border-radius: 4px;
-  padding: 12px 24px;
-  font-size: 16px;
-  font-weight: bold;
+  border-radius: 50px; /* Ajustado para coherencia */
+  padding: 1rem 2rem;
+  font-size: 1.1rem;
+  font-weight: 700;
   cursor: pointer;
   transition: all 0.3s ease;
   text-decoration: none;
@@ -279,7 +280,8 @@
 }
 
 .cta-button:hover {
-  background-color: #f57c00;
+  background: #F88EE7; /* SHELL */
+  color: #49274A; /* EGGPLANT */
   transform: translateY(-2px);
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
 }

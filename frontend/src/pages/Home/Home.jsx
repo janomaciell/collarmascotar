@@ -2,8 +2,8 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import './Home.css';
 
-// Imágenes de ejemplo (puedes reemplazarlas con assets locales)
-const promiseImage = 'https://images.unsplash.com/photo-1583511655826-05700d52f4d9?ixlib=rb-4.0.3&auto=format&fit=crop&w=1350&q=80';
+// Imagen de ejemplo para la sección Héroe (puedes reemplazarla con tu propia imagen)
+const heroImage = 'https://images.unsplash.com/photo-1583511655826-05700d52f4d9?ixlib=rb-4.0.3&auto=format&fit=crop&w=1350&q=80';
 
 const testimonials = [
   { text: "Mi perro se perdió y gracias al collar QR lo recuperé en horas. ¡Increíble!", author: "Ana G." },
@@ -13,37 +13,47 @@ const testimonials = [
 const Home = () => {
   return (
     <div className="home-wrapper">
-      {/* Navigation Bar */}
-
 
       {/* Sección Héroe */}
       <section className="hero-section" aria-label="Introducción a CollarMascotaQR">
-        <div className="hero-content centered">
+        <div className="hero-content">
           <h1>PROTEGE A TU MEJOR AMIGO</h1>
           <p>EncuentraME: La solución inteligente para mantener a tu mascota segura y siempre contigo.</p>
-          {/* Sección Héroe 
-          <div className="hero-counter">
-            <span>+50,000</span> Mascotas protegidas
-          </div>
-          */}
           <div className="hero-buttons">
             <Link to="/about" className="secondary-button">Descubre más</Link>
             <Link to="/compra" className="cta-button">¡Compra ahora!</Link>
           </div>
         </div>
+        <div className="hero-image">
+          <img src="src/img/perro_home.png" alt="Perro feliz con collar QR" />
+        </div>
       </section>
 
-      {/* Sección Join Our Community */}
-      <section className="join-section" aria-label="Unirse a la comunidad">
-        <h2>ÚNETE A NUESTRA COMUNIDAD</h2>
-        <p>Sé parte de una comunidad creciente de amantes de las mascotas que aseguran que sus amigos peludos estén siempre seguros.</p>
-        <Link to="/login" className="join-button">Únete Aquí</Link>
+      {/* Sección Información (similar a Contact Us, Philosophy, Outlets) */}
+      <section className="info-section" aria-label="Información adicional">
+        <div className="info-grid">
+          <article className="info-item">
+            <h3>Contáctanos</h3>
+            <p>Ponte en contacto con nosotros para cualquier consulta sobre CollarMascotaQR.</p>
+            <Link to="/contact" className="info-link">Escríbenos</Link>
+          </article>
+          <article className="info-item">
+            <h3>Nuestra Filosofía</h3>
+            <p>Creemos en mantener a las mascotas seguras y a sus dueños tranquilos con tecnología innovadora.</p>
+            <Link to="/about" className="info-link">Conoce más</Link>
+          </article>
+          <article className="info-item">
+            <h3>Únete a Nosotros</h3>
+            <p>Sé parte de una comunidad de amantes de las mascotas que confían en nosotros.</p>
+            <Link to="/login" className="info-link">Únete Aquí</Link>
+          </article>
+        </div>
       </section>
 
       {/* Sección Promesa */}
       <section className="promise-section" aria-label="Promesa de valor">
         <div className="promise-image">
-          <img src={promiseImage} alt="Perro feliz con su dueño" loading="lazy" />
+          <img src={heroImage} alt="Perro feliz con su dueño" loading="lazy" />
         </div>
         <div className="promise-content">
           <h2>Tranquilidad en un escaneo</h2>

@@ -85,7 +85,7 @@ const QRRegistrationPage = () => {
       const response = await registerPetToQR(uuid, formData);
       
       // Si la respuesta es exitosa, redirigir al dashboard
-      navigate('/dashboard', { 
+      navigate('/pets', { 
         state: { successMessage: 'Mascota registrada exitosamente.' } 
       });
 
@@ -124,7 +124,7 @@ const QRRegistrationPage = () => {
       const response = await completePendingRegistration(pendingData, pendingQR);
       sessionStorage.removeItem('pending_pet_data');
       sessionStorage.removeItem('pending_qr_uuid');
-      navigate('/dashboard', { state: { successMessage: 'Registro completado exitosamente.' } });
+      navigate('/pets', { state: { successMessage: 'Registro completado exitosamente.' } });
     } catch (err) {
       setError('Error al completar el registro: ' + (err.message || 'Intente nuevamente.'));
     }
