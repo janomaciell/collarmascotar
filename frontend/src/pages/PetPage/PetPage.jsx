@@ -5,15 +5,18 @@ import './PetPage.css';
 
 const BASE_URL = import.meta.env.VITE_BASE_URL;
 
+// Logo de EncuentraME - Reemplazar con la URL real de tu logo cuando esté disponible
+const logoUrl = '/logo_principal.png'; // Asumiendo que el logo está en la carpeta public
+
 // Nuevo componente PetIntro
 const PetIntro = ({ name, isLost }) => (
-  <>
+  <div className="pet-intro">
     <p className="intro-text">
       {isLost
-        ? 'Me he perdido y necesito tu ayuda para volver con mi familia. ¡Gracias por escanear mi collar!'
-        : 'Gracias por escanear mi collar. Aquí tienes toda mi información para que me conozcas mejor.'}
+        ? `¡Hola! Soy ${name} y me he perdido. Gracias por escanear mi collar y ayudarme a volver con mi familia.`
+        : `¡Hola! Soy ${name}. Gracias por escanear mi collar de EncuentraME.`}
     </p>
-  </>
+  </div>
 );
 
 const PetPage = () => {
@@ -24,6 +27,7 @@ const PetPage = () => {
   const [error, setError] = useState('');
   const [locationError, setLocationError] = useState('');
   const [locationRequested, setLocationRequested] = useState(false);
+  const [locationShared, setLocationShared] = useState(false);
 
   useEffect(() => {
     const fetchPetData = async () => {
@@ -66,6 +70,7 @@ const PetPage = () => {
             await notifyOwner(uuid, location);
             await sendCommunityNotification(uuid, location, 50);
             setLocationError('');
+            setLocationShared(true);
           } catch (notificationError) {
             console.error('Error en notificaciones:', notificationError);
             setLocationError('No se pudieron enviar las notificaciones de ubicación.');
@@ -103,16 +108,28 @@ const PetPage = () => {
 
   return (
     <div className="pet-page-container">
+      {/* Encabezado con Branding */}
       <header className={`pet-page-header ${pet.is_lost ? 'lost' : 'found'}`}>
-        <div className="logo">
-          <h1>
-            {pet.is_lost ? "MASCOTA PERDIDA" : `ENCONTRASTE A ${pet.name}`} - ENCUÉNTRAME
-          </h1>
+        <div className="brand-container">
+          <img src={logoUrl} alt="EncuentraME Logo" className="brand-logo" />
+          <div className="brand-text">
+            <h1 className="brand-name">EncuentraME</h1>
+            <p className="brand-slogan">Un escaneo, un reencuentro</p>
+          </div>
         </div>
       </header>
 
       <main className="pet-profile" role="main">
-        {!locationRequested && (
+        {/* Alerta de Mascota Perdida (si aplica) */}
+        {pet.is_lost && (
+          <div className="lost-alert" role="alert">
+            <h2>🚨 ¡{pet.name} está perdido! 🚨</h2>
+            <p>Por favor, ayúdanos a devolver a {pet.name} con su familia.</p>
+          </div>
+        )}
+
+        {/* Solicitud de Ubicación */}
+        {!locationRequested && pet.is_lost && (
           <div className="location-request-banner">
             <p>Ayúdanos a notificar al dueño de {pet.name} compartiendo tu ubicación.</p>
             <button 
@@ -122,6 +139,12 @@ const PetPage = () => {
             >
               📍 Compartir mi ubicación
             </button>
+          </div>
+        )}
+
+        {locationShared && (
+          <div className="location-success-banner" role="status">
+            <p>¡Gracias por compartir tu ubicación! El dueño ha sido notificado.</p>
           </div>
         )}
 
@@ -138,153 +161,181 @@ const PetPage = () => {
           </div>
         )}
 
-        {pet.is_lost && (
-          <div className="lost-alert" role="alert">
-            <h2>🚨 ¡{pet.name} está perdido! 🚨</h2>
-            <p>Por favor, ayúdanos a devolver a {pet.name} con su familia. Contacta al dueño lo antes posible.</p>
-          </div>
-        )}
-
+        {/* Sección Héroe con Foto */}
         <section className="pet-hero" aria-labelledby="pet-name">
-          {pet.photo && (
-            <div className="pet-photo">
-              <img src={petPhotoUrl} alt={`Foto de ${pet.name}`} loading="lazy" />
-            </div>
-          )}
+          <div className="pet-photo-container">
+            <img 
+              src={petPhotoUrl} 
+              alt={`Foto de ${pet.name}`} 
+              className="pet-photo" 
+              loading="lazy" 
+            />
+          </div>
+          <h2 id="pet-name" className="pet-name">{pet.name}</h2>
           <PetIntro name={pet.name} isLost={pet.is_lost} />
         </section>
 
-        <section className="pet-details" aria-label="Detalles de la mascota">
-          <div className="detail-card" aria-labelledby="about-me">
-            <h2 id="about-me">🐾 Sobre mí</h2>
-            <ul>
-              <li><strong>Nombre:</strong> {pet.name}</li>
-              <li><strong>Edad:</strong> {pet.age} años</li>
-              {pet.breed && <li><strong>Raza:</strong> {pet.breed}</li>}
-              <li><strong>Género:</strong> {pet.gender === 'M' ? 'Macho' : 'Hembra'}</li>
-              <li><strong>Esterilizado:</strong> {pet.is_sterilized ? 'Sí' : 'No'}</li>
-              {pet.sterilization_date && (
-                <li>
-                  <strong>Fecha de esterilización:</strong>{' '}
-                  {new Date(pet.sterilization_date).toLocaleDateString()}
-                </li>
+        {/* Tarjetas de Información */}
+        <section className="pet-info-cards">
+          {/* Información Básica */}
+          <div className="info-card">
+            <h3>Información Básica</h3>
+            <div className="info-content">
+              {pet.breed && (
+                <div className="info-item">
+                  <span className="info-label">Raza</span>
+                  <span className="info-value">{pet.breed}</span>
+                </div>
               )}
-            </ul>
+              {pet.age && (
+                <div className="info-item">
+                  <span className="info-label">Edad</span>
+                  <span className="info-value">{pet.age} años</span>
+                </div>
+              )}
+              <div className="info-item">
+                <span className="info-label">Género</span>
+                <span className="info-value">{pet.gender === 'M' ? 'Macho' : 'Hembra'}</span>
+              </div>
+              <div className="info-item">
+                <span className="info-label">Esterilizado</span>
+                <span className="info-value">{pet.is_sterilized ? 'Sí' : 'No'}</span>
+              </div>
+            </div>
           </div>
 
+          {/* Información de Salud (si existe) */}
           {(pet.medical_conditions || pet.allergies) && (
-            <div className="detail-card" aria-labelledby="health">
-              <h2 id="health">🏥 Mi salud</h2>
-              <ul>
+            <div className="info-card">
+              <h3>Información de Salud</h3>
+              <div className="info-content">
                 {pet.medical_conditions && (
-                  <li><strong>Condiciones médicas:</strong> {pet.medical_conditions}</li>
+                  <div className="info-item">
+                    <span className="info-label">Condiciones médicas</span>
+                    <span className="info-value">{pet.medical_conditions}</span>
+                  </div>
                 )}
-                {pet.allergies && <li><strong>Alergias:</strong> {pet.allergies}</li>}
-              </ul>
+                {pet.allergies && (
+                  <div className="info-item">
+                    <span className="info-label">Alergias</span>
+                    <span className="info-value">{pet.allergies}</span>
+                  </div>
+                )}
+              </div>
             </div>
           )}
 
-          {(pet.vet_name || pet.vet_phone || pet.vet_address) && (
-            <div className="detail-card" aria-labelledby="vet">
-              <h2 id="vet">👩‍⚕️ Mi veterinario</h2>
-              <ul>
-                {pet.vet_name && <li><strong>Nombre:</strong> {pet.vet_name}</li>}
-                {pet.vet_phone && (
-                  <li>
-                    <strong>Teléfono:</strong>{' '}
-                    <a href={`tel:${pet.vet_phone}`} aria-label={`Llamar al veterinario al ${pet.vet_phone}`}>
-                      {pet.vet_phone}
-                    </a>
-                  </li>
-                )}
-                {pet.vet_address && <li><strong>Dirección:</strong> {pet.vet_address}</li>}
-              </ul>
+          {/* Información del Dueño */}
+          <div className="info-card owner-info">
+            <h3>Información del Dueño</h3>
+            <div className="info-content">
+              <div className="info-item">
+                <span className="info-label">Nombre</span>
+                <span className="info-value">{pet.owner || 'No especificado'}</span>
+              </div>
+              <div className="info-item">
+                <span className="info-label">Dirección</span>
+                <span className="info-value">{pet.address || 'No especificada'}</span>
+              </div>
             </div>
-          )}
-
-          <div className="detail-card" aria-labelledby="family">
-            <h2 id="family">🏡 Mi familia</h2>
-            <ul>
-              <li><strong>Dirección:</strong> {pet.address}</li>
-              <li>
-                <strong>Teléfono:</strong>{' '}
-                <a href={`tel:${pet.phone}`} aria-label={`Llamar al dueño al ${pet.phone}`}>
-                  {pet.phone}
-                </a>
-              </li>
-              {pet.email && (
-                <li>
-                  <strong>Email:</strong>{' '}
-                  <a href={`mailto:${pet.email}`} aria-label={`Enviar email a ${pet.email}`}>
-                    {pet.email}
-                  </a>
-                </li>
-              )}
-            </ul>
           </div>
+        </section>
 
-          {pet.notes && (
-            <div className="detail-card" aria-labelledby="notes">
-              <h2 id="notes">📝 Notas especiales</h2>
-              <p>{pet.notes}</p>
+        {/* Botones de Contacto */}
+        <section className="contact-section">
+          <h3>Contactar al Dueño</h3>
+          <div className="contact-buttons">
+            <a
+              href={`tel:${pet.phone}`}
+              className="contact-button primary"
+              aria-label={`Llamar al dueño de ${pet.name}`}
+            >
+              <span className="button-icon">📞</span>
+              <span className="button-text">Llamar</span>
+            </a>
+            
+            {pet.phone && (
+              <a
+                href={`https://wa.me/549${pet.phone.replace(/^0/, '').replace(/\D/g, '')}?text=${encodeURIComponent(
+                  `Hola, encontré a ${pet.name} y me gustaría ayudarte a que vuelva a casa.`
+                )}`}
+                className="contact-button whatsapp"
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label={`Enviar mensaje de WhatsApp al dueño de ${pet.name}`}
+              >
+                <span className="button-icon">💬</span>
+                <span className="button-text">WhatsApp</span>
+              </a>
+            )}
+            
+            {pet.email && (
+              <a
+                href={`mailto:${pet.email}`}
+                className="contact-button secondary"
+                aria-label={`Enviar email al dueño de ${pet.name}`}
+              >
+                <span className="button-icon">✉️</span>
+                <span className="button-text">Email</span>
+              </a>
+            )}
+          </div>
+        </section>
+
+        {/* Veterinario (si existe información) */}
+        {(pet.vet_name || pet.vet_phone || pet.vet_address) && (
+          <section className="vet-section">
+            <h3>Información del Veterinario</h3>
+            <div className="vet-info">
+              {pet.vet_name && (
+                <div className="info-item">
+                  <span className="info-label">Nombre</span>
+                  <span className="info-value">{pet.vet_name}</span>
+                </div>
+              )}
+              {pet.vet_address && (
+                <div className="info-item">
+                  <span className="info-label">Dirección</span>
+                  <span className="info-value">{pet.vet_address}</span>
+                </div>
+              )}
+              {pet.vet_phone && (
+                <div className="contact-buttons vet-contact">
+                  <a
+                    href={`tel:${pet.vet_phone}`}
+                    className="contact-button secondary"
+                    aria-label={`Llamar al veterinario de ${pet.name}`}
+                  >
+                    <span className="button-icon">🩺</span>
+                    <span className="button-text">Llamar al Veterinario</span>
+                  </a>
+                </div>
+              )}
             </div>
-          )}
-        </section>
+          </section>
+        )}
 
-        <section className="contact-buttons" aria-label="Opciones de contacto">
-          <a
-            href={`tel:${pet.phone}`}
-            className="call-button primary"
-            aria-label={`Llamar al dueño de ${pet.name}`}
-          >
-            📞 Llamar al dueño
-          </a>
-          
-          {pet.vet_phone && (
-            <a
-              href={`tel:${pet.vet_phone}`}
-              className="call-button secondary"
-              aria-label={`Llamar al veterinario de ${pet.name}`}
-            >
-              🩺 Llamar al veterinario
-            </a>
-          )}
-          
-          {pet.email && (
-            <a
-              href={`mailto:${pet.email}`}
-              className="email-button"
-              aria-label={`Enviar email al dueño de ${pet.name}`}
-            >
-              ✉️ Enviar email
-            </a>
-          )}
-          
-          {pet.phone && (
-            <a
-              href={`https://wa.me/549${pet.phone.replace(/^0/, '').replace(/\D/g, '')}?text=${encodeURIComponent(
-                `Hola, encontré a ${pet.name} y me gustaría ayudarte a que vuelva a casa. ¿Cómo puedo ayudarte?`
-              )}`}
-              className="call-button primary whatsapp"
-              target="_blank"
-              rel="noopener noreferrer"
-              aria-label={`Enviar mensaje de WhatsApp al dueño de ${pet.name}`}
-            >
-              💬 Enviar WhatsApp
-            </a>
-          )}
-        </section>
+        {/* Notas Especiales (si existen) */}
+        {pet.notes && (
+          <section className="notes-section">
+            <h3>Notas Especiales</h3>
+            <p className="pet-notes">{pet.notes}</p>
+          </section>
+        )}
 
-        <section className="marketing-banner" aria-label="Promoción de Encuéntrame">
-          <h2>¿Quieres proteger a tu mascota como a {pet.name}?</h2>
-          <p>
-            Con Encuéntrame, tu mejor amigo siempre estará seguro. Escanea, conecta y protege con un solo clic.
-          </p>
-          <a href="/register" className="cta-button" aria-label="Registrarse en Encuéntrame">
-            ¡Consigue tu Encuéntrame ahora!
-          </a>
+        {/* Banner de Marketing */}
+        <section className="marketing-section">
+          <div className="marketing-content">
+            <h3>Protege a tu mascota con EncuentraME</h3>
+            <p>Identifica a tu mascota con nuestra tecnología QR y asegura su regreso a casa si alguna vez se pierde.</p>
+            <a href="/register" className="cta-button" aria-label="Registrarse en EncuentraME">
+              Consigue tu EncuentraME
+            </a>
+          </div>
         </section>
       </main>
+
+      
     </div>
   );
 };

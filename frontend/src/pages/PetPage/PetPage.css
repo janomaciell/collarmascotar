@@ -1,4 +1,19 @@
-/* Reset y Estilos Generales */
+/* Importación de fuentes */
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800;900&family=Open+Sans:wght@300;400;500;600;700&display=swap');
+
+/* Variables de colores corporativos */
+:root {
+  --grape: #94618E;
+  --eggplant: #49274A;
+  --sand: #F4DECB;
+  --white: #ffffff;
+  --black: #000000;
+  --shadow: rgba(73, 39, 74, 0.15);
+  --shadow-strong: rgba(73, 39, 74, 0.3);
+  --lost-color: #e74c3c;
+}
+
+/* Estilos generales */
 * {
   margin: 0;
   padding: 0;
@@ -6,260 +21,473 @@
 }
 
 body {
-  font-family: 'Poppins', sans-serif;
-  background: #ffffff; /* White background */
-  color: #000000; /* Black text */
+  font-family: 'Open Sans', sans-serif;
+  background-color: var(--white);
+  color: var(--black);
   line-height: 1.6;
-  overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
+h1, h2, h3, h4, h5, h6 {
+  font-family: 'Montserrat', sans-serif;
+  font-weight: 700;
+  color: var(--eggplant);
+}
+
+/* Contenedor principal */
 .pet-page-container {
-  max-width: 1200px;
+  max-width: 800px;
   margin: 0 auto;
-  padding: 1rem;
+  padding: 0;
+  background-color: var(--white);
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
 }
 
-/* Header */
+/* Encabezado con branding */
 .pet-page-header {
-  padding: 1rem;
-  text-align: center;
-  position: sticky;
-  top: 0;
-  z-index: 1000;
+  background-color: var(--eggplant);
+  padding: 1.5rem;
+  position: relative;
+  z-index: 10;
 }
 
 .pet-page-header.lost {
-  background: #ff9800; /* Intense orange for lost */
-  color: #ffffff; /* White text */
+  background-color: var(--lost-color);
 }
 
-.pet-page-header.found {
-  background: #ffeb3b; /* Intense yellow for found */
-  color: #000000; /* Black text */
+.brand-container {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
 }
 
-.pet-page-header .logo h1 {
-  font-size: 1.75rem;
-  font-weight: 700;
-  letter-spacing: 1px;
-  text-transform: uppercase;
+.brand-logo {
+  width: 50px;
+  height: 50px;
+  object-fit: contain;
 }
 
-/* Sección Principal */
+.brand-text {
+  display: flex;
+  flex-direction: column;
+}
+
+.brand-name {
+  font-family: 'Montserrat', sans-serif;
+  font-weight: 800;
+  font-size: 1.8rem;
+  color: var(--white);
+  margin: 0;
+  line-height: 1.1;
+}
+
+.brand-slogan {
+  font-family: 'Open Sans', sans-serif;
+  font-weight: 400;
+  font-style: italic;
+  font-size: 0.9rem;
+  color: var(--sand);
+  margin: 0.2rem 0 0;
+}
+
+/* Contenido principal */
 .pet-profile {
-  max-width: 1000px;
-  margin: 1rem auto;
+  flex: 1;
+  padding: 1.5rem;
+  background-color: var(--white);
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
 }
 
 /* Alerta de mascota perdida */
 .lost-alert {
-  background: #ff9800; /* Intense orange */
-  color: #ffffff; /* White text */
+  background-color: var(--lost-color);
+  color: var(--white);
   padding: 1rem;
-  border-radius: 8px;
+  border-radius: 12px;
   text-align: center;
-  margin-bottom: 1rem;
+  box-shadow: 0 4px 12px var(--shadow);
 }
 
 .lost-alert h2 {
   font-size: 1.25rem;
-  font-weight: 600;
+  font-weight: 700;
+  color: var(--white);
   margin-bottom: 0.5rem;
 }
 
 .lost-alert p {
-  font-size: 0.9rem;
+  font-size: 0.95rem;
 }
 
-/* Sección Héroe */
-.pet-hero {
+/* Banner de solicitud de ubicación */
+.location-request-banner {
+  background-color: var(--sand);
+  padding: 1rem;
+  border-radius: 12px;
   text-align: center;
-  margin-bottom: 1.5rem;
+  box-shadow: 0 4px 12px var(--shadow);
 }
 
-.pet-photo {
+.location-request-banner p {
+  font-size: 1rem;
+  color: var(--eggplant);
+  margin-bottom: 0.75rem;
+}
+
+.location-request-button {
+  background-color: var(--eggplant);
+  color: var(--white);
+  border: none;
+  padding: 0.75rem 1.5rem;
+  border-radius: 50px;
+  font-family: 'Montserrat', sans-serif;
+  font-weight: 600;
+  font-size: 0.95rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 8px var(--shadow);
+}
+
+.location-request-button:hover {
+  background-color: var(--grape);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 12px var(--shadow-strong);
+}
+
+.location-success-banner {
+  background-color: #27ae60;
+  color: var(--white);
+  padding: 1rem;
+  border-radius: 12px;
+  text-align: center;
+  box-shadow: 0 4px 12px var(--shadow);
+}
+
+.location-error-banner {
+  background-color: #e74c3c;
+  color: var(--white);
+  padding: 1rem;
+  border-radius: 12px;
+  text-align: center;
+  box-shadow: 0 4px 12px var(--shadow);
+}
+
+.location-retry-button {
+  background-color: var(--white);
+  color: #e74c3c;
+  border: none;
+  padding: 0.5rem 1rem;
+  border-radius: 50px;
+  font-family: 'Montserrat', sans-serif;
+  font-weight: 600;
+  font-size: 0.9rem;
+  margin-top: 0.5rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+/* Sección héroe con foto */
+.pet-hero {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
   margin-bottom: 1rem;
 }
 
-.pet-photo img {
-  max-width: 100%;
-  height: auto;
-  border-radius: 8px;
-  border: 1px solid #000000; /* Black border */
+.pet-photo-container {
+  width: 200px;
+  height: 200px;
+  border-radius: 50%;
+  overflow: hidden;
+  border: 8px solid var(--sand);
+  box-shadow: 0 8px 20px var(--shadow);
+  margin-bottom: 1rem;
 }
 
-/* Estilos para PetIntro */
+.pet-photo {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.pet-name {
+  font-family: 'Montserrat', sans-serif;
+  font-weight: 800;
+  font-size: 2.2rem;
+  color: var(--eggplant);
+  margin: 0.5rem 0;
+}
+
+.pet-intro {
+  max-width: 600px;
+  margin: 0 auto;
+}
+
 .intro-text {
-  font-size: 1.2rem;
+  font-size: 1.1rem;
   line-height: 1.6;
-  color: #000000; /* Black */
+  color: var(--grape);
   text-align: center;
-  margin: 1rem auto;
-  padding: 1rem;
-  background: #ffffff; /* White */
-  border-radius: 8px;
-  border: 1px solid #000000; /* Black border */
+  font-style: italic;
 }
 
-/* Sección de Detalles */
-.pet-details {
+/* Tarjetas de información */
+.pet-info-cards {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-  gap: 1rem;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 1.5rem;
+  margin-bottom: 1rem;
 }
 
-.detail-card {
-  background: #ffffff; /* White */
-  padding: 1rem;
-  border-radius: 8px;
-  border: 1px solid #000000; /* Black border */
+.info-card {
+  background-color: var(--white);
+  border-radius: 12px;
+  padding: 1.5rem;
+  box-shadow: 0 4px 12px var(--shadow);
+  border-top: 4px solid var(--grape);
 }
 
-.detail-card h2 {
-  font-size: 1.25rem;
+.info-card h3 {
+  font-size: 1.2rem;
+  margin-bottom: 1rem;
+  color: var(--eggplant);
+  border-bottom: 1px solid var(--sand);
+  padding-bottom: 0.5rem;
+}
+
+.info-content {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.info-item {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.info-label {
+  font-size: 0.85rem;
   font-weight: 600;
-  color: #000000; /* Black */
-  margin-bottom: 0.5rem;
-  border-bottom: 1px solid #ff9800; /* Intense orange */
-  padding-bottom: 0.3rem;
+  color: var(--grape);
+  text-transform: uppercase;
 }
 
-.detail-card ul {
-  list-style: none;
-  padding: 0;
+.info-value {
+  font-size: 1rem;
+  color: var(--black);
 }
 
-.detail-card ul li {
-  font-size: 0.9rem;
-  margin-bottom: 0.3rem;
-  color: #000000; /* Black */
+.owner-info {
+  border-top-color: var(--eggplant);
 }
 
-.detail-card ul li strong {
-  color: #ff9800; /* Intense orange */
-  font-weight: 600;
+/* Sección de contacto */
+.contact-section {
+  background-color: var(--sand);
+  border-radius: 12px;
+  padding: 1.5rem;
+  text-align: center;
+  margin-bottom: 1rem;
 }
 
-.detail-card p {
-  font-size: 0.9rem;
-  color: #000000; /* Black */
+.contact-section h3 {
+  font-size: 1.2rem;
+  margin-bottom: 1rem;
+  color: var(--eggplant);
 }
 
-.detail-card a {
-  color: #000000; /* Black */
-  text-decoration: none;
-}
-
-.detail-card a:hover {
-  color: #ff9800; /* Intense orange */
-  text-decoration: underline;
-}
-
-/* Botones de Contacto */
 .contact-buttons {
   display: flex;
   flex-wrap: wrap;
   justify-content: center;
+  gap: 1rem;
+}
+
+.contact-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 0.75rem 1.5rem;
+  border-radius: 50px;
+  font-family: 'Montserrat', sans-serif;
+  font-weight: 600;
+  font-size: 1rem;
+  text-decoration: none;
+  transition: all 0.3s ease;
+  min-width: 140px;
+  box-shadow: 0 4px 8px var(--shadow);
+}
+
+.contact-button.primary {
+  background-color: var(--eggplant);
+  color: var(--white);
+}
+
+.contact-button.whatsapp {
+  background-color: #25D366;
+  color: var(--white);
+}
+
+.contact-button.secondary {
+  background-color: var(--white);
+  color: var(--eggplant);
+  border: 1px solid var(--eggplant);
+}
+
+.contact-button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 12px var(--shadow-strong);
+}
+
+.button-icon {
+  font-size: 1.2rem;
+}
+
+/* Sección del veterinario */
+.vet-section {
+  background-color: var(--white);
+  border-radius: 12px;
+  padding: 1.5rem;
+  box-shadow: 0 4px 12px var(--shadow);
+  margin-bottom: 1rem;
+  border-top: 4px solid #3498db;
+}
+
+.vet-section h3 {
+  font-size: 1.2rem;
+  margin-bottom: 1rem;
+  color: var(--eggplant);
+  border-bottom: 1px solid var(--sand);
+  padding-bottom: 0.5rem;
+}
+
+.vet-info {
+  display: flex;
+  flex-direction: column;
   gap: 0.75rem;
+}
+
+.vet-contact {
+  margin-top: 0.75rem;
+}
+
+/* Sección de notas */
+.notes-section {
+  background-color: var(--white);
+  border-radius: 12px;
+  padding: 1.5rem;
+  box-shadow: 0 4px 12px var(--shadow);
+  margin-bottom: 1rem;
+  border-top: 4px solid #f39c12;
+}
+
+.notes-section h3 {
+  font-size: 1.2rem;
+  margin-bottom: 1rem;
+  color: var(--eggplant);
+  border-bottom: 1px solid var(--sand);
+  padding-bottom: 0.5rem;
+}
+
+.pet-notes {
+  font-size: 1rem;
+  line-height: 1.6;
+  color: var(--black);
+}
+
+/* Banner de marketing */
+.marketing-section {
+  background-color: var(--eggplant);
+  border-radius: 12px;
+  padding: 2rem;
+  text-align: center;
+  margin-top: 1rem;
+  box-shadow: 0 4px 12px var(--shadow);
+}
+
+.marketing-content {
+  max-width: 500px;
+  margin: 0 auto;
+}
+
+.marketing-section h3 {
+  font-size: 1.5rem;
+  margin-bottom: 1rem;
+  color: var(--white);
+}
+
+.marketing-section p {
+  font-size: 1rem;
+  color: var(--sand);
   margin-bottom: 1.5rem;
 }
 
-.call-button,
-.email-button {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  padding: 0.5rem 1rem;
-  border-radius: 9999px;
-  font-size: 0.9rem;
-  font-weight: 600;
+.cta-button {
+  display: inline-block;
+  padding: 0.75rem 1.5rem;
+  background-color: var(--sand);
+  color: var(--eggplant);
+  font-family: 'Montserrat', sans-serif;
+  font-weight: 700;
+  font-size: 1rem;
   text-decoration: none;
+  border-radius: 50px;
   transition: all 0.3s ease;
-  min-width: 160px;
+  box-shadow: 0 4px 8px var(--shadow-strong);
 }
 
-.call-button.primary,
-.call-button.whatsapp {
-  background: #ff9800; /* Intense orange */
-  color: #ffffff; /* White */
+.cta-button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px var(--shadow-strong);
+  background-color: var(--white);
 }
 
-.call-button.secondary,
-.email-button {
-  background: #ffffff; /* White */
-  color: #000000; /* Black */
-  border: 1px solid #000000; /* Black border */
-}
-
-.call-button.primary:hover,
-.call-button.whatsapp:hover {
-  background: #ffeb3b; /* Intense yellow */
-  color: #000000; /* Black */
-}
-
-.call-button.secondary:hover,
-.email-button:hover {
-  background: #ffeb3b; /* Intense yellow */
-  color: #000000; /* Black */
-}
-
-/* Banner de Marketing */
-.marketing-banner {
-  background: #ff9800; /* Intense orange */
-  padding: 1rem;
+/* Footer */
+.pet-page-footer {
+  background-color: var(--eggplant);
+  color: var(--white);
+  padding: 1.5rem;
   text-align: center;
-  color: #ffffff; /* White */
-  border-radius: 8px;
-  margin-bottom: 1rem;
-}
-
-.marketing-banner h2 {
-  font-size: 1.5rem;
-  font-weight: 600;
-  margin-bottom: 0.5rem;
-}
-
-.marketing-banner p {
   font-size: 0.9rem;
-  margin-bottom: 0.75rem;
 }
 
-.marketing-banner .cta-button {
-  display: inline-flex;
-  padding: 0.5rem 1rem;
-  background: #ffeb3b; /* Intense yellow */
-  color: #000000; /* Black */
-  font-size: 0.9rem;
-  font-weight: 600;
-  border-radius: 9999px;
-  text-decoration: none;
-  transition: all 0.3s ease;
+.pet-page-footer p {
+  margin: 0;
 }
 
-.marketing-banner .cta-button:hover {
-  background: #ffffff; /* White */
-  color: #ff9800; /* Intense orange */
+.pet-page-footer strong {
+  font-weight: 700;
+  color: var(--sand);
 }
 
-/* Loading y Error */
+/* Estados de carga y error */
 .loading-container {
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  min-height: 50vh;
-  text-align: center;
-  color: #000000; /* Black */
+  min-height: 100vh;
+  padding: 2rem;
+  background-color: var(--white);
 }
 
 .spinner {
-  width: 40px;
-  height: 40px;
-  border: 4px solid #e5e7eb;
-  border-top: 4px solid #ff9800; /* Intense orange */
+  width: 50px;
+  height: 50px;
+  border: 4px solid var(--sand);
+  border-top: 4px solid var(--eggplant);
   border-radius: 50%;
   animation: spin 1s linear infinite;
-  margin-bottom: 0.75rem;
+  margin-bottom: 1.5rem;
 }
 
 @keyframes spin {
@@ -268,191 +496,92 @@ body {
   }
 }
 
-.error-container {
-  max-width: 600px;
-  margin: 1rem auto;
-  padding: 1rem;
-  background: #ff9800; /* Intense orange */
-  color: #000000; /* Black */
-  border-radius: 8px;
-  text-align: center;
-  font-size: 0.9rem;
-}
-
-/* Estilos para el banner de solicitud de ubicación */
-.location-request-banner {
-  background: #ffeb3b; /* Intense yellow */
-  padding: 1rem;
-  margin: 1rem auto;
-  border-radius: 8px;
-  text-align: center;
-  max-width: 800px;
-  border: 1px solid #000000; /* Black border */
-}
-
-.location-request-banner p {
-  font-size: 1.1rem;
-  color: #000000; /* Black */
-  margin-bottom: 0.75rem;
-  line-height: 1.5;
-}
-
-.location-request-button {
-  background: #ff9800; /* Intense orange */
-  color: #ffffff; /* White */
-  border: none;
-  padding: 0.5rem 1rem;
-  border-radius: 50px;
-  font-size: 1rem;
+.loading-container p {
+  font-family: 'Montserrat', sans-serif;
   font-weight: 600;
-  cursor: pointer;
-  transition: all 0.3s ease;
-  display: inline-flex;
+  font-size: 1.1rem;
+  color: var(--eggplant);
+}
+
+.error-container {
+  display: flex;
+  flex-direction: column;
   align-items: center;
-  gap: 0.5rem;
-}
-
-.location-request-button:hover {
-  background: #ffeb3b; /* Intense yellow */
-  color: #000000; /* Black */
-}
-
-/* Estilos para el banner de error de ubicación */
-.location-error-banner {
-  background: #ff9800; /* Intense orange */
-  color: #000000; /* Black */
-  padding: 1rem;
-  margin: 1rem auto;
-  border-radius: 8px;
+  justify-content: center;
+  min-height: 100vh;
+  padding: 2rem;
+  background-color: var(--white);
+  color: #e74c3c;
   text-align: center;
-  max-width: 800px;
-  border: 1px solid #000000; /* Black border */
+  font-family: 'Montserrat', sans-serif;
+  font-weight: 600;
+  font-size: 1.1rem;
 }
 
-.location-error-banner p {
-  margin-bottom: 0.75rem;
-  font-size: 1rem;
-}
-
-.location-retry-button {
-  background: #ffffff; /* White */
-  color: #000000; /* Black */
-  border: 1px solid #000000; /* Black border */
-  padding: 0.5rem 1rem;
-  border-radius: 50px;
-  font-size: 0.9rem;
-  font-weight: 500;
-  cursor: pointer;
-  transition: all 0.3s ease;
-}
-
-.location-retry-button:hover {
-  background: #ffeb3b; /* Intense yellow */
-  color: #000000; /* Black */
-}
-
-/* Responsividad */
+/* Responsive */
 @media (max-width: 768px) {
-  .pet-page-container {
-    padding: 0.5rem;
+  .pet-page-header {
+    padding: 1rem;
   }
-
-  .pet-page-header .logo h1 {
+  
+  .brand-name {
     font-size: 1.5rem;
   }
-
-  .pet-hero .intro-text {
+  
+  .brand-slogan {
+    font-size: 0.8rem;
+  }
+  
+  .pet-profile {
+    padding: 1rem;
+  }
+  
+  .pet-photo-container {
+    width: 150px;
+    height: 150px;
+  }
+  
+  .pet-name {
+    font-size: 1.8rem;
+  }
+  
+  .intro-text {
     font-size: 1rem;
   }
-
-  .pet-photo img {
-    max-width: 300px;
+  
+  .marketing-section {
+    padding: 1.5rem;
   }
-
-  .pet-details {
-    grid-template-columns: 1fr;
-  }
-
-  .detail-card {
-    padding: 0.75rem;
-  }
-
-  .detail-card h2 {
-    font-size: 1.1rem;
-  }
-
-  .contact-buttons {
-    flex-direction: column;
-    align-items: center;
-  }
-
-  .call-button,
-  .email-button {
-    width: 100%;
-    max-width: 300px;
-  }
-
-  .marketing-banner h2 {
-    font-size: 1.25rem;
-  }
-
-  .marketing-banner p {
-    font-size: 0.85rem;
-  }
-
-  .marketing-banner .cta-button {
-    padding: 0.5rem 1rem;
-    font-size: 0.85rem;
-  }
-
-  .location-request-banner,
-  .location-error-banner {
-    margin: 0.75rem;
-    padding: 0.75rem;
-  }
-
-  .location-request-banner p {
-    font-size: 1rem;
-  }
-
-  .location-request-button,
-  .location-retry-button {
-    width: 100%;
-    justify-content: center;
-    padding: 0.5rem 1rem;
-    font-size: 0.9rem;
+  
+  .marketing-section h3 {
+    font-size: 1.3rem;
   }
 }
 
 @media (max-width: 480px) {
-  .pet-hero .intro-text {
-    font-size: 0.9rem;
+  .contact-buttons {
+    flex-direction: column;
   }
-
-  .pet-photo img {
-    max-width: 250px;
+  
+  .contact-button {
+    width: 100%;
   }
-
-  .lost-alert h2 {
-    font-size: 1.1rem;
+  
+  .pet-info-cards {
+    grid-template-columns: 1fr;
   }
-
-  .lost-alert p {
-    font-size: 0.85rem;
+  
+  .pet-photo-container {
+    width: 120px;
+    height: 120px;
+    border-width: 6px;
   }
-
-  .detail-card ul li,
-  .detail-card p {
-    font-size: 0.85rem;
+  
+  .pet-name {
+    font-size: 1.5rem;
   }
-
-  .location-request-banner p {
-    font-size: 0.9rem;
-  }
-
-  .location-request-button,
-  .location-retry-button {
-    padding: 0.5rem 1rem;
-    font-size: 0.85rem;
+  
+  .marketing-section h3 {
+    font-size: 1.2rem;
   }
 }
