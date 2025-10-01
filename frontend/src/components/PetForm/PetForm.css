@@ -1,10 +1,10 @@
 .pet-form {
-  background-color: #f5f1e9; /* Beige pastel como fondo */
+  background-color: #fff; /* Fondo blanco puro */
   padding: 2.5rem;
-  border-radius: 15px;
-  box-shadow: 0 5px 20px rgba(74, 60, 49, 0.1); /* Sombra marrón pastel suave */
-  max-width: 600px; /* Ancho máximo para centrar el formulario */
-  margin: 2rem auto; /* Centrado horizontal y espaciado vertical */
+  border-radius: 18px;
+  box-shadow: 0 5px 24px rgba(5, 64, 143, 0.08);
+  max-width: 540px;
+  margin: 2rem auto;
   position: relative;
   overflow: hidden;
 }
@@ -26,47 +26,47 @@
 .form-group label {
   display: block;
   margin-bottom: 0.5rem;
-  color: #4a3c31; /* Marrón pastel para etiquetas */
+  color: #05408F;
   font-weight: 600;
-  font-size: 1.1rem;
+  font-size: 1.08rem;
   letter-spacing: 0.5px;
 }
 
 .form-group input,
-.form-group textarea {
+.form-group textarea,
+.form-group select {
   width: 100%;
-  padding: 0.9rem;
-  border: 2px solid #d9c6a5; /* Borde marrón pastel claro */
+  padding: 1rem;
+  border: 2px solid #e2e8f0; /* Gris suave */
   border-radius: 10px;
   font-size: 1rem;
-  font-family: 'Poppins', sans-serif; /* Fuente coherente */
-  background-color: #ffffff; /* Fondo blanco */
-  transition: all 0.3s ease;
-  box-shadow: inset 0 2px 5px rgba(74, 60, 49, 0.05); /* Sombra interna sutil */
+  font-family: 'Poppins', sans-serif;
+  background-color: #fff;
+  color: #181818; /* Texto oscuro */
+  transition: border-color 0.2s, box-shadow 0.2s;
+  box-shadow: none;
 }
 
 .form-group input:focus,
-.form-group textarea:focus {
+.form-group textarea:focus,
+.form-group select:focus {
   outline: none;
-  border-color: #87a8d0; /* Azul pastel al enfocar */
-  box-shadow: 0 0 8px rgba(135, 168, 208, 0.3); /* Resplandor azul pastel */
-}
-
-.form-group textarea {
-  min-height: 120px;
-  resize: vertical;
+  border-color: #05408F; /* Azul branding */
+  box-shadow: 0 0 8px rgba(5, 64, 143, 0.12);
 }
 
 .form-group input.error,
 .form-group textarea.error {
-  border-color: #ff4444;
+  border-color: #FF3131;
+  color: #FF3131;
 }
 
 .error-message {
-  color: #ff4444;
-  font-size: 0.8rem;
+  color: #FF3131;
+  font-size: 0.95rem;
   margin-top: 0.3rem;
   display: block;
+  font-weight: 600;
 }
 
 .photo-preview-container {
@@ -75,39 +75,48 @@
 }
 
 .photo-preview {
-  max-width: 200px;
-  border-radius: 8px;
+  max-width: 180px;
+  border-radius: 10px;
+  border: 2px solid #e2e8f0;
 }
 
 .remove-photo-button {
-  background: #ff4444;
-  color: white;
+  background: #FF3131;
+  color: #fff;
   border: none;
   padding: 0.5rem 1rem;
-  border-radius: 4px;
+  border-radius: 20px;
   cursor: pointer;
   margin-top: 0.5rem;
+  font-weight: 600;
+  font-size: 0.95rem;
+  transition: background 0.2s;
+}
+
+.remove-photo-button:hover {
+  background: #FF6FA5;
 }
 
 .submit-button {
-  background-color: #f4e184; /* Naranja pastel */
-  color: white;
+  background: #05408F;
+  color: #fff;
   border: none;
   padding: 1rem 2rem;
   font-size: 1.1rem;
-  font-weight: 600;
+  font-weight: 700;
   border-radius: 50px;
   cursor: pointer;
-  transition: all 0.3s ease;
+  transition: box-shadow 0.2s, transform 0.2s;
   width: 100%;
   margin-top: 1.5rem;
-  box-shadow: 0 5px 15px rgba(74, 60, 49, 0.2); /* Sombra marrón pastel */
+  box-shadow: 0 5px 15px rgba(5, 64, 143, 0.10);
+  letter-spacing: 0.5px;
 }
 
 .submit-button:hover {
-  background-color: #e89b6b; /* Naranja pastel más oscuro */
-  transform: translateY(-3px);
-  box-shadow: 0 8px 20px rgba(74, 60, 49, 0.3);
+  transform: translateY(-2px) scale(1.03);
+  box-shadow: 0 8px 24px rgba(5, 64, 143, 0.18);
+  background: linear-gradient(90deg, #05408F 0%, #FF6FA5 100%);
 }
 
 .submit-button.loading {
@@ -118,31 +127,72 @@
 /* Estilos Responsivos */
 @media (max-width: 768px) {
   .pet-form {
-    padding: 1.5rem;
-    margin: 1.5rem auto;
-    max-width: 100%; /* Ajuste para pantallas pequeñas */
-    width: 90%;
-    padding: 1rem;
+    padding: 1.2rem;
+    margin: 1.2rem auto;
+    max-width: 98vw;
   }
-
-  .form-group input,
-  .form-group textarea {
-    padding: 0.75rem;
-    font-size: 0.95rem;
-  }
-
   .form-group input,
   .form-group textarea,
   .form-group select {
-    font-size: 16px; /* Previene zoom en iOS */
-  }
-
-  .submit-button {
-    padding: 0.9rem 1.5rem;
+    padding: 0.8rem;
     font-size: 1rem;
   }
-
-  .photo-preview {
-    max-width: 150px;
+  .submit-button {
+    padding: 0.9rem 1.2rem;
+    font-size: 1rem;
   }
+}
+
+.toggle-switch {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.toggle-switch-checkbox {
+  display: none;
+}
+
+.toggle-switch-label {
+  display: block;
+  width: 48px;
+  height: 26px;
+  position: relative;
+  cursor: pointer;
+}
+
+.toggle-switch-inner {
+  display: block;
+  width: 100%;
+  height: 100%;
+  background: #e2e8f0;
+  border-radius: 26px;
+  transition: background 0.2s;
+}
+
+.toggle-switch-checkbox:checked + .toggle-switch-label .toggle-switch-inner {
+  background: linear-gradient(90deg, #7ED957 0%, #05408F 100%);
+}
+
+.toggle-switch-switch {
+  display: block;
+  width: 22px;
+  height: 22px;
+  background: #fff;
+  border-radius: 50%;
+  position: absolute;
+  top: 2px;
+  left: 2px;
+  transition: left 0.2s;
+  box-shadow: 0 2px 8px rgba(5,64,143,0.08);
+}
+
+.toggle-switch-checkbox:checked + .toggle-switch-label .toggle-switch-switch {
+  left: 24px;
+}
+
+.toggle-switch-text {
+  font-weight: 600;
+  color: #05408F;
+  min-width: 24px;
 }

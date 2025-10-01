@@ -1,7 +1,9 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { getPetByUuid, notifyOwner, sendCommunityNotification, checkQRStatus } from '../../services/api';
 import './PetPage.css';
+import logoUrl from '../../img/logo.png';
+import mascotaImage from '../../img/personaje2.png';
 
 const BASE_URL = import.meta.env.VITE_BASE_URL;
 
@@ -24,9 +26,14 @@ const PetPage = () => {
   const [locationError, setLocationError] = useState('');
   const [locationRequested, setLocationRequested] = useState(false);
   const [locationShared, setLocationShared] = useState(false);
+  const [activeTab, setActiveTab] = useState('basic');
 
-  const logoUrl = 'src/img/logo.png';
-  const mascotaImage = 'src/img/personaje2.png';
+  // Referencias para scroll
+  const basicRef = useRef(null);
+  const healthRef = useRef(null);
+  const ownerRef = useRef(null);
+
+
 
   useEffect(() => {
     const fetchPetData = async () => {
@@ -73,6 +80,17 @@ const PetPage = () => {
       );
     } else {
       setLocationError('Geolocalización no soportada por el navegador.');
+    }
+  };
+
+  const handleTabClick = (tab) => {
+    setActiveTab(tab);
+    let ref;
+    if (tab === 'basic') ref = basicRef;
+    if (tab === 'health') ref = healthRef;
+    if (tab === 'owner') ref = ownerRef;
+    if (ref && ref.current) {
+      ref.current.scrollIntoView({ behavior: 'smooth', block: 'start' });
     }
   };
 
@@ -133,54 +151,74 @@ const PetPage = () => {
         )}
 
         {/* Hero de la mascota */}
-        <section className="pet-hero">
+        <section className="pet-hero-petpage">
           <div className="pet-photo-container">
             <img 
               src={petPhotoUrl} 
               alt={`Foto de ${pet.name}`} 
-              className="pet-photo" 
+              className="pet-photo-petpage" 
             />
             {pet.is_lost && <div className="lost-badge">Perdido</div>}
           </div>
           <div className="pet-basic-info">
-            <h2 className="pet-name">{pet.name}</h2>
-            <div className="pet-details">
-              {pet.breed}, {pet.gender === 'M' ? 'Macho' : 'Hembra'}, {pet.age} años
+            <h2 className="pet-name" style={{ fontSize: '2.8rem', marginBottom: '0.7rem' }}>{pet.name}</h2>
+            <div className="pet-details" style={{
+              fontSize: '1.3rem',
+              fontWeight: '700',
+              color: '#05408F',
+              marginBottom: '1.2rem',
+              letterSpacing: '0.5px'
+            }}>
+              {pet.breed} &nbsp;|&nbsp; {pet.gender === 'M' ? 'Macho' : 'Hembra'} &nbsp;|&nbsp; {pet.age} años
             </div>
             <PetIntro name={pet.name} isLost={pet.is_lost} />
           </div>
-          <div className="pet-actions">
-            <button className="action-btn">Editar perfil</button>
-            <a href={`tel:${pet.phone}`} className="action-btn secondary">Llamar dueño</a>
-            <a href={`mailto:${pet.email}`} className="action-btn secondary">Mensaje dueño</a>
+          <div className="pet-actions" style={{ justifyContent: 'center', gap: '2rem' }}>
+            <a href={`tel:${pet.phone}`} className="action-btn call-btn">📞 Llamar dueño</a>
+            <a href={`mailto:${pet.email}`} className="action-btn message-btn">✉️ Mensaje dueño</a>
           </div>
         </section>
 
-        {/* Tabs */}
+        {/* Tabs destacados */}
         <div className="pet-tabs">
-          <button className="pet-tab active">Información básica</button>
-          <button className="pet-tab">Salud</button>
-          <button className="pet-tab">Dueño y veterinario</button>
+          <button
+            className={`pet-tab ${activeTab === 'basic' ? 'active' : ''}`}
+            onClick={() => handleTabClick('basic')}
+          >
+            Información básica
+          </button>
+          <button
+            className={`pet-tab ${activeTab === 'health' ? 'active' : ''}`}
+            onClick={() => handleTabClick('health')}
+          >
+            Salud
+          </button>
+          <button
+            className={`pet-tab ${activeTab === 'owner' ? 'active' : ''}`}
+            onClick={() => handleTabClick('owner')}
+          >
+            Dueño y veterinario
+          </button>
         </div>
 
         {/* Información básica */}
-        <section className="pet-section">
-          <div className="pet-section-title">Basic Information</div>
+        <section className="pet-section" ref={basicRef}>
+          <div className="pet-section-title">Información básica</div>
           <div className="pet-info-grid">
             <div className="info-card">
-              <div className="info-label">Breed</div>
+              <div className="info-label">Raza</div>
               <div className="info-value">{pet.breed}</div>
             </div>
             <div className="info-card">
-              <div className="info-label">Gender</div>
-              <div className="info-value">{pet.gender === 'M' ? 'Male' : 'Female'}</div>
+              <div className="info-label">Género</div>
+              <div className="info-value">{pet.gender === 'M' ? 'Macho' : 'Hembra'}</div>
             </div>
             <div className="info-card">
-              <div className="info-label">Age</div>
-              <div className="info-value">{pet.age} years</div>
+              <div className="info-label">Edad</div>
+              <div className="info-value">{pet.age} años</div>
             </div>
             <div className="info-card">
-              <div className="info-label">Weight</div>
+              <div className="info-label">Peso</div>
               <div className="info-value">{pet.weight || '-'}</div>
             </div>
             <div className="info-card">
@@ -188,61 +226,61 @@ const PetPage = () => {
               <div className="info-value">{pet.color || '-'}</div>
             </div>
             <div className="info-card">
-              <div className="info-label">Microchip ID</div>
+              <div className="info-label">ID de microchip</div>
               <div className="info-value">{pet.microchip || '-'}</div>
             </div>
           </div>
         </section>
 
         {/* Información de salud */}
-        <section className="pet-section">
-          <div className="pet-section-title">Health Information</div>
+        <section className="pet-section" ref={healthRef}>
+          <div className="pet-section-title">Salud</div>
           <div className="pet-info-grid">
             <div className="info-card">
-              <div className="info-label">Vaccination Status</div>
-              <div className="info-value">{pet.vaccines || 'Up to date'}</div>
+              <div className="info-label">Estado de vacunación</div>
+              <div className="info-value">{pet.vaccines || 'Al día'}</div>
             </div>
             <div className="info-card">
-              <div className="info-label">Last Vet Visit</div>
+              <div className="info-label">Última visita al veterinario</div>
               <div className="info-value">{pet.last_vet_visit || '-'}</div>
             </div>
             <div className="info-card">
-              <div className="info-label">Allergies</div>
-              <div className="info-value">{pet.allergies || 'None'}</div>
+              <div className="info-label">Alergias</div>
+              <div className="info-value">{pet.allergies || 'Ninguna'}</div>
             </div>
             <div className="info-card">
-              <div className="info-label">Medications</div>
-              <div className="info-value">{pet.medications || 'None'}</div>
+              <div className="info-label">Medicamentos</div>
+              <div className="info-value">{pet.medications || 'Ninguno'}</div>
             </div>
           </div>
         </section>
 
         {/* Información del dueño y veterinario */}
-        <section className="pet-section">
-          <div className="pet-section-title">Owner & Vet Information</div>
+        <section className="pet-section" ref={ownerRef}>
+          <div className="pet-section-title">Dueño y veterinario</div>
           <div className="pet-info-grid">
             <div className="info-card">
-              <div className="info-label">Owner Name</div>
+              <div className="info-label">Nombre del dueño</div>
               <div className="info-value">{pet.owner || '-'}</div>
             </div>
             <div className="info-card">
-              <div className="info-label">Contact Number</div>
+              <div className="info-label">Número de contacto</div>
               <div className="info-value">{pet.phone || '-'}</div>
             </div>
             <div className="info-card">
-              <div className="info-label">Address</div>
+              <div className="info-label">Dirección</div>
               <div className="info-value">{pet.address || '-'}</div>
             </div>
             <div className="info-card">
-              <div className="info-label">Vet Name</div>
+              <div className="info-label">Nombre del veterinario</div>
               <div className="info-value">{pet.vet_name || '-'}</div>
             </div>
             <div className="info-card">
-              <div className="info-label">Clinic Name</div>
+              <div className="info-label">Nombre de la clínica</div>
               <div className="info-value">{pet.vet_clinic || '-'}</div>
             </div>
             <div className="info-card">
-              <div className="info-label">Vet Contact</div>
+              <div className="info-label">Contacto del veterinario</div>
               <div className="info-value">{pet.vet_phone || '-'}</div>
             </div>
           </div>
@@ -250,31 +288,10 @@ const PetPage = () => {
 
         {/* Notas especiales */}
         <section className="pet-section">
-          <div className="pet-section-title">Special Notes</div>
-          <div className="pet-notes">{pet.notes || 'No special notes.'}</div>
-        </section>
-
-        {/* Compartir perfil */}
-        <section className="share-section">
-          <div className="share-title">Share {pet.name}'s Profile</div>
-          <div className="share-desc">
-            Share {pet.name}'s profile with friends, family, or pet sitters to keep everyone informed about his care and needs.
-          </div>
-          <button className="share-btn">Share Profile</button>
+          <div className="pet-section-title">Notas especiales</div>
+          <div className="pet-notes">{pet.notes || 'No hay notas especiales.'}</div>
         </section>
       </main>
-
-      {/* Footer */}
-      <footer className="pet-footer">
-        <div className="footer-links">
-          <a href="#">Privacy Policy</a>
-          <a href="#">Terms of Service</a>
-          <a href="#">Contact Us</a>
-        </div>
-        <div className="footer-text">
-          © 2024 EncuéntraME. Todos los derechos reservados.
-        </div>
-      </footer>
     </div>
   );
 };

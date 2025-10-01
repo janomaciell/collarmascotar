@@ -207,12 +207,15 @@ const PetForm = ({ onSubmit, initialData = {} }) => {
 
         <div className="form-group">
           <label htmlFor="address">Dirección *</label>
-          <textarea
+          <input
+            type="text"
             id="address"
             name="address"
             value={formData.address}
             onChange={handleChange}
             required
+            autoComplete="street-address"
+            placeholder="Ej: Calle y número, ciudad"
             className={errors.address ? 'error' : ''}
           />
           {errors.address && <span className="error-message">{errors.address}</span>}
@@ -227,6 +230,8 @@ const PetForm = ({ onSubmit, initialData = {} }) => {
             value={formData.phone}
             onChange={handleChange}
             required
+            inputMode="numeric"
+            autoComplete="tel"
             className={errors.phone ? 'error' : ''}
           />
           {errors.phone && <span className="error-message">{errors.phone}</span>}
@@ -295,15 +300,24 @@ const PetForm = ({ onSubmit, initialData = {} }) => {
         </div>
 
         <div className="form-group">
-          <label>
+          <label htmlFor="is_sterilized" style={{ marginBottom: '0.7rem' }}>¿Está esterilizado/a?</label>
+          <div className="toggle-switch">
             <input
               type="checkbox"
+              id="is_sterilized"
               name="is_sterilized"
               checked={formData.is_sterilized}
               onChange={handleChange}
+              className="toggle-switch-checkbox"
             />
-            Esterilizado/a
-          </label>
+            <label className="toggle-switch-label" htmlFor="is_sterilized">
+              <span className="toggle-switch-inner" />
+              <span className="toggle-switch-switch" />
+            </label>
+            <span className="toggle-switch-text">
+              {formData.is_sterilized ? 'Sí' : 'No'}
+            </span>
+          </div>
         </div>
 
         {formData.is_sterilized && (

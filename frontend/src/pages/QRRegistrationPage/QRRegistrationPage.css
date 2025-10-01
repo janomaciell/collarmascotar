@@ -1,62 +1,364 @@
-/* pages/QRRegistrationPage.css */
+/* QRRegistrationPage.css - Minimalista, tonos claros y coherentes con Home */
+
+/* ==================== VARIABLES DE MARCA ==================== */
+:root {
+  --azul-principal: #05408F;
+  --negro-principal: #181818;
+  --blanco-principal: #FFFFFF;
+  --verde-secundario: #7ED957;
+  --rojo-acento: #FF3131;
+  --rosa-acento: #FF6FA5;
+  --gris-claro: #F5F5F5;
+  --gris-suave: #F8FAFC;
+  --gris-medio: #E2E8F0;
+  --sombra-suave: 0 4px 20px rgba(5, 64, 143, 0.08);
+  --sombra-profunda: 0 8px 32px rgba(5, 64, 143, 0.12);
+}
+
+body {
+  font-family: 'Poppins', sans-serif;
+  background: var(--gris-claro);
+  color: var(--negro-principal);
+}
+
+/* ==================== LOADING STATE ==================== */
+.loading {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  font-size: 1.2rem;
+  font-weight: 600;
+  color: var(--azul-principal);
+  background: var(--blanco-principal);
+}
+
+.loading::before {
+  content: '';
+  width: 40px;
+  height: 40px;
+  margin-right: 1rem;
+  border: 4px solid var(--gris-medio);
+  border-top-color: var(--azul-principal);
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+/* ==================== ERROR CONTAINER ==================== */
+.error-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  padding: 2rem;
+  text-align: center;
+  background: var(--gris-claro);
+}
+
+.error-container::before {
+  content: '⚠️';
+  font-size: 5rem;
+  margin-bottom: 1.5rem;
+  animation: pulse 2s ease-in-out infinite;
+}
+
+@keyframes pulse {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.1); }
+}
+
+.back-button {
+  margin-top: 2rem;
+  padding: 1rem 2.5rem;
+  background: var(--azul-principal);
+  color: var(--blanco-principal);
+  border: none;
+  border-radius: 50px;
+  font-size: 1rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 6px 20px rgba(5, 64, 143, 0.15);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.back-button:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 8px 25px rgba(5, 64, 143, 0.18);
+  background: var(--verde-secundario);
+  color: var(--negro-principal);
+}
+
+.back-button:active {
+  transform: translateY(0);
+}
+
+/* ==================== CONTAINER PRINCIPAL ==================== */
 .qr-registration-container {
-    max-width: 800px;
-    margin: 0 auto;
-    padding: 20px;
+  max-width: 540px;
+  margin: 2.5rem auto;
+  background: var(--blanco-principal);
+  border-radius: 24px;
+  box-shadow: var(--sombra-suave);
+  overflow: hidden;
+  position: relative;
+}
+
+/* Decoración sutil */
+.qr-registration-container::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-image: repeating-linear-gradient(
+    135deg,
+    #05408F10 0px,
+    #05408F10 2px,
+    transparent 2px,
+    transparent 24px
+  );
+  opacity: 0.08;
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* ==================== HEADER ==================== */
+.qr-registration-header {
+  text-align: center;
+  padding: 2.5rem 2rem 1.5rem 2rem;
+  background: var(--blanco-principal);
+  border-bottom: 1px solid var(--gris-claro);
+}
+
+.qr-logo {
+  width: 70px;
+  height: 70px;
+  object-fit: contain;
+  margin-bottom: 1rem;
+}
+
+.qr-title {
+  font-family: 'Jackerton', serif;
+  font-size: 2.1rem;
+  color: var(--azul-principal);
+  font-weight: 900;
+  margin-bottom: 0.3rem;
+  letter-spacing: -1px;
+}
+
+.qr-subtitle {
+  font-family: 'Poppins', sans-serif;
+  font-size: 1.1rem;
+  color: var(--negro-principal);
+  font-weight: 500;
+  margin-bottom: 1.2rem;
+  opacity: 0.8;
+}
+
+/* ==================== STEPS INDICATOR EN COLUMNA ==================== */
+.qr-steps {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1.2rem;
+  margin-bottom: 1.5rem;
+}
+
+.qr-step {
+  width: 100%;
+  max-width: 320px;
+  min-width: 220px;
+  box-sizing: border-box;
+  font-size: 1rem;
+  color: var(--azul-principal);
+  background: var(--gris-claro);
+  border-radius: 16px;
+  padding: 1.2rem 0.5rem;
+  font-weight: 600;
+  border: none;
+  letter-spacing: 0.5px;
+  text-align: center;
+  box-shadow: 0 2px 8px rgba(5,64,143,0.04);
+  margin: 0;
+  transition: box-shadow 0.2s;
+}
+
+.qr-step:not(:last-child) {
+  margin-bottom: 0.5rem;
+}
+
+.qr-step:last-child {
+  margin-bottom: 0;
+}
+
+/* ==================== CONTENT ==================== */
+.qr-registration-content {
+  padding: 2.5rem 2rem;
+  background: var(--blanco-principal);
+  border-radius: 0 0 24px 24px;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
+
+/* ==================== INSTRUCTIONS ==================== */
+.qr-instructions {
+  background: var(--gris-claro);
+  color: var(--negro-principal);
+  border-radius: 16px;
+  padding: 1.2rem 1rem;
+  margin-bottom: 1.5rem;
+  font-size: 1rem;
+  text-align: center;
+  box-shadow: 0 2px 8px rgba(5,64,143,0.04);
+}
+
+.qr-instructions strong {
+  font-size: 1.1rem;
+  display: block;
+  margin-bottom: 0.5rem;
+  color: var(--azul-principal);
+}
+
+.qr-instructions a {
+  color: var(--azul-principal);
+  text-decoration: underline;
+  font-weight: 500;
+}
+
+/* ==================== ERROR MESSAGE ==================== */
+.error-message {
+  color: var(--rojo-acento);
+  background: var(--gris-claro);
+  border-left: 4px solid var(--rojo-acento);
+  border-radius: 12px;
+  padding: 1rem;
+  text-align: center;
+  font-weight: 600;
+  font-size: 0.98rem;
+  margin-top: 1rem;
+}
+
+/* ==================== SECURITY TIPS ==================== */
+.security-tips {
+  background: var(--gris-suave);
+  border-radius: 16px;
+  padding: 1.5rem;
+  margin: 2rem 0;
+  border: 1px solid var(--gris-claro);
+  box-shadow: 0 2px 8px rgba(5,64,143,0.04);
+}
+
+.security-tips h4 {
+  color: var(--azul-principal);
+  font-size: 1.1rem;
+  font-weight: 700;
+  margin-bottom: 1rem;
+}
+
+.security-tips ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.security-tips li {
+  padding: 0.7rem 0;
+  color: #475569;
+  font-size: 0.98rem;
+  line-height: 1.6;
+  display: flex;
+  align-items: flex-start;
+  gap: 0.8rem;
+}
+
+.security-tips li::before {
+  content: '✓';
+  color: var(--verde-secundario);
+  font-weight: 900;
+  font-size: 1.2rem;
+  flex-shrink: 0;
+}
+
+/* ==================== HELP CARD ==================== */
+.help-card {
+  background: var(--rosa-acento);
+  color: var(--blanco-principal);
+  border-radius: 16px;
+  padding: 1.5rem;
+  margin: 2rem 0;
+  text-align: center;
+  box-shadow: 0 4px 16px rgba(255, 111, 165, 0.12);
+}
+
+.help-card h4 {
+  font-size: 1.2rem;
+  font-weight: 700;
+  margin-bottom: 0.8rem;
+}
+
+.help-card p {
+  font-size: 0.98rem;
+  opacity: 0.95;
+  margin-bottom: 1.2rem;
+  line-height: 1.5;
+}
+
+.help-button {
+  background: var(--blanco-principal);
+  color: var(--rosa-acento);
+  border: none;
+  border-radius: 50px;
+  padding: 0.9rem 2rem;
+  font-weight: 700;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  box-shadow: 0 2px 8px rgba(255, 111, 165, 0.08);
+}
+
+.help-button:hover {
+  background: var(--verde-secundario);
+  color: var(--negro-principal);
+}
+
+/* ==================== FOOTER ==================== */
+.qr-registration-footer {
+  text-align: center;
+  padding: 1.5rem 1rem;
+  color: var(--gris-claro);
+  font-size: 0.95rem;
+  background: var(--blanco-principal);
+  border-top: 1px solid var(--gris-claro);
+  opacity: 0.7;
+}
+
+/* ==================== RESPONSIVIDAD ==================== */
+@media (max-width: 600px) {
+  .qr-registration-container {
+    max-width: 98vw;
+    margin: 1rem auto;
+    border-radius: 12px;
   }
-  
-  .qr-registration-header {
-    text-align: center;
-    margin-bottom: 20px;
-  }
-  
-  .qr-registration-header h1 {
-    font-size: 2rem;
-    color: #4a3c31;
-  }
-  
-  .qr-registration-header h2 {
-    font-size: 1.5rem;
-    color: #666;
-  }
-  
+  .qr-registration-header,
   .qr-registration-content {
-    background: #fff;
-    padding: 20px;
-    border-radius: 8px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    padding: 1.2rem 0.5rem;
+    border-radius: 12px;
   }
-  
-  .auth-warning {
-    background: #fff3cd;
-    padding: 15px;
-    border-radius: 4px;
-    margin-bottom: 20px;
-    text-align: center;
+  .security-tips,
+  .help-card {
+    margin: 1rem 0;
+    padding: 1rem;
   }
-  
-  .auth-button {
-    background: #87a8d0;
-    color: white;
-    padding: 10px 20px;
-    margin: 0 10px;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
-  }
-  
-  .auth-button:hover {
-    background: #6b8ab0;
-  }
-  
-  .error-message {
-    color: #d32f2f;
-    margin-top: 10px;
-    text-align: center;
-  }
-  
-  .qr-registration-footer {
-    text-align: center;
-    margin-top: 20px;
-    color: #777;
-  }
+}

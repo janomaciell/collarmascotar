@@ -3,7 +3,7 @@ import { useParams, useNavigate } from 'react-router-dom';
 import PetForm from '../../components/PetForm/PetForm';
 import { checkQRStatus, registerPetToQR, completePendingRegistration } from '../../services/api';
 import './QRRegistrationPage.css';
-
+import logo from '../../img/logo.png';
 const QRRegistrationPage = () => {
   const { uuid } = useParams();
   const navigate = useNavigate();
@@ -45,10 +45,7 @@ const QRRegistrationPage = () => {
   const handlePetSubmission = async (petData) => {
     try {
       setError('');
-      
-      // Verificar autenticación primero
       if (!isAuthenticated) {
-        // Guardar datos del formulario y redireccionar a login
         sessionStorage.setItem('pending_pet_data', JSON.stringify(petData));
         sessionStorage.setItem('pending_qr_uuid', uuid);
         navigate('/login', { state: { from: `/register-pet/${uuid}` } });
@@ -56,9 +53,6 @@ const QRRegistrationPage = () => {
       }
 
       const formData = new FormData();
-
-      console.log('Datos recibidos en handlePetSubmission:', petData);
-
       const requiredFields = ['name', 'age', 'address', 'phone'];
       for (const field of requiredFields) {
         if (!petData[field]) {
@@ -78,23 +72,10 @@ const QRRegistrationPage = () => {
         }
       });
 
-      for (let pair of formData.entries()) {
-        console.log('FormData contiene:', pair[0], pair[1]);
-      }
-
-      const response = await registerPetToQR(uuid, formData);
-      
-      // Si la respuesta es exitosa, redirigir al dashboard
-      navigate('/pets', { 
-        state: { successMessage: 'Mascota registrada exitosamente.' } 
-      });
-
+      await registerPetToQR(uuid, formData);
+      navigate('/pets', { state: { successMessage: 'Mascota registrada exitosamente.' } });
     } catch (err) {
-      console.error('Error completo:', err);
-      
-      // Si el error es de autenticación a pesar de tener token
       if (err.response?.status === 401) {
-        // El token podría estar expirado - limpiar y redirigir a login
         localStorage.removeItem('token');
         setIsAuthenticated(false);
         sessionStorage.setItem('pending_pet_data', JSON.stringify(petData));
@@ -107,7 +88,6 @@ const QRRegistrationPage = () => {
         });
         return;
       }
-
       setError('Error al registrar la mascota: ' + (err.message || 'Intente nuevamente.'));
     }
   };
@@ -120,8 +100,7 @@ const QRRegistrationPage = () => {
         setError('No hay datos pendientes para registrar.');
         return;
       }
-
-      const response = await completePendingRegistration(pendingData, pendingQR);
+      await completePendingRegistration(pendingData, pendingQR);
       sessionStorage.removeItem('pending_pet_data');
       sessionStorage.removeItem('pending_qr_uuid');
       navigate('/pets', { state: { successMessage: 'Registro completado exitosamente.' } });
@@ -145,17 +124,46 @@ const QRRegistrationPage = () => {
   return (
     <div className="qr-registration-container">
       <header className="qr-registration-header">
-        <h1>CollarMascotaQR</h1>
-        <h2>Registrar Nueva Mascota</h2>
+        <img src={logo} alt="Logo EncuéntraME" className="qr-logo" />
+        <h1 className="qr-title">ENCUÉNTRAME</h1>
+        <h2 className="qr-subtitle">Registro de Mascota</h2>
+        <div className="qr-steps">
+          <span className="qr-step">1. Datos de tu mascota</span>
+          <span className="qr-step">2. Confirma y guarda</span>
+          <span className="qr-step">3. ¡Listo!</span>
+        </div>
       </header>
       <main className="qr-registration-content">
-        <p>Escaneaste un QR para registrar una nueva mascota. Por favor, completa los datos.</p>
+        <div className="qr-instructions">
+          <strong>Bienvenido</strong>
+          <p>
+            Completa los datos principales de tu mascota.<br />
+            <span style={{ color: '#05408F', fontWeight: 500 }}>
+              Si tienes dudas, puedes pedir ayuda en <a href="/support">Soporte</a>.
+            </span>
+          </p>
+        </div>
         <PetForm onSubmit={handlePetSubmission} />
         {error && <div className="error-message">{error}</div>}
       </main>
-      <footer className="qr-registration-footer">
-        <p>© 2025 CollarMascotaQR. Todos los derechos reservados.</p>
-      </footer>
+      <div className="security-tips">
+  <h4>Tips de seguridad</h4>
+  <ul>
+    <li>Mantén actualizada la información de contacto</li>
+    <li>Agrega una foto clara de tu mascota</li>
+    <li>Incluye datos médicos importantes</li>
+    <li>Verifica que el collar esté bien ajustado</li>
+  </ul>
+</div>
+
+    <div className="help-card">
+      <h4>¿Necesitas ayuda?</h4>
+      <p>Nuestro equipo está disponible para ayudarte en cada paso</p>
+      <button className="help-button" onClick={() => navigate('/soporte')}>
+        Contactar soporte
+      </button>
+    </div>
+
     </div>
   );
 };

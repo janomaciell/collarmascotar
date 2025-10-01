@@ -32,8 +32,12 @@ const Header = () => {
             <img src={logoUrl} alt="Logo" />
           </Link>
         </div>
-        <div className="hamburger" onClick={toggleMenu}>☰</div>
-        <nav className={`nav ${menuActive ? 'active' : ''}`}>
+        <div className={`hamburger${menuActive ? ' active' : ''}`} onClick={toggleMenu}>
+          <span />
+          <span />
+          <span />
+        </div>
+        <nav className={`nav${menuActive ? ' active' : ''}`}>
           <ul className="nav-list">
             <li className="nav-item"><Link to="/support" className="nav-link" onClick={handleNavClick}>Soporte</Link></li>
             <li className="nav-item"><Link to="/about" className="nav-link" onClick={handleNavClick}>Nosotros</Link></li>
