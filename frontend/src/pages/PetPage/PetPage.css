@@ -575,6 +575,16 @@ body {
 .share-btn:active {
   transform: translateY(0);
 }
+.whatsapp-btn {
+  color: white;
+  border: none;
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.whatsapp-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(37, 211, 102, 0.4);
+}
 
 /* ==================== FOOTER ==================== */
 .pet-footer {

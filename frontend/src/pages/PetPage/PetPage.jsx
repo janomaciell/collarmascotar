@@ -32,8 +32,6 @@ const PetPage = () => {
   const healthRef = useRef(null);
   const ownerRef = useRef(null);
 
-
-
   useEffect(() => {
     const fetchPetData = async () => {
       try {
@@ -80,6 +78,25 @@ const PetPage = () => {
     } else {
       setLocationError('Geolocalización no soportada por el navegador.');
     }
+  };
+
+  // Función para enviar WhatsApp
+  const handleWhatsApp = () => {
+    if (!pet.phone) return;
+    
+    // Limpiar el número de teléfono (eliminar espacios, guiones, paréntesis)
+    const phoneNumber = pet.phone.replace(/[^\d+]/g, '');
+    
+    // Mensaje predeterminado
+    const message = pet.is_lost 
+      ? `Hola, encontré a ${pet.name}. Escaneé su collar EncuéntraME y quiero ayudar a que regrese a casa.`
+      : `Hola, escaneé el collar EncuéntraME de ${pet.name}.`;
+    
+    // URL de WhatsApp con el mensaje
+    const whatsappUrl = `https://wa.me/${phoneNumber}?text=${encodeURIComponent(message)}`;
+    
+    // Abrir WhatsApp en una nueva pestaña
+    window.open(whatsappUrl, '_blank');
   };
 
   const handleTabClick = (tab) => {
@@ -173,6 +190,7 @@ const PetPage = () => {
           </div>
           <div className="pet-actions" style={{ justifyContent: 'center', gap: '2rem' }}>
             <a href={`tel:${pet.phone}`} className="action-btn call-btn">📞 Llamar dueño</a>
+            <button onClick={handleWhatsApp} className="action-btn whatsapp-btn">💬 WhatsApp</button>
             <a href={`mailto:${pet.email}`} className="action-btn message-btn">✉️ Mensaje dueño</a>
           </div>
         </section>
