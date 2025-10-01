@@ -201,7 +201,6 @@ body {
 
 /* ==================== CONTENT ==================== */
 .pet-content {
-  max-width: 1200px;
   margin: 0 auto;
   padding: 0 2rem 3rem;
 }
@@ -212,7 +211,6 @@ body {
   flex-direction: column;
   align-items: center;
   margin: 3rem 0 2rem 0;
-  background-color: #05408F;
 }
 
 @keyframes fadeInUp {
@@ -243,9 +241,6 @@ body {
   transition: transform 0.3s ease;
 }
 
-.pet-photo-petpage:hover {
-  transform: scale(1.05);
-}
 
 .lost-badge {
   position: absolute;
@@ -272,7 +267,7 @@ body {
   max-width: 700px;
 }
 
-.pet-name {
+.pet-name-petpage {
   font-family: 'Jackerton', serif;
   font-size: clamp(2.5rem, 5vw, 4rem);
   font-weight: 900;
@@ -427,17 +422,6 @@ body {
   background: var(--verde-secundario);
   color: var(--blanco-principal);
   box-shadow: 0 6px 20px rgba(126,217,87,0.18);
-}
-
-.pet-tab.active::after {
-  content: '';
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  height: 4px;
-  background: linear-gradient(90deg, var(--verde-secundario) 0%, var(--azul-principal) 100%);
-  border-radius: 4px 4px 0 0;
 }
 
 /* ==================== SECCIONES DE INFORMACIÓN ==================== */
@@ -794,7 +778,7 @@ body {
     height: 200px;
   }
 
-  .pet-name {
+  .pet-name-petpage {
     font-size: 2.5rem;
   }
 
@@ -837,11 +821,11 @@ body {
     width: 80px;
   }
   .pet-photo-petpage {
-    width: 120px;
-    height: 120px;
-    border-width: 4px;
+    width: 300px;
+    height: 300px;
+    border-width: 5px;
   }
-  .pet-name {
+  .pet-name-petpage {
     font-size: 1.3rem;
   }
   .pet-details {
@@ -894,12 +878,12 @@ body {
   }
 
   .pet-photo-petpage {
-    width: 160px;
-    height: 160px;
-    border-width: 6px;
+    width: 300px;
+    height: 300px;
+    border-width: 5px;
   }
 
-  .pet-name {
+  .pet-name-petpage {
     font-size: 2rem;
   }
 

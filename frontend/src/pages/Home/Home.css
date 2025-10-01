@@ -98,14 +98,11 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 .hero-title-home {
-  font-family: 'Jackerton', 'Jackerton Regular', 'Jackerton-Regular', serif;
-  font-size: clamp(3.5rem, 7vw, 6rem);
-  font-weight: 700;
-  color: var(--azul-principal);
-  margin-bottom: 0.5rem;
-  text-transform: uppercase;
-  letter-spacing: -0.03em;
-  line-height: 0.9;
+  font-family: 'Jackerton', serif;
+  font-weight: 900;
+  font-size: 5rem;
+  color: #05408F;
+  letter-spacing: -2px;
 }
 
 .hero-subtitle-home {

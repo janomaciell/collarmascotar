@@ -2,7 +2,6 @@ import React, { useEffect, useState, useRef } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { getPetByUuid, notifyOwner, sendCommunityNotification, checkQRStatus } from '../../services/api';
 import './PetPage.css';
-import logoUrl from '../../img/logo.png';
 import mascotaImage from '../../img/personaje2.png';
 
 const BASE_URL = import.meta.env.VITE_BASE_URL;
@@ -126,7 +125,6 @@ const PetPage = () => {
         <div className="pattern-bg"></div>
         <div className="header-content">
           <div className="brand-section">
-            <img src={logoUrl} alt="EncuéntraME Logo" className="brand-logo" />
             <div className="brand-info">
               <h1 className="brand-name">ENCUÉNTRAME</h1>
               <p className="brand-tagline">Mascotas seguras, familias tranquilas</p>
@@ -161,7 +159,7 @@ const PetPage = () => {
             {pet.is_lost && <div className="lost-badge">Perdido</div>}
           </div>
           <div className="pet-basic-info">
-            <h2 className="pet-name" style={{ fontSize: '2.8rem', marginBottom: '0.7rem' }}>{pet.name}</h2>
+            <h2 className="pet-name-petpage" style={{ fontSize: '2.8rem', marginBottom: '0.7rem' }}>{pet.name}</h2>
             <div className="pet-details" style={{
               fontSize: '1.3rem',
               fontWeight: '700',

@@ -7,9 +7,11 @@ import perroygato from '../../img/perroygato.png';
 import perrocorriendo from '../../img/perrocorriendo.png';
 
 //const mascotaImage = perroygato;
-import mascotaImage from '../../img/personaje2.png';
 
 const Home = () => {
+  const mascotaImage = new URL('../../img/personaje2.png', import.meta.url).href;
+
+
   return (
     <div className="home-wrapper">
       
