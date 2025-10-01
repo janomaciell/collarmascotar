@@ -15,6 +15,8 @@ const Profile = () => {
   const [error, setError] = useState('');
   const [isModalOpen, setIsModalOpen] = useState(false);
 
+  const mascotaImage = 'src/img/personaje2.png';
+
   useEffect(() => {
     const token = localStorage.getItem('token');
     if (!token) {
@@ -148,101 +150,140 @@ const Profile = () => {
 
   if (loading) {
     return (
-      <div className="loading flex justify-center items-center h-screen">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-eggplant"></div>
+      <div className="profile-wrapper">
+        <div className="loading-container">
+          <div className="loading-spinner"></div>
+          <p>Cargando tu perfil...</p>
+        </div>
       </div>
     );
   }
 
   return (
-    <div className="profile-container max-w-4xl mx-auto p-6">
-      <div className="profile-header flex justify-between items-center mb-8 relative overflow-hidden">
-        <h1 className="text-3xl font-bold text-white z-10">Mi Perfil - Encuéntrame</h1>
-
-        <div className="header-shape"></div>
-      </div>
-
-      {error && (
-        <div className="error-message px-4 py-3 rounded-lg mb-6 flex justify-between items-center">
-          <span className="text-white">{error}</span>
-          <button
-            onClick={handleRetry}
-            className="underline hover:text-shell text-white"
-            aria-label="Reintentar carga de datos"
-          >
-            Reintentar
-          </button>
+    <div className="profile-wrapper">
+      {/* Hero del perfil */}
+      <section className="profile-hero">
+        <div className="pattern-bg"></div>
+        <div className="hero-content">
+          <img src={mascotaImage} alt="Mascota EncuentraME" className="hero-mascota" />
+          <h1 className="hero-title">MI PERFIL</h1>
+          <p className="hero-subtitle">Gestiona tu cuenta y mascotas</p>
         </div>
-      )}
+      </section>
 
-      <div className="profile-content grid grid-cols-1 md:grid-cols-2 gap-6">
-        {/* Info del usuario */}
-        <div className="profile-section card p-6">
-          <h2 className="text-xl font-semibold mb-4 text-eggplant">
-            Información Personal
-          </h2>
-          {userData && (
-            <>
-              <p className="mb-2"><strong className="text-eggplant">Usuario:</strong> {userData.username}</p>
-              <p className="mb-2"><strong className="text-eggplant">Email:</strong> {userData.email}</p>
-              <p className="mb-2"><strong className="text-eggplant">Nombre:</strong> {userData.first_name} {userData.last_name}</p>
-              <p className="mb-4"><strong className="text-eggplant">Teléfono:</strong> {userData.phone || 'No especificado'}</p>
-              <button
-                className="edit-btn px-4 py-2 rounded-full w-full md:w-auto"
-                onClick={openModal}
-                aria-label="Editar perfil"
-              >
-                Editar Perfil
-              </button>
-            </>
-          )}
-        </div>
+      <div className="profile-container">
+        {error && (
+          <div className="error-message">
+            <span className="error-icon">⚠️</span>
+            <span>{error}</span>
+            <button onClick={handleRetry} className="retry-button">
+              Reintentar
+            </button>
+          </div>
+        )}
 
-        {/* Mascotas */}
-        <div className="profile-section card p-6">
-          <h2 className="text-xl font-semibold mb-4 text-eggplant">
-            Mis Mascotas
-          </h2>
-          {isLoadingPets ? (
-            <div className="animate-pulse flex space-x-4">
-              <div className="rounded-full bg-gray-200 h-10 w-10"></div>
-              <div className="flex-1 space-y-6 py-1">
-                <div className="h-2 bg-gray-200 rounded"></div>
-              </div>
+        <div className="profile-content">
+          {/* Información personal */}
+          <div className="profile-card">
+            <div className="card-header">
+              <h2>Información Personal</h2>
+              <span className="card-icon">👤</span>
             </div>
-          ) : memoizedPets && memoizedPets.length > 0 ? (
-            <ul className="pet-list space-y-3">
-              {memoizedPets.map((pet) => (
-                <li key={pet.id} className="flex items-center gap-4 p-2 rounded-lg bg-white hover:bg-sand transition-colors">
-                  <img
-                    src={pet.photo || 'https://via.placeholder.com/50'}
-                    alt={`Foto de ${pet.name}`}
-                    className="pet-photo-circular"
-                    loading="lazy"
-                    width="50"
-                    height="50"
-                  />
-                  <span className="text-eggplant">
-                    {pet.name}{' '}
-                    {pet.is_lost && (
-                      <span className="lost-tag text-sm font-semibold bg-eggplant text-white">
-                        (Perdida)
-                      </span>
-                    )}
-                  </span>
-                </li>
-              ))}
-            </ul>
-          ) : (
-            <p className="text-eggplant">No tienes mascotas registradas.</p>
-          )}
-          <button
-            className="add-pet-btn mt-4 px-4 py-2 rounded-full w-full md:w-auto"
-            onClick={() => navigate('/pets')}
-            aria-label="Gestionar mascotas"
-          >
-            Gestionar Mascotas
-          </button>
+            
+            {userData && (
+              <div className="card-content">
+                <div className="info-item">
+                  <span className="info-label">Usuario:</span>
+                  <span className="info-value">{userData.username}</span>
+                </div>
+                <div className="info-item">
+                  <span className="info-label">Email:</span>
+                  <span className="info-value">{userData.email}</span>
+                </div>
+                <div className="info-item">
+                  <span className="info-label">Nombre:</span>
+                  <span className="info-value">{userData.first_name} {userData.last_name}</span>
+                </div>
+
+                
+                <button className="edit-btn" onClick={openModal}>
+                  Editar perfil
+                </button>
+              </div>
+            )}
+          </div>
+
+          {/* Mis mascotas */}
+          <div className="profile-card">
+            <div className="card-header">
+              <h2>Mis Mascotas</h2>
+              <span className="card-icon">🐾</span>
+            </div>
+            
+            <div className="card-content">
+              {isLoadingPets ? (
+                <div className="loading-pets">
+                  <div className="pet-skeleton"></div>
+                  <div className="pet-skeleton"></div>
+                </div>
+              ) : memoizedPets && memoizedPets.length > 0 ? (
+                <div className="pets-list">
+                  {memoizedPets.map((pet) => (
+                    <div key={pet.id} className="pet-item">
+                      <img
+                        src={pet.photo || 'https://via.placeholder.com/60'}
+                        alt={`Foto de ${pet.name}`}
+                        className="pet-photo"
+                      />
+                      <div className="pet-info">
+                        <h3>{pet.name}</h3>
+                        <p>{pet.breed || 'Sin raza'} • {pet.age} años</p>
+                        {pet.is_lost && <span className="lost-badge">Perdida</span>}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              ) : (
+                <div className="no-pets">
+                  <p>No tienes mascotas registradas</p>
+                  <img src={mascotaImage} alt="Sin mascotas" className="no-pets-image" />
+                </div>
+              )}
+              
+              <button
+                className="pets-btn"
+                onClick={() => navigate('/pets')}
+              >
+                Gestionar mascotas
+              </button>
+            </div>
+          </div>
+
+          {/* Acciones rápidas */}
+          <div className="profile-card actions-card">
+            <div className="card-header">
+              <h2>Acciones</h2>
+              <span className="card-icon">⚙️</span>
+            </div>
+            
+            <div className="card-content">
+              <button
+                className="action-btn purchase-btn"
+                onClick={() => navigate('/compra')}
+              >
+                <span className="btn-icon">🛒</span>
+                Comprar collar
+              </button>
+              
+              <button
+                className="action-btn logout-btn"
+                onClick={handleLogout}
+              >
+                <span className="btn-icon">🚪</span>
+                Cerrar sesión
+              </button>
+            </div>
+          </div>
         </div>
       </div>
 

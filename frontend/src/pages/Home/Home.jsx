@@ -2,119 +2,204 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import './Home.css';
 
-// Imagen de ejemplo para la sección Héroe (puedes reemplazarla con tu propia imagen)
-const heroImage = 'https://images.unsplash.com/photo-1583511655826-05700d52f4d9?ixlib=rb-4.0.3&auto=format&fit=crop&w=1350&q=80';
+// Imágenes de tu marca
+import perroygato from '../../img/perroygato.png';
+import perrocorriendo from '../../img/perrocorriendo.png';
 
-const testimonials = [
-  { text: "Mi perro se perdió y gracias al collar QR lo recuperé en horas. ¡Increíble!", author: "Ana G." },
-  { text: "El historial médico en el QR salvó a mi perrito en una emergencia.", author: "Juan P." },
-];
-
+//const mascotaImage = perroygato;
+const mascotaImage = 'src/img/personaje2.png';
 const Home = () => {
   return (
     <div className="home-wrapper">
-
-      {/* Sección Héroe */}
-      <section className="hero-section" aria-label="Introducción a CollarMascotaQR">
-        <div className="hero-content">
-          <h1>PROTEGE A TU MEJOR AMIGO</h1>
-          <p>EncuentraME: La solución inteligente para mantener a tu mascota segura y siempre contigo.</p>
-          <div className="hero-buttons">
-            <Link to="/about" className="secondary-button">Descubre más</Link>
-            <Link to="/compra" className="cta-button">¡Compra ahora!</Link>
+      
+      {/* Hero Principal - Minimalista y Moderno */}
+      <section className="hero-main">
+        <div className="hero-container">
+          <div className="hero-content">
+            <h1 className="hero-title-home">
+              ENCUÉNTRAME
+            </h1>
+            <p className="hero-subtitle-home">
+              Mascotas seguras, familias tranquilas
+            </p>
+            <div className="hero-description">
+              <p>Collares con código QR que conectan a tu mascota contigo al instante. Tecnología simple, resultados extraordinarios.</p>
+            </div>
+            <div className="hero-cta">
+              <Link to="/compra" className="btn-primary btn-green">
+                Compra tu collar ahora
+              </Link>
+              <Link to="/como-funciona" className="btn-secondary btn-blue">
+                Cómo funciona
+              </Link>
+            </div>
+          </div>
+          <div className="hero-visual">
+            <img 
+              src={mascotaImage} 
+              alt="Mascota EncuentraME - branding perroygato" 
+              className="mascota-image flipped white-bg" 
+            />
           </div>
         </div>
-        <div className="hero-image">
-          <img src="src/img/perro_home.png" alt="Perro feliz con collar QR" />
+        <div className="decorative-circles">
+          <div className="circle circle-1"></div>
+          <div className="circle circle-2"></div>
+          <div className="circle circle-3"></div>
         </div>
       </section>
 
-      {/* Sección Información (similar a Contact Us, Philosophy, Outlets) */}
-      <section className="info-section" aria-label="Información adicional">
-        <div className="info-grid">
-          <article className="info-item">
-            <h3>Contáctanos</h3>
-            <p>Ponte en contacto con nosotros para cualquier consulta sobre CollarMascotaQR.</p>
-            <Link to="/contact" className="info-link">Escríbenos</Link>
-          </article>
-          <article className="info-item">
-            <h3>Nuestra Filosofía</h3>
-            <p>Creemos en mantener a las mascotas seguras y a sus dueños tranquilos con tecnología innovadora.</p>
-            <Link to="/about" className="info-link">Conoce más</Link>
-          </article>
-          <article className="info-item">
-            <h3>Únete a Nosotros</h3>
-            <p>Sé parte de una comunidad de amantes de las mascotas que confían en nosotros.</p>
-            <Link to="/login" className="info-link">Únete Aquí</Link>
-          </article>
+      {/* Cómo Funciona - Simplificado */}
+      <section className="how-works-section" id="como-funciona">
+        <div className="pattern-bg-home"></div>
+        <div className="how-works-container">
+          <h2 className="section-title">¿Cómo funciona?</h2>
+          <div className="steps-grid-horizontal">
+            <div className="step">
+              <div className="step-number">1</div>
+              <div className="step-icon">📱</div>
+              <h3>Escanea</h3>
+              <p>Cualquier persona escanea el código QR del collar</p>
+            </div>
+            <div className="step-arrow">→</div>
+            <div className="step">
+              <div className="step-number">2</div>
+              <div className="step-icon">📋</div>
+              <h3>Accede</h3>
+              <p>Ve inmediatamente la información de contacto</p>
+            </div>
+            <div className="step-arrow">→</div>
+            <div className="step">
+              <div className="step-number">3</div>
+              <div className="step-icon">🏠</div>
+              <h3>Reencuentra</h3>
+              <p>Tu mascota regresa segura a casa</p>
+            </div>
+          </div>
         </div>
       </section>
 
-      {/* Sección Promesa */}
-      <section className="promise-section" aria-label="Promesa de valor">
-        <div className="promise-image">
-          <img src={heroImage} alt="Perro feliz con su dueño" loading="lazy" />
-        </div>
-        <div className="promise-content">
-          <h2>Tranquilidad en un escaneo</h2>
-          <p>Con nuestro collar QR, cualquier persona puede escanearlo y acceder a la información vital de tu mascota: dirección, historial médico, datos del veterinario y más. ¡Tu perro volverá a casa más rápido que nunca!</p>
-        </div>
-      </section>
-
-      {/* Sección Cómo Funciona */}
-      <section className="how-it-works-section" aria-label="Cómo funciona">
-        <h2>¿CÓMO FUNCIONA COLLARMASCOTAQR?</h2>
-        <div className="how-it-works-grid">
-          <article className="how-it-works-item">
-            <span className="step-number">1</span>
-            <p>Registra a tu mascota y personaliza su perfil con todos sus datos.</p>
-          </article>
-          <article className="how-it-works-item">
-            <span className="step-number">2</span>
-            <p>Coloca el collar con el QR único en tu perro.</p>
-          </article>
-          <article className="how-it-works-item">
-            <span className="step-number">3</span>
-            <p>Si se pierde, alguien lo escanea y te contacta al instante.</p>
-          </article>
-        </div>
-      </section>
-
-      {/* Sección Servicios */}
-      <section className="services-section" aria-label="Beneficios">
-        <h2>BENEFICIOS QUE AMARÁS</h2>
-        <div className="services-grid">
-          <article className="service-item"><span className="service-icon">📍</span><p>Ubicación actualizada si se pierde</p></article>
-          <article className="service-item"><span className="service-icon">📋</span><p>Libreta sanitaria digital</p></article>
-          <article className="service-item"><span className="service-icon">🏥</span><p>Datos del veterinario siempre a mano</p></article>
-          <article className="service-item"><span className="service-icon">🔒</span><p>Privacidad y seguridad garantizadas</p></article>
-          <article className="service-item"><span className="service-icon">📞</span><p>Contacto directo con el dueño</p></article>
-          <article className="service-item"><span className="service-icon">🐾</span><p>Fácil de usar y duradero</p></article>
-        </div>
-      </section>
-
-      {/* Sección Testimonios */}
-      <section className="testimonials-section" aria-label="Testimonios de clientes">
-        <h2>LO QUE DICEN NUESTROS CLIENTES</h2>
-        <div className="testimonials-grid">
-          {testimonials.map((testimonial, index) => (
-            <article key={index} className="testimonial-item">
-              <p>"{testimonial.text}"</p>
-              <span>- {testimonial.author}</span>
-            </article>
-          ))}
+      {/* Productos */}
+      <section className="products-section">
+        <div className="products-container">
+          <h2 className="section-title-dark">Nuestros productos</h2>
+          <div className="products-grid">
+            <div className="product-card">
+              <div className="product-image">
+                <div className="placeholder-product black-collar">
+                  <div className="collar-icon">🐕</div>
+                </div>
+              </div>
+              <h3>Collar Básico</h3>
+              <p>Collar resistente con QR permanente</p>
+              <Link to="/compra" className="btn-product">Ver producto</Link>
+            </div>
+            
+            <div className="product-card featured">
+              <div className="featured-badge">Más popular</div>
+              <div className="product-image">
+                <div className="placeholder-product green-collar">
+                  <div className="collar-icon">💚</div>
+                </div>
+              </div>
+              <h3>Collar Completo</h3>
+              <p>Incluye placa de identificación y QR</p>
+              <Link to="/compra" className="btn-product btn-featured">Ver producto</Link>
+            </div>
+            
+            <div className="product-card">
+              <div className="product-image">
+                <div className="placeholder-product pink-collar">
+                  <div className="collar-icon">❤️</div>
+                </div>
+              </div>
+              <h3>Collar Completo</h3>
+              <p>Incluye placa de identificación y QR</p>
+              <Link to="/compra" className="btn-product">Ver producto</Link>
+            </div>
+          </div>
         </div>
       </section>
 
-      {/* CTA Final */}
-      <section className="cta-final-section" aria-label="Llamado a la acción final">
-        <h2>¡NO ESPERES MÁS!</h2>
-        <p>Protege a tu mascota hoy con CollarMascotaQR y vive con la tranquilidad que mereces.</p>
-        <Link to="/compra" className="cta-button">Pide el tuyo ahora</Link>
+      {/* Beneficios que amarás */}
+      <section className="benefits-section">
+        <div className="benefits-container">
+          <h2 className="section-title">BENEFICIOS QUE AMARÁS</h2>
+          <div className="benefits-grid">
+            <div className="benefit-card">
+              <div className="benefit-icon">📍</div>
+              <h3>Ubicación</h3>
+              <p>Ubicación actualizada si se pierde</p>
+            </div>
+            <div className="benefit-card">
+              <div className="benefit-icon">📋</div>
+              <h3>Salud</h3>
+              <p>Libreta sanitaria digital</p>
+            </div>
+            <div className="benefit-card">
+              <div className="benefit-icon">🏥</div>
+              <h3>Placa QR</h3>
+              <p>Datos del veterinario siempre a mano</p>
+            </div>
+            <div className="benefit-card">
+              <div className="benefit-icon">🔒</div>
+              <h3>Privacidad</h3>
+              <p>Privacidad y seguridad garantizadas</p>
+            </div>
+            <div className="benefit-card">
+              <div className="benefit-icon">📞</div>
+              <h3>Contacto</h3>
+              <p>Comunicación directa con el dueño</p>
+            </div>
+            <div className="benefit-card">
+              <div className="benefit-icon">🐾</div>
+              <h3>Fácil de usar</h3>
+              <p>Fácil de usar y duradero</p>
+            </div>
+          </div>
+        </div>
+        <div className="decorative-circles benefits-circles">
+          <div className="circle circle-pink"></div>
+          <div className="circle circle-green"></div>
+        </div>
       </section>
 
-      {/* Botón Flotante */}
-      <Link to="/compra" className="floating-cta">¡Pide el tuyo!</Link>
+      {/* CTA Final con Testimonios */}
+      <section className="final-cta">
+        <div className="final-cta-container">
+          <div className="final-left">
+            <img src={perrocorriendo} alt="Mascota corriendo - branding" className="cta-mascota-sleep white-bg" />
+            <div className="sleep-zzz">
+              <span>z</span>
+              <span>z</span>
+              <span>z</span>
+            </div>
+          </div>
+          
+          <div className="final-center">
+            <h3 className="final-subtitle">Únete a nuestra comunidad</h3>
+            <p className="final-text">Estamos construyendo una red de seguridad para todas las mascotas</p>
+            <Link to="/compra" className="btn-cta-final">
+              Comenzar ahora
+            </Link>
+          </div>
+          
+          <div className="final-right">
+            <div className="testimonial-bubble">
+              <div className="testimonial-header">
+                <div className="testimonial-avatar woman">
+                  <span>👩</span>
+                </div>
+                <div className="testimonial-content">
+                  <p>"Funciona perfectamente. En 15 minutos recuperamos a Max."</p>
+                  <div className="testimonial-author">- María, Belgrano</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
     </div>
   );
 };

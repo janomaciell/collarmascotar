@@ -1,89 +1,183 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import './About.css';
-import { FaPaw, FaBell, FaHeart } from 'react-icons/fa';
 
 const About = () => {
+  const mascotaImage = 'src/img/personaje2.png';
+
   return (
-    <div className="about-container">
-      {/* Sección Hero con fondo de huellas */}
+    <div className="about-wrapper">
+      {/* Hero */}
       <section className="about-hero">
-        <div className="hero-shapes">
-          <div className="shape shape-1"></div>
-          <div className="shape shape-2"></div>
-        </div>
-        <h1>ENCUENTRAME</h1>
-        <p>Porque cada minuto cuenta cuando tu mejor amigo se pierde</p>
-      </section>
-
-      {/* Sección Historia Personal */}
-      <section className="story-section">
-        <h2>Mi Historia</h2>
-        <div className="story-card">
-          <p>
-            Soy <strong>Jano Maciel</strong>, programador y fundador de EncuentraME. Como amante de los animales, sufrí en carne propia la angustia de perder a una mascota. 
-            La incertidumbre, la desesperación y la impotencia fueron emociones que nunca quiero que nadie más experimente.
-          </p>
-          <p>
-            Fue entonces cuando decidí crear 
-            una solución real, accesible y efectiva: un collar con un código QR que pueda reunir de lo antes posible a una mascota perdida con su familia.
-          </p>
+        <div className="pattern-bg"></div>
+        <div className="hero-content">
+          <img src={mascotaImage} alt="Mascota EncuentraME" className="hero-mascota" />
+          <h1 className="hero-title">NUESTRA HISTORIA</h1>
+          <p className="hero-subtitle">Porque cada minuto cuenta cuando tu mejor amigo se pierde</p>
         </div>
       </section>
 
-      {/* Sección Misión */}
-      <section className="mission-section">
-        <div className="mission-shape"></div>
-        <div className="mission-content">
-          <h2>Nuestra Misión</h2>
-          <p>
-            <strong>EncuentraME nace de una necesidad real: </strong>reducir la cantidad de mascotas perdidas y ayudar a sus dueños a reencontrarse con ellas en tiempo récord. 
-            La tecnología nos permite estar conectados, y ahora también puede ser el puente que traiga de vuelta a nuestros compañeros peludos.
-          </p>
-        </div>
-      </section>
-
-      {/* Sección Visión */}
-      <section className="vision-section">
-        <div className="vision-shape"></div>
-        <div className="vision-content">
-          <h2>Nuestra Visión</h2>
-          <p>
-            Queremos un mundo donde ninguna mascota se pierda para siempre y donde cada familia pueda disfrutar de la tranquilidad de saber que su mejor amigo siempre estará protegido. 
-            Con EncuentraME, aspiramos a liderar una comunidad global de amantes de las mascotas que confían en la tecnología para mantener a sus compañeros seguros.
-          </p>
-        </div>
-      </section>
-
-      {/* Sección Beneficios */}
-      <section className="benefits-section">
-        <h2>¿Por qué las familias eligen EncuentraME?</h2>
-        <div className="benefits-grid">
-          <div className="benefit-item">
-            <div className="benefit-icon"><FaPaw /></div>
-            <h3>Reencuentros rápidos y simples</h3>
-            <p>Un escaneo del QR conecta directamente a quien encuentra a tu mascota contigo, sin complicaciones.</p>
+      <div className="about-container">
+        {/* Historia Personal */}
+        <section className="story-section">
+          <div className="section-card">
+            <div className="card-header">
+              <h2>Mi Historia</h2>
+              <span className="card-icon">❤️</span>
+            </div>
+            
+            <div className="card-content">
+              <div className="founder-intro">
+                <h3>Jano Maciel</h3>
+                <p className="founder-title">Fundador de EncuéntraME</p>
+              </div>
+              
+              <p>
+                Soy programador, emprendedor y, sobre todo, amante de los animales. 
+                La idea de EncuéntraME nació de una experiencia personal que me marcó profundamente: 
+                <strong> la angustia de perder a mi mascota</strong>.
+              </p>
+              
+              <p>
+                Sentir la incertidumbre y la desesperación de no saber dónde estaba mi compañero de cuatro patas 
+                fue un momento que cambió mi perspectiva. Esa vivencia me llevó a buscar una solución real y accesible 
+                para que ninguna familia tenga que atravesar lo mismo.
+              </p>
+              
+              <div className="highlight-box">
+                <p>
+                  <strong>Así nació EncuéntraME:</strong> un collar con código QR que conecta a tu mascota contigo 
+                  en segundos y activa una red de ayuda comunitaria.
+                </p>
+              </div>
+            </div>
           </div>
-          <div className="benefit-item">
-            <div className="benefit-icon"><FaBell /></div>
-            <h3>Apoyo de una comunidad cercana</h3>
-            <p>Al escanear el collar, se notifica a personas dispuestas a ayudar en tu área, aumentando las chances de traer a tu mascota de vuelta.</p>
-          </div>
-          <div className="benefit-item">
-            <div className="benefit-icon"><FaHeart /></div>
-            <h3>Tranquilidad en cada aventura</h3>
-            <p>Siente la seguridad de saber que tu mejor amigo lleva consigo una solución para volver a casa, estés donde estés.</p>
-          </div>
-        </div>
-      </section>
+        </section>
 
-      {/* Sección CTA */}
+        {/* Misión */}
+        <section className="mission-section">
+          <div className="section-card mission-card">
+            <div className="card-header">
+              <h2>Nuestra Misión</h2>
+              <span className="card-icon">🎯</span>
+            </div>
+            
+            <div className="card-content">
+              <div className="mission-statement">
+                <h3>Hacer que cada mascota siempre encuentre el camino a casa</h3>
+              </div>
+              
+              <p>
+                Queremos que la tecnología sea una aliada en la protección de quienes más amamos. 
+                EncuéntraME busca reducir la cantidad de mascotas perdidas, generar reencuentros rápidos 
+                y transmitir tranquilidad a las familias.
+              </p>
+              
+              <div className="stats-grid">
+                <div className="stat-item">
+                  <span className="stat-number">∞</span>
+                  <span className="stat-label">mascotas por proteger</span>
+                </div>
+                <div className="stat-item">
+                  <span className="stat-number">100%</span>
+                  <span className="stat-label">compromiso con tu tranquilidad</span>
+                </div>
+                <div className="stat-item">
+                  <span className="stat-number">24/7</span>
+                  <span className="stat-label">innovación en marcha</span>
+                </div>
+              </div>
+
+            </div>
+          </div>
+        </section>
+
+        {/* Visión */}
+        <section className="vision-section">
+          <div className="section-card vision-card">
+            <div className="card-header">
+              <h2>Nuestra Visión</h2>
+              <span className="card-icon">🌟</span>
+            </div>
+            
+            <div className="card-content">
+              <p>
+                Soñamos con un mundo donde <strong>ninguna mascota se pierda para siempre</strong>. 
+                Aspiramos a construir una comunidad global de personas que creen en la unión entre 
+                innovación, empatía y amor por los animales.
+              </p>
+              
+              <div className="vision-goals">
+                <div className="goal-item">
+                  <span className="goal-icon">🌍</span>
+                  <span>Comunidad global</span>
+                </div>
+                <div className="goal-item">
+                  <span className="goal-icon">💡</span>
+                  <span>Innovación constante</span>
+                </div>
+                <div className="goal-item">
+                  <span className="goal-icon">🤝</span>
+                  <span>Apoyo mutuo</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {/* Beneficios */}
+        <section className="benefits-section">
+          <div className="benefits-header">
+            <h2>¿Por qué elegir EncuéntraME?</h2>
+            <p>La solución más completa para proteger a tu mascota</p>
+          </div>
+          
+          <div className="benefits-grid">
+            <div className="benefit-card">
+              <div className="benefit-icon">⚡</div>
+              <h3>Reencuentros instantáneos</h3>
+              <p>
+                Un simple escaneo del QR conecta al instante a quien encuentra 
+                a tu mascota contigo. Sin apps, sin complicaciones.
+              </p>
+            </div>
+            
+            <div className="benefit-card">
+              <div className="benefit-icon">👥</div>
+              <h3>Comunidad activa</h3>
+              <p>
+                Cuando tu mascota se marca como perdida, se notifica automáticamente 
+                a usuarios en tu zona para maximizar las chances de reencuentro.
+              </p>
+            </div>
+            
+            <div className="benefit-card">
+              <div className="benefit-icon">🛡️</div>
+              <h3>Tranquilidad total</h3>
+              <p>
+                Tu mascota lleva su identidad digital, historial de salud y datos 
+                de contacto siempre disponibles. Control total donde sea que estés.
+              </p>
+            </div>
+          </div>
+        </section>
+      </div>
+
+      {/* CTA Final */}
       <section className="about-cta">
-        <h2>No esperes a vivir lo que yo viví</h2>
-        <p>
-          El miedo, la angustia y la desesperación de perder a tu mascota son emociones que no le deseo a nadie. Por solo el precio de una cena, puedes darle a tu familia la tranquilidad de saber que tu mascota siempre encontrará el camino a casa.
-        </p>
-        <Link to="/register" className="cta-button">Protege a tu mascota ahora</Link>
+        <div className="cta-content">
+          <img src={mascotaImage} alt="Mascota EncuentraME" className="cta-mascota" />
+          <h2>No esperes a vivir lo que yo viví</h2>
+          <p>
+            La angustia de perder a tu mascota es algo que nadie debería pasar. 
+            Por el valor de una salida a cenar, podés darle a tu familia la seguridad 
+            de que tu mejor amigo siempre encontrará el camino de regreso.
+          </p>
+          <Link to="/compra" className="cta-button">
+            <span className="btn-icon">🛒</span>
+            Proteger a mi mascota
+          </Link>
+        </div>
       </section>
     </div>
   );

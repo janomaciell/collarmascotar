@@ -1,23 +1,29 @@
-/* Importación de fuentes */
-@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800;900&family=Open+Sans:wght@300;400;500;600;700&display=swap');
+/* Fuentes y variables de marca */
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800;900&display=swap');
 
 :root {
-  --grape: #94618E;
-  --eggplant: #49274A;
-  --sand: #F4DECB;
-  --shell: #F8EE7;
-  --blanco: #ffffff;
-  --negro: #000000;
-  --sombra-fuerte: rgba(0, 0, 0, 0.3);
+  --azul-principal: #05408F;
+  --negro-principal: #181818;
+  --blanco-principal: #FFFFFF;
+  --rosa-secundario: #FF6FA5;
+  --rojo-secundario: #FF3131;
+  --verde-secundario: #7ED957;
+  --gris-suave: #F5F5F5;
+  --gris-claro: #E8F4F8;
+  --sombra-fuerte: rgba(0, 0, 0, 0.25);
 }
 
 /* Estilos generales */
 .lost-poster-page {
   padding-top: 80px;
-  background: var(--sand);
+  background: var(--gris-claro);
   min-height: 100vh;
-  font-family: 'Open Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+  font-family: 'Poppins', -apple-system, BlinkMacSystemFont, sans-serif;
+  color: var(--negro-principal);
 }
+
+/* Titulares en Jackerton */
+h1, h2, h3, h4, h5, h6 { font-family: 'Jackerton', 'Jackerton Regular', 'Jackerton-Regular', serif; }
 
 /* Botones de acción */
 .poster-actions {
@@ -33,15 +39,15 @@
 .back-button,
 .download-button,
 .share-button {
-  background: var(--eggplant);
-  color: var(--blanco);
+  background: var(--azul-principal);
+  color: var(--blanco-principal);
   border: none;
   padding: 1rem 2rem;
   border-radius: 50px;
   cursor: pointer;
   font-size: 1.1rem;
   font-weight: 600;
-  font-family: 'Montserrat', sans-serif;
+  font-family: 'Poppins', sans-serif;
   transition: all 0.3s ease;
   box-shadow: 0 4px 15px var(--sombra-fuerte);
 }
@@ -49,7 +55,7 @@
 .back-button:hover,
 .download-button:hover,
 .share-button:hover {
-  background: var(--grape);
+  background: #043870;
   transform: translateY(-2px);
   box-shadow: 0 6px 20px var(--sombra-fuerte);
 }
@@ -83,10 +89,10 @@
   transition: all 0.3s ease;
 }
 
-.whatsapp-button { background: #25d366; color: var(--blanco); }
-.facebook-button { background: #4267b2; color: var(--blanco); }
-.twitter-button { background: #1da1f2; color: var(--blanco); }
-.copy-button { background: var(--sand); color: var(--eggplant); }
+.whatsapp-button { background: #25d366; color: var(--blanco-principal); }
+.facebook-button { background: #4267b2; color: var(--blanco-principal); }
+.twitter-button { background: #1da1f2; color: var(--blanco-principal); }
+.copy-button { background: var(--gris-claro); color: var(--azul-principal); }
 
 /* Contenedor del póster */
 .lost-poster-container {
@@ -96,7 +102,7 @@
 }
 
 .lost-poster {
-  background: var(--blanco);
+  background: var(--blanco-principal);
   width: 210mm;
   height: 297mm;
   margin: 0 auto;
@@ -108,6 +114,11 @@
   overflow: hidden;
 }
 
+/* Durante render de html2canvas, forzamos Poppins para evitar fallbacks de CDNs bloqueados */
+.poster-sans, .poster-sans * {
+  font-family: 'Poppins', -apple-system, BlinkMacSystemFont, sans-serif !important;
+}
+
 /* Encabezado con Branding */
 .poster-header {
   display: flex;
@@ -115,7 +126,6 @@
 }
 
 .brand-container {
-  background-color: var(--sand);
   padding: 1rem;
 }
 
@@ -137,74 +147,82 @@
 }
 
 .brand-name {
-  font-family: 'Montserrat', sans-serif;
-  font-weight: 900;
+  font-family: 'Jackerton', 'Jackerton Regular', 'Jackerton-Regular', serif;
+  font-weight: 700;
   font-size: 2rem;
-  color: var(--eggplant);
+  color: var(--azul-principal);
   margin: 0;
   line-height: 1;
 }
 
 .brand-slogan {
-  font-family: 'Open Sans', sans-serif;
+  font-family: 'Poppins', sans-serif;
   font-weight: 400;
   font-style: italic;
   font-size: 1rem;
-  color: var(--grape);
+  color: #4b5563;
   margin: 0.25rem 0 0;
 }
 
 .poster-title {
-  background-color: var(--eggplant);
+  background-color: var(--azul-principal);
   padding: 0.5rem;
   text-align: center;
 }
 
 .poster-title h2 {
-  font-family: 'Montserrat', sans-serif;
-  font-weight: 800;
+  font-family: 'Jackerton', 'Jackerton Regular', 'Jackerton-Regular', serif;
+  font-weight: 700;
   font-size: 1.5rem;
-  color: var(--sand);
+  color: var(--blanco-principal);
   margin: 0;
   text-transform: uppercase;
   letter-spacing: 2px;
 }
 
 /* Foto de la Mascota */
-.pet-photo-container {
+.pet-photo-container-poster {
   display: flex;
   justify-content: center;
+  width: 100%;
+  padding: 1rem 0;
 }
 
-.pet-photo {
-  width: 40%;
-  max-width: 500px;
+.pet-photo-lost-poster {
+  width: 80%;
+  max-width: 320px;
   height: auto;
-  object-fit: cover;
-  border-radius: 15px;
-  border: 8px solid var(--sand);
-  box-shadow: 0 4px 15px var(--sombra-fuerte);
+  object-fit: contain;
+  border-radius: 16px;
+  box-shadow: 0 8px 24px rgba(0,0,0,0.1);
+}
+
+/* Integración para fotos con fondo blanco */
+.white-bg {
+  background: radial-gradient(circle at 50% 50%, #ffffff 40%, rgba(255,255,255,0) 70%);
+  border-radius: 16px;
+  padding: 8px;
 }
 
 /* Nombre de la Mascota */
 .pet-name-container {
-  background-color: var(--grape);
+  background-color: var(--azul-principal);
   padding: 0.75rem;
   text-align: center;
 }
 
 .pet-name {
-  font-family: 'Montserrat', sans-serif;
-  font-weight: 800;
+  font-family: 'Jackerton', 'Jackerton Regular', 'Jackerton-Regular', serif;
+  font-weight: 700;
   font-size: 1.5rem;
-  color: var(--blanco);
+  color: var(--blanco-principal);
   margin: 0;
   text-transform: uppercase;
 }
 
 /* Detalles de la Mascota */
 .pet-details {
-  background-color: var(--sand);
+  background-color: var(--gris-claro);
   padding: 1rem;
   display: flex;
   flex-direction: column;
@@ -221,7 +239,7 @@
   display: flex;
   align-items: flex-start;
   gap: 0.5rem;
-  background-color: rgba(255, 255, 255, 0.7);
+  background-color: rgba(255, 255, 255, 0.8);
   padding: 0.75rem;
   border-radius: 8px;
 }
@@ -236,32 +254,32 @@
 
 .detail-text strong {
   display: block;
-  font-family: 'Montserrat', sans-serif;
+  font-family: 'Poppins', sans-serif;
   font-weight: 700;
   font-size: 0.9rem;
-  color: var(--eggplant);
+  color: var(--azul-principal);
   margin-bottom: 0.25rem;
 }
 
 .detail-text p {
   margin: 0;
-  font-family: 'Open Sans', sans-serif;
+  font-family: 'Poppins', sans-serif;
   font-size: 1rem;
-  color: var(--negro);
+  color: var(--negro-principal);
 }
 
 /* Mensaje Motivacional */
 .motivational-message {
   text-align: center;
-  background-color: rgba(148, 97, 142, 0.1);
+  background: linear-gradient(135deg, var(--gris-claro) 0%, var(--blanco-principal) 100%);
 }
 
 .motivational-message p {
-  font-family: 'Montserrat', sans-serif;
+  font-family: 'Poppins', sans-serif;
   font-weight: 600;
   font-size: 1.5rem;
   font-style: italic;
-  color: var(--eggplant);
+  color: var(--azul-principal);
 }
 
 /* Sección de Contacto y QR */
@@ -269,7 +287,6 @@
 
 .contact-section {
   flex: 3;
-  background-color: var(--grape);
   padding: 1rem;
   display: flex;
   flex-direction: column;
@@ -278,9 +295,9 @@
 }
 
 .contact-section h3 {
-  font-family: 'Montserrat', sans-serif;
+  font-family: 'Jackerton', 'Jackerton Regular', 'Jackerton-Regular', serif;
   font-weight: 700;
-  color: var(--blanco);
+  color: var(--blanco-principal);
   margin-bottom: 1rem;
   text-align: center;
   text-transform: uppercase;
@@ -307,14 +324,14 @@
 
 .contact-icon {
   font-size: 1.5rem;
-  color: var(--eggplant);
+  color: var(--azul-principal);
 }
 
 .contact-item strong {
-  font-family: 'Montserrat', sans-serif;
+  font-family: 'Poppins', sans-serif;
   font-weight: 700;
   font-size: 1.2rem;
-  color: var(--eggplant);
+  color: var(--azul-principal);
 }
 
 
@@ -322,19 +339,19 @@
 /* Pie de Página */
 .poster-footer {
   padding: 0.75rem;
-  background-color: var(--eggplant);
+  background-color: var(--azul-principal);
   text-align: center;
 }
 
 .footer-text {
-  font-family: 'Open Sans', sans-serif;
+  font-family: 'Poppins', sans-serif;
   font-size: 0.9rem;
-  color: var(--blanco);
+  color: var(--blanco-principal);
   margin: 0;
 }
 
 .footer-text strong {
-  font-family: 'Montserrat', sans-serif;
+  font-family: 'Poppins', sans-serif;
   font-weight: 700;
 }
 
@@ -344,10 +361,10 @@
   justify-content: center;
   align-items: center;
   height: 50vh;
-  font-family: 'Montserrat', sans-serif;
+  font-family: 'Poppins', sans-serif;
   font-weight: 600;
   font-size: 1.5rem;
-  color: var(--eggplant);
+  color: var(--azul-principal);
 }
 
 .error-container {
@@ -370,9 +387,7 @@
     flex-direction: column;
   }
   
-  .pet-photo {
-    max-width: 100%;
-  }
+  .pet-photo { max-width: 90%; }
 }
 
 /* Estilos para impresión */
@@ -390,23 +405,9 @@
     border-radius: 0;
   }
   
-  .brand-container {
-    background-color: #f0e6d2 !important; /* Versión imprimible del color sand */
-  }
-  
-  .poster-title {
-    background-color: #333 !important; /* Versión imprimible del color eggplant */
-  }
-  
-  .pet-name-container {
-    background-color: #666 !important; /* Versión imprimible del color grape */
-  }
-  
-  .contact-section {
-    background-color: #666 !important; /* Versión imprimible del color grape */
-  }
-  
-  .poster-footer {
-    background-color: #333 !important; /* Versión imprimible del color eggplant */
-  }
+  .brand-container { background-color: #eef5fb !important; }
+  .poster-title { background-color: #333 !important; }
+  .pet-name-container { background-color: #666 !important; }
+  .contact-section { background-color: #666 !important; }
+  .poster-footer { background-color: #333 !important; }
 }

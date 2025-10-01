@@ -11,8 +11,9 @@ const Compra = () => {
   const [userPhone, setUserPhone] = useState('');
   const [selectedOption, setSelectedOption] = useState(null);
   const [additionalInfo, setAdditionalInfo] = useState('');
-  const [purchaseReason, setPurchaseReason] = useState('');
-  const [lostPet, setLostPet] = useState(null); // Nuevo estado
+  const [lostPet, setLostPet] = useState(null);
+
+  const mascotaImage = new URL('../../img/personaje2.png', import.meta.url).href;
 
   useEffect(() => {
     fetchPets();
@@ -24,29 +25,52 @@ const Compra = () => {
       const data = await getPets();
       setPets(data);
       setError('');
-    } catch (err) {
-      setError('No pudimos cargar las mascotas. Intenta de nuevo.');
-      console.error(err);
+
+    } catch (error) {
+      console.error(error);
     } finally {
       setIsLoading(false);
     }
   };
 
   const purchaseOptions = [
-    { id: 'chapita', name: 'Solo Chapita QR', price: 20000, available: true },
-    { id: 'collar-simple', name: 'Collar Básico + QR', price: 0, available: false },
-    { id: 'collar-premium', name: 'Collar Premium + QR', price: 0, available: false },
+    { 
+      id: 'chapita', 
+      name: 'Chapita QR', 
+      price: 25000,
+      oldPrice: 30000,
+      available: true,
+      description: 'Placa resistente con código QR único',
+      icon: '🏷️'
+    },
+    { 
+      id: 'collar-simple', 
+      name: 'Collar Básico', 
+      price: 25000,
+      oldPrice: 30000,
+      available: false,
+      description: 'Collar + chapita QR incluida',
+      icon: '🦮'
+    },
+    { 
+      id: 'collar-premium', 
+      name: 'Collar Premium', 
+      price: 25000,
+      oldPrice: 30000,
+      available: false,
+      description: 'Collar reforzado + chapita personalizada',
+      icon: '👑'
+    },
   ];
 
   const handlePhoneChange = (e) => {
-    const value = e.target.value.replace(/\D/g, ''); // Solo números
+    const value = e.target.value.replace(/\D/g, '');
     if (value.length <= 10) {
       setUserPhone(value);
     }
   };
 
   const validatePhone = () => {
-    // Números de teléfono argentinos: 10 dígitos en total (código de área + número, sin "15")
     const phoneRegex = /^\d{10}$/;
     return phoneRegex.test(userPhone);
   };
@@ -93,8 +117,7 @@ const Compra = () => {
           setUserPhone('');
           setAdditionalInfo('');
           setSuccessMessage('');
-          setPurchaseReason('');
-          setLostPet(null); // Reinicia el estado de mascota perdida
+          setLostPet(null);
         }, 3000);
       }, 100);
 
@@ -105,116 +128,181 @@ const Compra = () => {
   };
 
   return (
-    <div className="compra-container">
-      <h1>¡Consigue tu Collar QR con Encuéntrame!</h1>
-      <h2>Elige y Personaliza</h2>
-
-      {isLoading ? (
-        <div className="loading-message">Cargando...</div>
-      ) : (
-        <form onSubmit={handleSubmit} className="compra-form">
-          {/* Pregunta sobre mascota perdida */}
-          <div className="form-group">
-            <h3 className="lost-pet-question">¿Perdiste a tu mascota?</h3>
-            <div className="yes-no-buttons">
-              <button
-                type="button"
-                className={`choice-button ${lostPet === true ? 'selected' : ''}`}
-                onClick={() => setLostPet(true)}
-              >
-                Sí
-              </button>
-              <button
-                type="button"
-                className={`choice-button ${lostPet === false ? 'selected' : ''}`}
-                onClick={() => setLostPet(false)}
-              >
-                No
-              </button>
-            </div>
+    <div className="compra-wrapper">
+      {/* Hero de Compra */}
+      <section className="compra-hero">
+        <div className="hero-content">
+          <img src={mascotaImage} alt="Mascota EncuentraME" className="hero-mascota" />
+          <h1 className="hero-title">¡PROTEGE A TU MEJOR AMIGO!</h1>
+          <p className="hero-subtitle">Collar QR que salva vidas</p>
+          <div className="hero-badge">
+            <span>📱 Tecnología simple, resultados inmediatos</span>
           </div>
+        </div>
+      </section>
 
-          {/* Selección de Mascota (solo si perdió a su mascota) */}
-          {lostPet === true && (
-            <div className="form-group">
-              <label>¿Cuál de tus mascotas perdió el collar?</label>
-              {pets.length === 0 ? (
-                <p>
-                  No tienes mascotas registradas.{' '}
-                </p>
-              ) : (
-                <div className="pet-selection">
-                  {pets.map((pet) => (
-                    <div
-                      key={pet.id}
-                      className={`pet-option ${selectedPetId === pet.id ? 'selected' : ''}`}
-                      onClick={() => setSelectedPetId(pet.id)}
-                    >
-                      <img src={pet.photo} alt={pet.name} className="pet-thumbnail" />
-                      <div className="pet-details">
-                        <h4>{pet.name}</h4>
-                        <p>{pet.breed || 'Sin raza'}, {pet.age} años</p>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              )}
-            </div>
-          )}
-
-          {/* Selección de Opción de Compra */}
-          <div className="form-group">
-            <label>Elige tu opción</label>
-            <div className="options-grid">
-              {purchaseOptions.map((option) => (
-                <div
-                  key={option.id}
-                  className={`option-card ${selectedOption === option.id ? 'selected' : ''} ${!option.available ? 'unavailable' : ''}`}
-                  onClick={() => option.available && setSelectedOption(option.id)}
+      <div className="compra-container">
+        {isLoading ? (
+          <div className="loading-container">
+            <div className="loading-spinner"></div>
+            <p>Cargando tus mascotas...</p>
+          </div>
+        ) : (
+          <form onSubmit={handleSubmit} className="compra-form">
+            
+            {/* Pregunta inicial */}
+            <div className="form-section">
+              <div className="section-header">
+                <h2>¿Perdiste a tu mascota?</h2>
+                <p>Ayúdanos a personalizar tu pedido</p>
+              </div>
+              
+              <div className="choice-buttons">
+                <button
+                  type="button"
+                  className={`choice-btn ${lostPet === true ? 'selected' : ''}`}
+                  onClick={() => setLostPet(true)}
                 >
-                  <h4>{option.name}</h4>
-                  <p className="price">${option.price.toLocaleString('es-AR')} ARS</p>
-                  {!option.available && <p className="unavailable-text">Próximamente</p>}
-                </div>
-              ))}
+                  <span className="choice-icon"></span>
+                  <span>Sí, la perdí</span>
+                </button>
+                <button
+                  type="button"
+                  className={`choice-btn ${lostPet === false ? 'selected' : ''}`}
+                  onClick={() => setLostPet(false)}
+                >
+                  <span className="choice-icon"></span>
+                  <span>No, es prevención</span>
+                </button>
+              </div>
             </div>
-          </div>
 
-          {/* Teléfono */}
-          <div className="form-group">
-            <label>Tu WhatsApp</label>
-            <input
-              type="tel"
-              value={userPhone}
-              onChange={handlePhoneChange}
-              placeholder="Ej: 1123456789"
-              required
-            />
-            <small>Ingresa tu número con código de área, sin el 15 (ejemplo: 1123456789)</small>
-          </div>
+            {/* Selección de mascota */}
+            {lostPet === true && (
+              <div className="form-section">
+                <div className="section-header">
+                  <h2>¿Cuál de tus mascotas?</h2>
+                </div>
+                
+                {pets.length === 0 ? (
+                  <div className="no-pets-message">
+                    <p>No tienes mascotas registradas aún.</p>
+                    <p>¡No te preocupes! Puedes continuar con tu pedido.</p>
+                  </div>
+                ) : (
+                  <div className="pets-grid">
+                    {pets.map((pet) => (
+                      <div
+                        key={pet.id}
+                        className={`pet-card ${selectedPetId === pet.id ? 'selected' : ''}`}
+                        onClick={() => setSelectedPetId(pet.id)}
+                      >
+                        <img src={pet.photo} alt={pet.name} className="pet-photo" />
+                        <div className="pet-info">
+                          <h3>{pet.name}</h3>
+                          <p>{pet.breed || 'Sin raza'} • {pet.age} años</p>
+                        </div>
+                        <div className="selection-indicator">✓</div>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
+            )}
 
-          {/* Detalles Adicionales */}
-          <div className="form-group">
-            <label>Detalles adicionales (opcional)</label>
-            <textarea
-              value={additionalInfo}
-              onChange={(e) => setAdditionalInfo(e.target.value)}
-              placeholder="Ej: 'Quiero un diseño especial'"
-            />
-          </div>
+            {/* Opciones de producto */}
+            <div className="form-section">
+              <div className="section-header">
+                <h2>Elige tu producto</h2>
+                <p>Todas las opciones incluyen código QR único</p>
+              </div>
+              
+              <div className="products-grid">
+                {purchaseOptions.map((option) => (
+                  <div
+                    key={option.id}
+                    className={`product-card ${selectedOption === option.id ? 'selected' : ''} ${!option.available ? 'unavailable' : ''}`}
+                    onClick={() => option.available && setSelectedOption(option.id)}
+                  >
+                    <div className="product-icon">{option.icon}</div>
+                    <h3>{option.name}</h3>
+                    <p className="product-description">{option.description}</p>
+                    <div className="product-price">
+                      {option.available ? (
+                        <>
+                          {option.oldPrice && (
+                            <span className="old-price">${option.oldPrice.toLocaleString('es-AR')}</span>
+                          )}
+                          <span className="price-amount">${option.price.toLocaleString('es-AR')}</span>
+                          {option.oldPrice && <span className="launch-badge">Lanzamiento</span>}
+                        </>
+                      ) : (
+                        <span className="coming-soon">Próximamente</span>
+                      )}
+                    </div>
+                    {option.available && <div className="selection-indicator">✓</div>}
+                  </div>
+                ))}
+              </div>
+            </div>
 
-          {error && <div className="error-message">{error}</div>}
-          {successMessage && <div className="success-message">{successMessage}</div>}
+            {/* WhatsApp */}
+            <div className="form-section">
+              <div className="section-header">
+                <h2>Tu WhatsApp</h2>
+                <p>Te contactaremos para coordinar la entrega</p>
+              </div>
+              
+              <div className="phone-input-container">
+                <div className="phone-prefix">+54 9</div>
+                <input
+                  type="tel"
+                  value={userPhone}
+                  onChange={handlePhoneChange}
+                  placeholder="1123456789"
+                  className="phone-input"
+                  required
+                />
+              </div>
+              <small className="input-help">Sin 15, solo área + número (ej: 1123456789)</small>
+            </div>
 
-          <button
-            type="submit"
-            className="submit-button"
-            disabled={!selectedOption || !validatePhone()}
-          >
-            Enviar Pedido por WhatsApp
-          </button>
-        </form>
-      )}
+            {/* Detalles adicionales */}
+            <div className="form-section">
+              <div className="section-header">
+                <h2>Detalles especiales</h2>
+                <p>(Opcional) Cuéntanos algo más</p>
+              </div>
+              
+              <textarea
+                value={additionalInfo}
+                onChange={(e) => setAdditionalInfo(e.target.value)}
+                placeholder="Ej: Quiero grabado especial, color específico, entrega urgente..."
+                className="details-input"
+              />
+            </div>
+
+            
+            {successMessage && (
+              <div className="message success-message">
+                <span className="message-icon">✅</span>
+                {successMessage}
+              </div>
+            )}
+
+            {/* Botón de envío */}
+            <button
+              type="submit"
+              className="submit-btn"
+              disabled={!selectedOption || !validatePhone()}
+            >
+              <span className="btn-icon">📱</span>
+              <span>Enviar por WhatsApp</span>
+              <span className="btn-arrow">→</span>
+            </button>
+          </form>
+        )}
+      </div>
     </div>
   );
 };

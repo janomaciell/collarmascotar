@@ -7,12 +7,12 @@ import Dashboard from './pages/Dashboard/Dashboard';
 import PetPage from './pages/PetPage/PetPage';
 import PetManagement from './pages/PetManagement/PetManagement';
 import Profile from './pages/Profile/Profile';
-import Subscriptions from './pages/Subscriptions/Subscriptions';
 import Header from './components/Header/Header';
 import Footer from './components/Footer/Footer';
 import PrivateRoute from './components/PrivateRoute/PrivateRoute';
 import About from './pages/About/About';
 import Support from './pages/Support/Support';
+import HowItWorks from './pages/HowItWorks/HowItWorks';
 import NotificationPromptModal from './components/NotificationPromptModal/NotificationPromptModal';
 import LostPoster from './pages/LostPoster/LostPoster'; // Import the LostPoster component
 import Analytics from './components/Analytics';
@@ -49,6 +49,7 @@ function App() {
             <Route path="/home" element={<Home />} />
             <Route path="/support" element={<Support />} />
             <Route path="/about" element={<About />} />
+            <Route path="/como-funciona" element={<HowItWorks />} />
             <Route path="/register" element={<Register />} />
             <Route path="/login" element={<Login />} />
             <Route
@@ -76,14 +77,6 @@ function App() {
               }
             />
             <Route path="/pet/:uuid" element={<PetPage />} />
-            <Route
-              path="/subscriptions"
-              element={
-                <PrivateRoute>
-                  <Subscriptions />
-                </PrivateRoute>
-              }
-            />
             <Route path="/edit-profile" element={<EditProfile />} />
             <Route path="/compra" element={<Compra />} />
             <Route path="/register-pet/:uuid" element={<QRRegistrationPage />} />

@@ -167,20 +167,49 @@ def record_scan(request, uuid):
     subject = f"¡Alguien escaneó el QR de {pet_name}!"
     html_message = f"""
     <html>
-      <body style="font-family: Arial, sans-serif; color: #333;">
-        <h2 style="color: #4CAF50;">¡Tu mascota {pet_name} ha sido encontrada!</h2>
-        <p>Hola,</p>
-        <p>Alguien acaba de escanear el QR de tu mascota. Aquí están los detalles:</p>
-        <ul>
-          <li><strong>Mascota:</strong> {pet_name}</li>
-          <li><strong>Fecha y hora:</strong> {scan_time}</li>
-          <li><strong>Ubicación:</strong> <a href="{google_maps_link}" style="color: #1a73e8; text-decoration: none;">Ver en Google Maps</a></li>
-        </ul>
-        <p>Si necesitas más información, revisa el historial de escaneos en tu cuenta.</p>
-        <p style="font-size: 0.9em; color: #777;">Este es un mensaje automático, por favor no respondas directamente.</p>
-      </body>
+    <body style="font-family: 'Helvetica Neue', Arial, sans-serif; background-color: #f9f9f9; margin: 0; padding: 0;">
+        <div style="max-width: 600px; margin: 20px auto; background: #ffffff; border-radius: 10px; box-shadow: 0 2px 6px rgba(0,0,0,0.1); overflow: hidden;">
+        
+        <!-- Encabezado -->
+        <div style="background-color: #05408F; padding: 20px; text-align: center;">
+            <h1 style="margin: 0; color: #ffffff; font-size: 22px;">¡Alguien escaneó el QR de {pet_name}!</h1>
+        </div>
+        
+        <!-- Contenido -->
+        <div style="padding: 25px; color: #333;">
+            <h2 style="color: #4CAF50; margin-top: 0;">🐾 ¡Tu mascota {pet_name} ha sido encontrada!</h2>
+            <p>Hola,</p>
+            <p>Acaban de escanear el QR de tu mascota. Aquí están los detalles:</p>
+            
+            <table style="width: 100%; border-collapse: collapse; margin: 15px 0;">
+            <tr>
+                <td style="padding: 8px; font-weight: bold;">🐶 Mascota:</td>
+                <td style="padding: 8px;">{pet_name}</td>
+            </tr>
+            <tr style="background-color: #f4f4f4;">
+                <td style="padding: 8px; font-weight: bold;">📅 Fecha y hora:</td>
+                <td style="padding: 8px;">{scan_time}</td>
+            </tr>
+            <tr>
+                <td style="padding: 8px; font-weight: bold;">📍 Ubicación:</td>
+                <td style="padding: 8px;">
+                <a href="{google_maps_link}" style="color: #05408F; font-weight: bold; text-decoration: none;">Ver en Google Maps</a>
+                </td>
+            </tr>
+            </table>
+            
+            <p style="margin-top: 20px;">🔎 Para más información, revisa el historial de escaneos en tu cuenta.</p>
+        </div>
+        
+        <!-- Footer -->
+        <div style="background-color: #f0f0f0; padding: 15px; text-align: center; font-size: 12px; color: #777;">
+            <p>Este es un mensaje automático de <strong>Encuéntrame</strong>. Por favor, no respondas directamente.</p>
+        </div>
+        </div>
+    </body>
     </html>
     """
+
     plain_message = f"¡Tu mascota {pet_name} ha sido encontrada!\nFecha y hora: {scan_time}\nUbicación: {google_maps_link}\nRevisa el historial de escaneos en tu cuenta."
 
     send_mail(

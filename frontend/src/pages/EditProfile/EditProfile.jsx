@@ -24,7 +24,6 @@ const EditProfileModal = ({ onClose }) => {
         setUserData({
           first_name: data.first_name,
           last_name: data.last_name,
-          phone: data.phone,
         });
       } catch (err) {
         setError('Error al cargar los datos. Intenta de nuevo.');
@@ -56,7 +55,6 @@ const EditProfileModal = ({ onClose }) => {
         body: JSON.stringify({
           first_name: userData.first_name,
           last_name: userData.last_name,
-          phone: userData.phone
         }),
       });
 
@@ -114,15 +112,7 @@ const EditProfileModal = ({ onClose }) => {
               required
             />
           </div>
-          <div className="form-group">
-            <label>Teléfono</label>
-            <input
-              type="text"
-              name="phone"
-              value={userData.phone}
-              onChange={handleChange}
-            />
-          </div>
+
           <button type="submit" className="submit-btn">
             Guardar Cambios
           </button>

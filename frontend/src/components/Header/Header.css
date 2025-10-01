@@ -1,115 +1,106 @@
-/* Header Styles */
+/* Header con identidad de marca */
 .header {
-  background-color: #94618E; /* GRAPE background */
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3); /* Shadow for elevation */
-  position: fixed;
+  background-color: var(--blanco-principal, #FFFFFF);
+  box-shadow: 0 2px 15px rgba(5, 64, 143, 0.1);
+  position: sticky;
   top: 0;
-  left: 0;
   width: 100%;
   z-index: 1000;
-  height: 70px; /* Fixed height for consistency */
+  height: 90px;
+  border-bottom: 1px solid #f0f0f0;
 }
 
 .header-container {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 0 2rem;
+  padding: 0 3rem;
   max-width: 1200px;
   margin: 0 auto;
   height: 100%;
 }
 
-/* Logo Styles */
 .logo {
   display: flex;
   align-items: center;
+  width: 100px;
+  height: 40px;
 }
 
-.logo a {
-  display: flex;
-  flex-direction: column;
-  text-decoration: none;
+.logo img {
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: contain;
+  padding-top: 30px;
 }
 
-.logo-text {
-  font-family: 'Arial', sans-serif; /* Similar to the image's elegant sans-serif */
-  font-size: 1.6rem;
-  font-weight: 800;
-  color: #ffffff; /* White for the logo text */
-  text-transform: uppercase;
-  position: relative;
-}
-
-.logo-text::after {
-  content: '🐾'; /* Paw icon as an accent */
-  position: absolute;
-  right: -25px;
-  top: 0;
-  font-size: 1.2rem;
-  color: #F88EE7; /* SHELL for the paw */
-}
-
-.logo-tagline {
-  font-family: 'Arial', sans-serif;
-  font-size: 0.8rem;
-  font-weight: 400;
-  color: #ffffff; /* White for the tagline */
-  text-transform: none;
-}
-
-/* Navigation Styles */
 .nav-list {
   display: flex;
   list-style: none;
-  margin: 0;
-  padding: 0;
-}
-
-.nav-item {
-  margin-left: 2rem;
+  align-items: center;
+  gap: 2rem;
 }
 
 .nav-link {
-  color: #ffffff; /* White for nav links */
+  color: var(--negro-principal, #181818);
   text-decoration: none;
-  font-family: 'Arial', sans-serif;
-  font-weight: 500;
-  font-size: 1.1rem;
-  transition: color 0.3s;
+  font-family: 'Poppins', sans-serif;
+  font-weight: 600;
+  font-size: 0.95rem;
+  transition: color 0.3s ease;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
 }
 
 .nav-link:hover {
-  color: #F88EE7; /* SHELL on hover */
+  color: var(--azul-principal, #05408F);
+}
+
+.buy-button {
+  background: var(--azul-principal, #05408F);
+  color: var(--blanco-principal, #FFFFFF) !important;
+  padding: 0.8rem 1.5rem;
+  border-radius: 25px;
+  font-weight: 700;
+  transition: all 0.3s ease;
+}
+
+.buy-button:hover {
+  background: var(--verde-secundario, #7ED957);
+  transform: translateY(-2px);
 }
 
 .register-button {
-  background-color: #49274A; /* EGGPLANT for the register button */
-  color: #ffffff; /* White text */
-  padding: 0.5rem 1.5rem;
-  border-radius: 50px;
-  transition: background-color 0.3s, color 0.3s;
+  border: 2px solid var(--azul-principal, #05408F);
+  color: var(--azul-principal, #05408F);
+  padding: 0.6rem 1.2rem;
+  border-radius: 25px;
+  font-weight: 700;
+  transition: all 0.3s ease;
 }
 
 .register-button:hover {
-  background-color: #F88EE7; /* SHELL on hover */
-  color: #49274A; /* EGGPLANT text on hover */
+  background: var(--azul-principal, #05408F);
+  color: var(--blanco-principal, #FFFFFF);
 }
+
+/* Resto del CSS del header permanece igual... */
 
 .logout-button {
   background: none;
   border: none;
-  color: #ffffff; /* White for logout button */
-  font-family: 'Arial', sans-serif;
-  font-weight: 500;
+  color: #000000;
+  font-family: 'Outfit', 'Inter', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  font-weight: 800;
   cursor: pointer;
   padding: 0;
-  font-size: 1.1rem;
-  transition: color 0.3s;
+  font-size: 0.95rem;
+  transition: color 0.2s ease;
+  text-transform: uppercase;
 }
 
 .logout-button:hover {
-  color: #F88EE7; /* SHELL on hover */
+  color: #F4B51E;
 }
 
 /* Hamburger Menu */
@@ -117,14 +108,35 @@
   display: none;
   font-size: 1.8rem;
   cursor: pointer;
-  color: #ffffff; /* White for hamburger icon */
+  color: #000000;
   padding: 0.5rem;
   z-index: 1001;
-  transition: color 0.3s;
+  transition: color 0.2s ease;
+}
+.buy-button {
+  background: #000000;
+  color: #ffffff !important;
+  padding: 0.6rem 1.1rem;
+  border-radius: 10px;
+  border: 2px solid #000000;
+  text-decoration: none;
+  font-weight: 900;
+  letter-spacing: 0.6px;
+  transition: transform 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
 }
 
+.buy-button:hover {
+  background: #ffffff;
+  color: #000000 !important;
+  box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+  transform: translateY(-2px);
+}
+
+.desktop-only { display: block; }
+@media (max-width: 768px) { .desktop-only { display: none; } }
+
 .hamburger:hover {
-  color: #F88EE7; /* SHELL on hover */
+  color: #F4B51E;
 }
 
 /* Responsive Styles */
@@ -143,8 +155,8 @@
     top: 70px;
     left: 0;
     width: 100%;
-    background-color: #94618E; /* GRAPE background for mobile menu */
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+    background-color: #ffffff;
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.08);
     z-index: 999;
   }
 
@@ -166,7 +178,7 @@
 
   .nav-link {
     display: block;
-    padding: 0.5rem 0;
+    padding: 0.75rem 0;
   }
 
   .header-container {
@@ -177,11 +189,11 @@
   }
 
   .logo-text {
-    font-size: 1.2rem; /* Smaller on mobile */
+    font-size: 1.2rem;
   }
 
   .logo-text::after {
-    right: -20px; /* Adjust paw position on mobile */
+    right: -20px;
     font-size: 1rem;
   }
 

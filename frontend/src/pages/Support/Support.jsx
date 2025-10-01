@@ -13,6 +13,9 @@ const Support = () => {
   });
   const [submitted, setSubmitted] = useState(false);
   const [error, setError] = useState('');
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
+  const mascotaImage = 'src/img/personaje2.png';
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -23,6 +26,7 @@ const Support = () => {
     e.preventDefault();
     setError('');
     setSubmitted(false);
+    setIsSubmitting(true);
 
     const { name, email, message } = formData;
 
@@ -36,60 +40,70 @@ const Support = () => {
       setFormData({ name: '', email: '', message: '' });
     } catch (err) {
       setError(err.response?.data?.error || 'Error al enviar el mensaje');
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
   const handleNavigateHome = () => {
-    window.location.href = '/';
+    navigate('/');
   };
 
   return (
-    <div className="support-container">
-      {/* Sección Hero */}
+    <div className="support-wrapper">
+      {/* Hero */}
       <section className="support-hero">
-        <div className="hero-shapes">
-          <div className="shape shape-1"></div>
-          <div className="shape shape-2"></div>
+        <div className="pattern-bg"></div>
+        <div className="hero-content">
+          <img src={mascotaImage} alt="Mascota EncuentraME" className="hero-mascota" />
+          <h1 className="hero-title">SOPORTE</h1>
+          <p className="hero-subtitle">Estamos aquí para ayudarte</p>
         </div>
-        <h1>Soporte</h1>
-        <p>Estamos aquí para ayudarte en cualquier momento</p>
       </section>
 
-      {/* Sección Contacto */}
-      <section className="contact-section">
-        <div className="contact-content">
-          <h2>Contáctanos</h2>
-          <p>
-            ¿Tienes preguntas, necesitas ayuda o quieres reportar un problema? Envíanos un mensaje o síguenos en Instagram para mantenerte al tanto de nuestras novedades.
+      {/* Content */}
+      <div className="support-container">
+        <div className="support-content">
+          <h2>¿En qué podemos ayudarte?</h2>
+          <p className="intro-text">
+            Nuestro equipo está disponible para resolver tus dudas, ayudarte con problemas técnicos o recibir tus sugerencias.
           </p>
 
-          {/* Formulario de Correo */}
-          <div className="support-card">
+          {/* Contact Form */}
+          <div className="contact-form-section">
+            <div className="form-header">
+              <h3>Envíanos un mensaje</h3>
+              <span className="form-icon">📧</span>
+            </div>
+            
             <form className="support-form" onSubmit={handleSubmit}>
-              <div className="form-group">
-                <label htmlFor="name">Nombre</label>
-                <input
-                  type="text"
-                  id="name"
-                  name="name"
-                  value={formData.name}
-                  onChange={handleChange}
-                  required
-                  placeholder="Tu nombre"
-                />
+              <div className="form-row">
+                <div className="form-group">
+                  <label htmlFor="name">Nombre</label>
+                  <input
+                    type="text"
+                    id="name"
+                    name="name"
+                    value={formData.name}
+                    onChange={handleChange}
+                    required
+                    placeholder="Tu nombre completo"
+                  />
+                </div>
+                <div className="form-group">
+                  <label htmlFor="email">Email</label>
+                  <input
+                    type="email"
+                    id="email"
+                    name="email"
+                    value={formData.email}
+                    onChange={handleChange}
+                    required
+                    placeholder="tu@email.com"
+                  />
+                </div>
               </div>
-              <div className="form-group">
-                <label htmlFor="email">Correo Electrónico</label>
-                <input
-                  type="email"
-                  id="email"
-                  name="email"
-                  value={formData.email}
-                  onChange={handleChange}
-                  required
-                  placeholder="tu@email.com"
-                />
-              </div>
+              
               <div className="form-group">
                 <label htmlFor="message">Mensaje</label>
                 <textarea
@@ -98,51 +112,119 @@ const Support = () => {
                   value={formData.message}
                   onChange={handleChange}
                   required
-                  placeholder="¿En qué podemos ayudarte?"
-                  rows="5"
+                  placeholder="Cuéntanos tu consulta o problema..."
+                  rows="6"
                 />
               </div>
-              <button type="submit" className="submit-button">
-                Enviar Mensaje
+              
+              <button type="submit" className="submit-btn" disabled={isSubmitting}>
+                {isSubmitting ? (
+                  <>
+                    <div className="btn-spinner"></div>
+                    Enviando...
+                  </>
+                ) : (
+                  <>
+                    <span className="btn-icon">📤</span>
+                    Enviar mensaje
+                  </>
+                )}
               </button>
+              
               {submitted && (
-                <p className="success-message">
-                  ¡Gracias por contactarnos! Tu mensaje ha sido enviado con éxito.
-                </p>
+                <div className="success-message">
+                  <span className="success-icon">✅</span>
+                  <p>¡Mensaje enviado exitosamente! Te responderemos pronto.</p>
+                </div>
               )}
-              {error && <p className="errorWELL-message">{error}</p>}
+              
+              {error && (
+                <div className="error-message">
+                  <span className="error-icon">⚠️</span>
+                  <p>{error}</p>
+                </div>
+              )}
             </form>
           </div>
 
-          {/* Enlace a Instagram */}
-          <div className="support-card social-contact">
-            <h3>Síguenos en Instagram</h3>
-            <p>Conéctate con nosotros y únete a nuestra comunidad de amantes de las mascotas.</p>
-            <a
-              href="https://www.instagram.com/encuentrameqr"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="instagram-button"
-            >
-              @encuentrameQR
-            </a>
+          {/* Social Section */}
+          <div className="social-section">
+            <div className="social-header">
+              <h3>Síguenos en redes</h3>
+              <span className="social-icon">📱</span>
+            </div>
+            
+            <div className="social-content">
+              <p>Conecta con nuestra comunidad y mantente al día con novedades, consejos y historias de reencuentro.</p>
+              
+              <div className="social-buttons">
+                <a 
+                
+                  href="https://www.instagram.com/encuentrameqr"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="social-btn instagram"
+                >
+                  <span className="social-btn-icon">📸</span>
+                  @encuentrameQR
+                </a>
+                
+                <a 
+                  href="https://www.facebook.com/encuentrameqr"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="social-btn facebook"
+                >
+                  <span className="social-btn-icon">👥</span>
+                  EncuéntraME
+                </a>
+              </div>
+            </div>
+          </div>
+
+          {/* FAQ Section */}
+          <div className="faq-section">
+            <div className="faq-header">
+              <h3>Preguntas frecuentes</h3>
+              <span className="faq-icon">❓</span>
+            </div>
+            
+            <div className="faq-grid">
+              <div className="faq-item">
+                <h4>¿Cómo funciona el collar QR?</h4>
+                <p>Cada collar tiene un código QR único. Al escanearlo, las personas pueden ver la información de tu mascota y contactarte inmediatamente.</p>
+              </div>
+              
+              <div className="faq-item">
+                <h4>¿Qué pasa si pierdo el collar?</h4>
+                <p>Puedes reportar la pérdida en tu perfil y generar un nuevo código QR. También puedes comprar un collar de reemplazo.</p>
+              </div>
+              
+              <div className="faq-item">
+                <h4>¿Es resistente al agua?</h4>
+                <p>Sí, nuestros collares están diseñados para resistir lluvia y actividades diarias. Son duraderos y seguros para tu mascota.</p>
+              </div>
+              
+              <div className="faq-item">
+                <h4>¿Cómo actualizo la información?</h4>
+                <p>Ingresa a tu perfil desde nuestra web y actualiza los datos cuando quieras. Los cambios se reflejan inmediatamente en el QR.</p>
+              </div>
+            </div>
           </div>
         </div>
-      </section>
+      </div>
 
-      {/* Sección CTA */}
+      {/* CTA Final */}
       <section className="support-cta">
-        <div className="cta-shapes">
-          <div className="shape cta-shape"></div>
+        <div className="cta-content">
+          <img src={mascotaImage} alt="Mascota EncuentraME" className="cta-mascota" />
+          <h2>¿Todo listo?</h2>
+          <p>Vuelve al inicio y protege a tu mejor amigo</p>
+          <button onClick={handleNavigateHome} className="cta-btn">
+            <span className="btn-icon">🏠</span>
+            Ir al inicio
+          </button>
         </div>
-        <h2>¿Necesitas Más Ayuda?</h2>
-        <p>Estamos disponibles 24/7 para asegurarnos de que tú y tu mascota estén bien.</p>
-        <button 
-          onClick={handleNavigateHome}
-          className="cta-button"
-        >
-          Volver al Inicio
-        </button>
       </section>
     </div>
   );

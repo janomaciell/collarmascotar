@@ -7,6 +7,8 @@ const Header = () => {
   const navigate = useNavigate();
   const isLoggedIn = !!localStorage.getItem('token');
   const [menuActive, setMenuActive] = useState(false);
+  const logoUrl = 'src/img/logo.png';
+
 
   const handleLogout = () => {
     setMenuActive(false);
@@ -27,8 +29,7 @@ const Header = () => {
       <div className="header-container">
         <div className="logo">
           <Link to="/" onClick={handleNavClick}>
-            <span className="logo-text">ENCUENTRAME</span>
-            <span className="logo-tagline">Tu Mascota, Siempre Segura</span>
+            <img src={logoUrl} alt="Logo" />
           </Link>
         </div>
         <div className="hamburger" onClick={toggleMenu}>☰</div>
@@ -36,6 +37,7 @@ const Header = () => {
           <ul className="nav-list">
             <li className="nav-item"><Link to="/support" className="nav-link" onClick={handleNavClick}>Soporte</Link></li>
             <li className="nav-item"><Link to="/about" className="nav-link" onClick={handleNavClick}>Nosotros</Link></li>
+            <li className="nav-item desktop-only"><Link to="/compra" className="buy-button" onClick={handleNavClick}>Comprar</Link></li>
             {isLoggedIn ? (
               <>
                 <li className="nav-item"><Link to="/pets" className="nav-link" onClick={handleNavClick}>Mis Mascotas</Link></li>

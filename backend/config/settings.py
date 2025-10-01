@@ -107,29 +107,29 @@ WSGI_APPLICATION = 'config.wsgi.application'
 
 
 #LOCAL
-#DATABASES = {
-#     'default': {
-#        'ENGINE': 'django.db.backends.mysql',
-#        'NAME': config('MYSQLDATABASE'),
-#        'USER': config('MYSQLUSER'),
-#        'PASSWORD': config('MYSQLPASSWORD'),
-#        'HOST': config('MYSQLHOST'),
-#        'PORT': config('MYSQLPORT'),
-#        'OPTIONS': {
-#            'init_command': "SET sql_mode='STRICT_TRANS_TABLES'",
-#            'charset': 'utf8mb4'
-#        }
-#    }
-#}
+DATABASES = {
+     'default': {
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': config('MYSQLDATABASE'),
+        'USER': config('MYSQLUSER'),
+        'PASSWORD': config('MYSQLPASSWORD'),
+        'HOST': config('MYSQLHOST'),
+        'PORT': config('MYSQLPORT'),
+        'OPTIONS': {
+            'init_command': "SET sql_mode='STRICT_TRANS_TABLES'",
+            'charset': 'utf8mb4'
+        }
+    }
+}
 
 # Alternativa usando DATABASE_URL
-DATABASES = {
-    'default': dj_database_url.config(
-        default=config('DATABASE_URL'),
-        conn_max_age=600,
-        conn_health_checks=True,
-    )
-}
+#DATABASES = {
+#    'default': dj_database_url.config(
+#        default=config('DATABASE_URL'),
+#        conn_max_age=600,
+#        conn_health_checks=True,
+#    )
+#}
 
 # Password validation
 # https://docs.djangoproject.com/en/5.1/ref/settings/#auth-password-validators

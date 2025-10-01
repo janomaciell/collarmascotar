@@ -16,6 +16,8 @@ const Register = () => {
   const [submitting, setSubmitting] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
 
+  const mascotaImage = 'src/img/personaje2.png';
+
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData({
@@ -78,106 +80,126 @@ const Register = () => {
   };
 
   return (
-    <div className="register-page">
-      <div className="register-hero">
-        <h1>Regístrate en Encuentrame</h1>
-        <p>Completa el formulario para crear tu cuenta</p>
-      </div>
-      
-      <div className="register-form-container">
-        <form className="register-form" onSubmit={handleSubmit}>
+    <div className="register-wrapper">
+      {/* Hero */}
+      <section className="register-hero">
+        <div className="pattern-bg"></div>
+        <div className="hero-content">
+          <img src={mascotaImage} alt="Mascota EncuentraME" className="hero-mascota" />
+          <h1 className="hero-title">ÚNETE A ENCUÉNTRAME</h1>
+          <p className="hero-subtitle">Crea tu cuenta y protege a tu mejor amigo</p>
+        </div>
+      </section>
+
+      {/* Formulario */}
+      <div className="register-container">
+        <div className="register-form-container">
+          <h2>Crear cuenta</h2>
+          
           {errors.general && (
-            <div className="error-message">{errors.general}</div>
+            <div className="error-message">
+              <span className="error-icon">⚠️</span>
+              {errors.general}
+            </div>
           )}
           
-          <div className="form-group">
-            <label htmlFor="first_name">Nombre</label>
-            <input
-              type="text"
-              id="first_name"
-              name="first_name"
-              value={formData.first_name}
-              onChange={handleChange}
-              className={errors.first_name ? "error" : ""}
-            />
-            {errors.first_name && <span className="error-text">{errors.first_name}</span>}
-          </div>
-          
-          <div className="form-group">
-            <label htmlFor="last_name">Apellido</label>
-            <input
-              type="text"
-              id="last_name"
-              name="last_name"
-              value={formData.last_name}
-              onChange={handleChange}
-              className={errors.last_name ? "error" : ""}
-            />
-            {errors.last_name && <span className="error-text">{errors.last_name}</span>}
-          </div>
-          
-          <div className="form-group">
-            <label htmlFor="username">Nombre de usuario</label>
-            <input
-              type="text"
-              id="username"
-              name="username"
-              value={formData.username}
-              onChange={handleChange}
-              className={errors.username ? "error" : ""}
-            />
-            {errors.username && <span className="error-text">{errors.username}</span>}
-          </div>
-          
-          <div className="form-group">
-            <label htmlFor="email">Correo electrónico</label>
-            <input
-              type="email"
-              id="email"
-              name="email"
-              value={formData.email}
-              onChange={handleChange}
-              className={errors.email ? "error" : ""}
-            />
-            {errors.email && <span className="error-text">{errors.email}</span>}
-          </div>
-          
-          <div className="form-group">
-            <label htmlFor="password">Contraseña</label>
-            <div className="password-input-container">
-              <input
-                type={showPassword ? "text" : "password"}
-                id="password"
-                name="password"
-                value={formData.password}
-                onChange={handleChange}
-                className={errors.password ? "error" : ""}
-              />
-              <button 
-                type="button"
-                className="toggle-password"
-                onClick={() => setShowPassword(!showPassword)}
-              >
-                {showPassword ? "👁️" : "👁️‍🗨️"}
-              </button>
+          <form className="register-form" onSubmit={handleSubmit}>
+            <div className="form-row">
+              <div className="form-group">
+                <label htmlFor="first_name">Nombre</label>
+                <input
+                  type="text"
+                  id="first_name"
+                  name="first_name"
+                  value={formData.first_name}
+                  onChange={handleChange}
+                  className={errors.first_name ? "error" : ""}
+                  placeholder="Tu nombre"
+                />
+                {errors.first_name && <span className="error-text">{errors.first_name}</span>}
+              </div>
+              
+              <div className="form-group">
+                <label htmlFor="last_name">Apellido</label>
+                <input
+                  type="text"
+                  id="last_name"
+                  name="last_name"
+                  value={formData.last_name}
+                  onChange={handleChange}
+                  className={errors.last_name ? "error" : ""}
+                  placeholder="Tu apellido"
+                />
+                {errors.last_name && <span className="error-text">{errors.last_name}</span>}
+              </div>
             </div>
-            {errors.password && <span className="error-text">{errors.password}</span>}
-            <small>Debe tener al menos 8 caracteres y 1 número</small>
-          </div>
+            
+            <div className="form-group">
+              <label htmlFor="username">Nombre de usuario</label>
+              <input
+                type="text"
+                id="username"
+                name="username"
+                value={formData.username}
+                onChange={handleChange}
+                className={errors.username ? "error" : ""}
+                placeholder="Elige un nombre único"
+              />
+              {errors.username && <span className="error-text">{errors.username}</span>}
+            </div>
+            
+            <div className="form-group">
+              <label htmlFor="email">Correo electrónico</label>
+              <input
+                type="email"
+                id="email"
+                name="email"
+                value={formData.email}
+                onChange={handleChange}
+                className={errors.email ? "error" : ""}
+                placeholder="tu@email.com"
+              />
+              {errors.email && <span className="error-text">{errors.email}</span>}
+            </div>
+            
+            <div className="form-group">
+              <label htmlFor="password">Contraseña</label>
+              <div className="password-input-container">
+                <input
+                  type={showPassword ? "text" : "password"}
+                  id="password"
+                  name="password"
+                  value={formData.password}
+                  onChange={handleChange}
+                  className={errors.password ? "error" : ""}
+                  placeholder="Mínimo 8 caracteres"
+                />
+                <button 
+                  type="button"
+                  className="toggle-password"
+                  onClick={() => setShowPassword(!showPassword)}
+                >
+                  {showPassword ? "👁️" : "👁️‍🗨️"}
+                </button>
+              </div>
+              {errors.password && <span className="error-text">{errors.password}</span>}
+              <small>Debe tener al menos 8 caracteres y 1 número</small>
+            </div>
+            
+            <button 
+              type="submit" 
+              className="register-button"
+              disabled={submitting}
+            >
+              {submitting ? 'Creando cuenta...' : 'Crear mi cuenta'}
+            </button>
+          </form>
           
-          <button 
-            type="submit" 
-            className="register-button"
-            disabled={submitting}
-          >
-            {submitting ? 'Registrando...' : 'Registrarse'}
-          </button>
-        </form>
+          <p className="login-link">
+            ¿Ya tienes cuenta? <Link to="/login">Inicia sesión</Link>
+          </p>
+        </div>
       </div>
-      
-      <p className="login-link">
-        ¿Ya tienes una cuenta? <Link to="/login">Inicia sesión aquí</Link>
-      </p>
     </div>
   );
 };

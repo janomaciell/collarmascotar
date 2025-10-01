@@ -5,16 +5,12 @@ import './PetPage.css';
 
 const BASE_URL = import.meta.env.VITE_BASE_URL;
 
-// Logo de EncuentraME - Reemplazar con la URL real de tu logo cuando esté disponible
-const logoUrl = '/logo_principal.png'; // Asumiendo que el logo está en la carpeta public
-
-// Nuevo componente PetIntro
 const PetIntro = ({ name, isLost }) => (
   <div className="pet-intro">
     <p className="intro-text">
       {isLost
-        ? `¡Hola! Soy ${name} y me he perdido. Gracias por escanear mi collar y ayudarme a volver con mi familia.`
-        : `¡Hola! Soy ${name}. Gracias por escanear mi collar de EncuentraME.`}
+        ? `¡Hola! Soy ${name} y me he perdido. Gracias por escanear mi collar EncuéntraME y ayudarme a volver con mi familia.`
+        : `¡Hola! Soy ${name}. Gracias por escanear mi collar EncuéntraME. Mi familia y yo estamos muy agradecidos.`}
     </p>
   </div>
 );
@@ -29,36 +25,31 @@ const PetPage = () => {
   const [locationRequested, setLocationRequested] = useState(false);
   const [locationShared, setLocationShared] = useState(false);
 
+  const logoUrl = 'src/img/logo.png';
+  const mascotaImage = 'src/img/personaje2.png';
+
   useEffect(() => {
     const fetchPetData = async () => {
       try {
         setIsLoading(true);
-
-        // Verificar si el QR está asignado
         const qrStatus = await checkQRStatus(uuid);
         if (!qrStatus.is_assigned) {
           navigate(`/register-pet/${uuid}`);
           return;
         }
-
-        // Obtener datos de la mascota
         const petData = await getPetByUuid(uuid);
         setPet(petData);
         setIsLoading(false);
       } catch (err) {
-        console.error('Error al obtener datos de la mascota:', err);
         setError('No se pudo obtener la información de la mascota. Por favor, intenta de nuevo.');
         setIsLoading(false);
       }
     };
-
     fetchPetData();
   }, [uuid, navigate]);
 
-  // Función para solicitar geolocalización explícitamente
   const requestLocation = () => {
     setLocationRequested(true);
-    
     if (navigator.geolocation) {
       navigator.geolocation.getCurrentPosition(
         async (position) => {
@@ -71,13 +62,11 @@ const PetPage = () => {
             await sendCommunityNotification(uuid, location, 50);
             setLocationError('');
             setLocationShared(true);
-          } catch (notificationError) {
-            console.error('Error en notificaciones:', notificationError);
+          } catch {
             setLocationError('No se pudieron enviar las notificaciones de ubicación.');
           }
         },
-        (geoError) => {
-          console.error('Geolocalización denegada:', geoError);
+        () => {
           setLocationError('No se pudo obtener la ubicación para enviar notificaciones.');
         },
         { enableHighAccuracy: true, timeout: 5000 }
@@ -89,17 +78,23 @@ const PetPage = () => {
 
   if (isLoading) {
     return (
-      <div className="loading-container" role="status" aria-live="polite">
-        <div className="spinner"></div>
-        <p>Cargando información de la mascota...</p>
+      <div className="pet-page-wrapper">
+        <div className="loading-container">
+          <div className="loading-spinner"></div>
+          <p>Cargando información de la mascota...</p>
+        </div>
       </div>
     );
   }
 
   if (error || !pet) {
     return (
-      <div className="error-container" role="alert">
-        {error || 'No se encontró la mascota.'}
+      <div className="pet-page-wrapper">
+        <div className="error-container">
+          <span className="error-icon">⚠️</span>
+          <h2>Error</h2>
+          <p>{error || 'No se encontró la mascota.'}</p>
+        </div>
       </div>
     );
   }
@@ -107,235 +102,179 @@ const PetPage = () => {
   const petPhotoUrl = pet.photo?.startsWith('http') ? pet.photo : `${BASE_URL}${pet.photo}`;
 
   return (
-    <div className="pet-page-container">
-      {/* Encabezado con Branding */}
-      <header className={`pet-page-header ${pet.is_lost ? 'lost' : 'found'}`}>
-        <div className="brand-container">
-          <img src={logoUrl} alt="EncuentraME Logo" className="brand-logo" />
-          <div className="brand-text">
-            <h1 className="brand-name">EncuentraME</h1>
-            <p className="brand-slogan">Un escaneo, un reencuentro</p>
+    <div className="pet-page-wrapper">
+      {/* Header con branding fuerte */}
+      <header className={`pet-header ${pet.is_lost ? 'lost-header' : 'normal-header'}`}>
+        <div className="pattern-bg"></div>
+        <div className="header-content">
+          <div className="brand-section">
+            <img src={logoUrl} alt="EncuéntraME Logo" className="brand-logo" />
+            <div className="brand-info">
+              <h1 className="brand-name">ENCUÉNTRAME</h1>
+              <p className="brand-tagline">Mascotas seguras, familias tranquilas</p>
+            </div>
           </div>
+          <img src={mascotaImage} alt="Mascota EncuentraME" className="header-mascot" />
         </div>
       </header>
 
-      <main className="pet-profile" role="main">
-        {/* Alerta de Mascota Perdida (si aplica) */}
+      <main className="pet-content">
+        {/* Alerta de mascota perdida */}
         {pet.is_lost && (
-          <div className="lost-alert" role="alert">
-            <h2>🚨 ¡{pet.name} está perdido! 🚨</h2>
-            <p>Por favor, ayúdanos a devolver a {pet.name} con su familia.</p>
-          </div>
-        )}
-
-        {/* Solicitud de Ubicación */}
-        {!locationRequested && pet.is_lost && (
-          <div className="location-request-banner">
-            <p>Ayúdanos a notificar al dueño de {pet.name} compartiendo tu ubicación.</p>
-            <button 
-              className="location-request-button" 
-              onClick={requestLocation}
-              aria-label="Compartir mi ubicación"
-            >
-              📍 Compartir mi ubicación
+          <div className="pet-alert">
+            <div>
+              <strong>¡Mascota perdida!</strong>
+              <div>Si encontraste a {pet.name}, sigue los pasos para ayudarlo a volver a casa.</div>
+            </div>
+            <button className="alert-btn" onClick={requestLocation}>
+              Activar alerta
             </button>
           </div>
         )}
 
-        {locationShared && (
-          <div className="location-success-banner" role="status">
-            <p>¡Gracias por compartir tu ubicación! El dueño ha sido notificado.</p>
-          </div>
-        )}
-
-        {locationError && (
-          <div className="location-error-banner" role="status">
-            <p>{locationError}</p>
-            <button 
-              className="location-retry-button" 
-              onClick={requestLocation}
-              aria-label="Reintentar compartir ubicación"
-            >
-              Reintentar
-            </button>
-          </div>
-        )}
-
-        {/* Sección Héroe con Foto */}
-        <section className="pet-hero" aria-labelledby="pet-name">
+        {/* Hero de la mascota */}
+        <section className="pet-hero">
           <div className="pet-photo-container">
             <img 
               src={petPhotoUrl} 
               alt={`Foto de ${pet.name}`} 
               className="pet-photo" 
-              loading="lazy" 
             />
+            {pet.is_lost && <div className="lost-badge">Perdido</div>}
           </div>
-          <h2 id="pet-name" className="pet-name">{pet.name}</h2>
-          <PetIntro name={pet.name} isLost={pet.is_lost} />
+          <div className="pet-basic-info">
+            <h2 className="pet-name">{pet.name}</h2>
+            <div className="pet-details">
+              {pet.breed}, {pet.gender === 'M' ? 'Macho' : 'Hembra'}, {pet.age} años
+            </div>
+            <PetIntro name={pet.name} isLost={pet.is_lost} />
+          </div>
+          <div className="pet-actions">
+            <button className="action-btn">Editar perfil</button>
+            <a href={`tel:${pet.phone}`} className="action-btn secondary">Llamar dueño</a>
+            <a href={`mailto:${pet.email}`} className="action-btn secondary">Mensaje dueño</a>
+          </div>
         </section>
 
-        {/* Tarjetas de Información */}
-        <section className="pet-info-cards">
-          {/* Información Básica */}
-          <div className="info-card">
-            <h3>Información Básica</h3>
-            <div className="info-content">
-              {pet.breed && (
-                <div className="info-item">
-                  <span className="info-label">Raza</span>
-                  <span className="info-value">{pet.breed}</span>
-                </div>
-              )}
-              {pet.age && (
-                <div className="info-item">
-                  <span className="info-label">Edad</span>
-                  <span className="info-value">{pet.age} años</span>
-                </div>
-              )}
-              <div className="info-item">
-                <span className="info-label">Género</span>
-                <span className="info-value">{pet.gender === 'M' ? 'Macho' : 'Hembra'}</span>
-              </div>
-              <div className="info-item">
-                <span className="info-label">Esterilizado</span>
-                <span className="info-value">{pet.is_sterilized ? 'Sí' : 'No'}</span>
-              </div>
-            </div>
-          </div>
+        {/* Tabs */}
+        <div className="pet-tabs">
+          <button className="pet-tab active">Información básica</button>
+          <button className="pet-tab">Salud</button>
+          <button className="pet-tab">Dueño y veterinario</button>
+        </div>
 
-          {/* Información de Salud (si existe) */}
-          {(pet.medical_conditions || pet.allergies) && (
+        {/* Información básica */}
+        <section className="pet-section">
+          <div className="pet-section-title">Basic Information</div>
+          <div className="pet-info-grid">
             <div className="info-card">
-              <h3>Información de Salud</h3>
-              <div className="info-content">
-                {pet.medical_conditions && (
-                  <div className="info-item">
-                    <span className="info-label">Condiciones médicas</span>
-                    <span className="info-value">{pet.medical_conditions}</span>
-                  </div>
-                )}
-                {pet.allergies && (
-                  <div className="info-item">
-                    <span className="info-label">Alergias</span>
-                    <span className="info-value">{pet.allergies}</span>
-                  </div>
-                )}
-              </div>
+              <div className="info-label">Breed</div>
+              <div className="info-value">{pet.breed}</div>
             </div>
-          )}
-
-          {/* Información del Dueño */}
-          <div className="info-card owner-info">
-            <h3>Información del Dueño</h3>
-            <div className="info-content">
-              <div className="info-item">
-                <span className="info-label">Nombre</span>
-                <span className="info-value">{pet.owner || 'No especificado'}</span>
-              </div>
-              <div className="info-item">
-                <span className="info-label">Dirección</span>
-                <span className="info-value">{pet.address || 'No especificada'}</span>
-              </div>
+            <div className="info-card">
+              <div className="info-label">Gender</div>
+              <div className="info-value">{pet.gender === 'M' ? 'Male' : 'Female'}</div>
+            </div>
+            <div className="info-card">
+              <div className="info-label">Age</div>
+              <div className="info-value">{pet.age} years</div>
+            </div>
+            <div className="info-card">
+              <div className="info-label">Weight</div>
+              <div className="info-value">{pet.weight || '-'}</div>
+            </div>
+            <div className="info-card">
+              <div className="info-label">Color</div>
+              <div className="info-value">{pet.color || '-'}</div>
+            </div>
+            <div className="info-card">
+              <div className="info-label">Microchip ID</div>
+              <div className="info-value">{pet.microchip || '-'}</div>
             </div>
           </div>
         </section>
 
-        {/* Botones de Contacto */}
-        <section className="contact-section">
-          <h3>Contactar al Dueño</h3>
-          <div className="contact-buttons">
-            <a
-              href={`tel:${pet.phone}`}
-              className="contact-button primary"
-              aria-label={`Llamar al dueño de ${pet.name}`}
-            >
-              <span className="button-icon">📞</span>
-              <span className="button-text">Llamar</span>
-            </a>
-            
-            {pet.phone && (
-              <a
-                href={`https://wa.me/549${pet.phone.replace(/^0/, '').replace(/\D/g, '')}?text=${encodeURIComponent(
-                  `Hola, encontré a ${pet.name} y me gustaría ayudarte a que vuelva a casa.`
-                )}`}
-                className="contact-button whatsapp"
-                target="_blank"
-                rel="noopener noreferrer"
-                aria-label={`Enviar mensaje de WhatsApp al dueño de ${pet.name}`}
-              >
-                <span className="button-icon">💬</span>
-                <span className="button-text">WhatsApp</span>
-              </a>
-            )}
-            
-            {pet.email && (
-              <a
-                href={`mailto:${pet.email}`}
-                className="contact-button secondary"
-                aria-label={`Enviar email al dueño de ${pet.name}`}
-              >
-                <span className="button-icon">✉️</span>
-                <span className="button-text">Email</span>
-              </a>
-            )}
+        {/* Información de salud */}
+        <section className="pet-section">
+          <div className="pet-section-title">Health Information</div>
+          <div className="pet-info-grid">
+            <div className="info-card">
+              <div className="info-label">Vaccination Status</div>
+              <div className="info-value">{pet.vaccines || 'Up to date'}</div>
+            </div>
+            <div className="info-card">
+              <div className="info-label">Last Vet Visit</div>
+              <div className="info-value">{pet.last_vet_visit || '-'}</div>
+            </div>
+            <div className="info-card">
+              <div className="info-label">Allergies</div>
+              <div className="info-value">{pet.allergies || 'None'}</div>
+            </div>
+            <div className="info-card">
+              <div className="info-label">Medications</div>
+              <div className="info-value">{pet.medications || 'None'}</div>
+            </div>
           </div>
         </section>
 
-        {/* Veterinario (si existe información) */}
-        {(pet.vet_name || pet.vet_phone || pet.vet_address) && (
-          <section className="vet-section">
-            <h3>Información del Veterinario</h3>
-            <div className="vet-info">
-              {pet.vet_name && (
-                <div className="info-item">
-                  <span className="info-label">Nombre</span>
-                  <span className="info-value">{pet.vet_name}</span>
-                </div>
-              )}
-              {pet.vet_address && (
-                <div className="info-item">
-                  <span className="info-label">Dirección</span>
-                  <span className="info-value">{pet.vet_address}</span>
-                </div>
-              )}
-              {pet.vet_phone && (
-                <div className="contact-buttons vet-contact">
-                  <a
-                    href={`tel:${pet.vet_phone}`}
-                    className="contact-button secondary"
-                    aria-label={`Llamar al veterinario de ${pet.name}`}
-                  >
-                    <span className="button-icon">🩺</span>
-                    <span className="button-text">Llamar al Veterinario</span>
-                  </a>
-                </div>
-              )}
+        {/* Información del dueño y veterinario */}
+        <section className="pet-section">
+          <div className="pet-section-title">Owner & Vet Information</div>
+          <div className="pet-info-grid">
+            <div className="info-card">
+              <div className="info-label">Owner Name</div>
+              <div className="info-value">{pet.owner || '-'}</div>
             </div>
-          </section>
-        )}
-
-        {/* Notas Especiales (si existen) */}
-        {pet.notes && (
-          <section className="notes-section">
-            <h3>Notas Especiales</h3>
-            <p className="pet-notes">{pet.notes}</p>
-          </section>
-        )}
-
-        {/* Banner de Marketing */}
-        <section className="marketing-section">
-          <div className="marketing-content">
-            <h3>Protege a tu mascota con EncuentraME</h3>
-            <p>Identifica a tu mascota con nuestra tecnología QR y asegura su regreso a casa si alguna vez se pierde.</p>
-            <a href="/register" className="cta-button" aria-label="Registrarse en EncuentraME">
-              Consigue tu EncuentraME
-            </a>
+            <div className="info-card">
+              <div className="info-label">Contact Number</div>
+              <div className="info-value">{pet.phone || '-'}</div>
+            </div>
+            <div className="info-card">
+              <div className="info-label">Address</div>
+              <div className="info-value">{pet.address || '-'}</div>
+            </div>
+            <div className="info-card">
+              <div className="info-label">Vet Name</div>
+              <div className="info-value">{pet.vet_name || '-'}</div>
+            </div>
+            <div className="info-card">
+              <div className="info-label">Clinic Name</div>
+              <div className="info-value">{pet.vet_clinic || '-'}</div>
+            </div>
+            <div className="info-card">
+              <div className="info-label">Vet Contact</div>
+              <div className="info-value">{pet.vet_phone || '-'}</div>
+            </div>
           </div>
+        </section>
+
+        {/* Notas especiales */}
+        <section className="pet-section">
+          <div className="pet-section-title">Special Notes</div>
+          <div className="pet-notes">{pet.notes || 'No special notes.'}</div>
+        </section>
+
+        {/* Compartir perfil */}
+        <section className="share-section">
+          <div className="share-title">Share {pet.name}'s Profile</div>
+          <div className="share-desc">
+            Share {pet.name}'s profile with friends, family, or pet sitters to keep everyone informed about his care and needs.
+          </div>
+          <button className="share-btn">Share Profile</button>
         </section>
       </main>
 
-      
+      {/* Footer */}
+      <footer className="pet-footer">
+        <div className="footer-links">
+          <a href="#">Privacy Policy</a>
+          <a href="#">Terms of Service</a>
+          <a href="#">Contact Us</a>
+        </div>
+        <div className="footer-text">
+          © 2024 EncuéntraME. Todos los derechos reservados.
+        </div>
+      </footer>
     </div>
   );
 };

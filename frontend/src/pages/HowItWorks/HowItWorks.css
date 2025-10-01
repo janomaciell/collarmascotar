@@ -1,0 +1,45 @@
+/* Variables base ya existen en otros CSS; usamos mismas llaves */
+.howitworks-page { width: 100%; overflow: hidden; }
+
+.hiw-container { max-width: 1200px; margin: 0 auto; padding: 0 2rem; }
+
+/* Hero */
+.hiw-hero { background: linear-gradient(135deg, var(--blanco-principal) 0%, var(--gris-claro) 100%); padding: 5rem 0 3rem; }
+.hiw-hero-content { text-align: center; }
+.hiw-title { font-family: 'Jackerton', serif; font-size: clamp(2.2rem, 6vw, 3rem); color: var(--azul-principal); text-transform: uppercase; letter-spacing: 1px; }
+.hiw-subtitle { font-weight: 700; color: var(--negro-principal); margin-top: 0.5rem; }
+.hiw-description { color: #555; max-width: 700px; margin: 1rem auto 2rem; }
+.hiw-cta { display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap; }
+
+/* Steps */
+.hiw-steps { padding: 4rem 0; background: var(--blanco-principal); }
+.hiw-steps-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 1.5rem; }
+.hiw-step { background: var(--blanco-principal); border: 2px solid transparent; border-radius: 20px; padding: 2rem; text-align: center; box-shadow: 0 8px 30px rgba(0,0,0,0.06); transition: .3s ease; }
+.hiw-step:hover { transform: translateY(-6px); border-color: var(--azul-principal); }
+.hiw-step-number { background: var(--verde-secundario); color: var(--blanco-principal); width: 36px; height: 36px; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; font-weight: 800; margin-bottom: 0.75rem; }
+.hiw-step-icon { font-size: 2rem; margin-bottom: 0.5rem; }
+.hiw-step h3 { font-family: 'Jackerton', serif; color: var(--azul-principal); margin-bottom: 0.5rem; }
+.hiw-step p { color: #666; }
+
+/* Features */
+.hiw-features { padding: 4rem 0; background: var(--gris-suave); }
+.hiw-features-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 1.5rem; }
+.hiw-feature-card { background: var(--blanco-principal); border-radius: 20px; padding: 2rem; text-align: center; border: 2px solid transparent; box-shadow: 0 8px 30px rgba(0,0,0,0.06); }
+.hiw-feature-card:hover { border-color: var(--verde-secundario); transform: translateY(-6px); }
+.hiw-feature-icon { font-size: 2.2rem; margin-bottom: 0.75rem; }
+.hiw-feature-card h3 { font-family: 'Jackerton', serif; color: var(--azul-principal); margin-bottom: 0.5rem; }
+.hiw-feature-card p { color: #666; }
+
+/* Final CTA */
+.hiw-final-cta { background: var(--azul-principal); padding: 4rem 0; }
+.hiw-final-cta-inner { display: grid; grid-template-columns: 1.5fr 1fr; align-items: center; gap: 2rem; }
+.hiw-final-text .final-subtitle { font-family: 'Jackerton', serif; color: var(--blanco-principal); font-size: clamp(1.6rem, 4vw, 2.2rem); margin: 0 0 0.5rem; }
+.hiw-final-text .final-text { color: rgba(255,255,255,0.9); margin: 0; }
+.hiw-final-actions { text-align: right; }
+
+@media (max-width: 992px) {
+  .hiw-final-cta-inner { grid-template-columns: 1fr; text-align: center; }
+  .hiw-final-actions { text-align: center; }
+}
+
+

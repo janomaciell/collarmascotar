@@ -7,7 +7,7 @@ import jsPDF from 'jspdf';
 const BASE_URL = import.meta.env.VITE_BASE_URL;
 
 // Logo de EncuentraME - Reemplazar con la URL real de tu logo cuando esté disponible
-const logoUrl = new URL('../../img/logo_icono_sin_fondo.png', import.meta.url).href; 
+const logoUrl = new URL('../../img/logo.png', import.meta.url).href; 
 // Usando URL para obtener la ruta correcta
 const LostPoster = () => {
   const { petId } = useParams(); // Este es el qr_uuid desde la URL
@@ -105,31 +105,7 @@ const LostPoster = () => {
     }
   };
 
-  const handleShareSocial = async (platform) => {
-    if (!posterUrl) await generatePosterImage();
 
-    try {
-      const response = await generateLostPoster(petId, posterUrl, platform);
-      switch (platform) {
-        case 'whatsapp':
-          window.open(`https://wa.me/?text=${encodeURIComponent(response.shareUrl)}`);
-          break;
-        case 'facebook':
-          window.open(`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(response.shareUrl)}`);
-          break;
-        case 'twitter':
-          window.open(`https://twitter.com/intent/tweet?url=${encodeURIComponent(response.shareUrl)}&text=${encodeURIComponent('¡Ayuda a encontrar esta mascota perdida con ENCUENTRAME!')}`);
-          break;
-        default:
-          navigator.clipboard.writeText(response.shareUrl);
-          alert('¡Enlace copiado al portapapeles!');
-      }
-      setShareOptions(false);
-    } catch (err) {
-      console.error('Error sharing:', err);
-      setError('Error al compartir cartel');
-    }
-  };
 
   if (isLoading) return <div className="loading">Cargando cartel...</div>;
   if (error) return <div className="error-container">{error}</div>;
@@ -138,23 +114,18 @@ const LostPoster = () => {
   const lastSeenDate = pet.last_seen_date ? new Date(pet.last_seen_date).toLocaleDateString() : new Date().toLocaleDateString();
 
   return (
+
+    
     <div className="lost-poster-page">
+
       <div className="poster-actions">
+        
         <button onClick={() => navigate(-1)} className="back-button">Volver</button>
         <button onClick={downloadPdf} disabled={isGenerating} className="download-button">
           {isGenerating ? 'Generando...' : 'Descargar Cartel (PDF)'}
         </button>
-        <button onClick={() => setShareOptions(!shareOptions)} className="share-button">
-          Compartir
-        </button>
-        {shareOptions && (
-          <div className="share-options">
-            <button onClick={() => handleShareSocial('whatsapp')} className="whatsapp-button">WhatsApp</button>
-            <button onClick={() => handleShareSocial('facebook')} className="facebook-button">Facebook</button>
-            <button onClick={() => handleShareSocial('twitter')} className="twitter-button">Twitter</button>
-            <button onClick={() => handleShareSocial('copy')} className="copy-button">Copiar Enlace</button>
-          </div>
-        )}
+
+
       </div>
 
       <div className="lost-poster-container">
@@ -177,11 +148,11 @@ const LostPoster = () => {
           </div>
 
           {/* Foto de la Mascota */}
-          <div className="pet-photo-container">
+          <div className="pet-photo-container-poster">
             <img
               src={pet.photo ? `${BASE_URL}${pet.photo}` : 'https://via.placeholder.com/500x400/94618E/ffffff?text=Sin+Foto'}
               alt={`Foto de ${pet.name}`}
-              className="pet-photo"
+              className="pet-photo-lost-poster"
               crossOrigin="anonymous"
             />
           </div>
