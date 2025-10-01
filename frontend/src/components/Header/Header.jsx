@@ -2,12 +2,12 @@ import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { logout } from '../../services/api';
 import './Header.css';
+import logoUrl from '../../img/logo.png';
 
 const Header = () => {
   const navigate = useNavigate();
   const isLoggedIn = !!localStorage.getItem('token');
   const [menuActive, setMenuActive] = useState(false);
-  const logoUrl = 'src/img/logo.png';
 
 
   const handleLogout = () => {

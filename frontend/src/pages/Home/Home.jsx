@@ -7,7 +7,8 @@ import perroygato from '../../img/perroygato.png';
 import perrocorriendo from '../../img/perrocorriendo.png';
 
 //const mascotaImage = perroygato;
-const mascotaImage = 'src/img/personaje2.png';
+import mascotaImage from '../../img/personaje2.png';
+
 const Home = () => {
   return (
     <div className="home-wrapper">
