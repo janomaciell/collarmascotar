@@ -90,25 +90,8 @@ WSGI_APPLICATION = 'config.wsgi.application'
 
 
 #DATABASES DE RAILWAY
-#DATABASES = {
-#    'default': {
-#        'ENGINE': 'django.db.backends.mysql',
-#        'NAME': config('MYSQLDATABASE'),
-#        'USER': config('MYSQLUSER'),
-#        'PASSWORD': config('MYSQLPASSWORD'),
-#        'HOST': config('MYSQLHOST'),
-#        'PORT': config('MYSQLPORT'),
-#        'OPTIONS': {
-#            'init_command': "SET sql_mode='STRICT_TRANS_TABLES'",
-#            'charset': 'utf8mb4'
-#        }
-#    }
-#}
-
-
-#LOCAL
 DATABASES = {
-     'default': {
+    'default': {
         'ENGINE': 'django.db.backends.mysql',
         'NAME': config('MYSQLDATABASE'),
         'USER': config('MYSQLUSER'),
@@ -121,6 +104,23 @@ DATABASES = {
         }
     }
 }
+
+
+#LOCAL
+#DATABASES = {
+#     'default': {
+#        'ENGINE': 'django.db.backends.mysql',
+#        'NAME': config('MYSQLDATABASE'),
+#        'USER': config('MYSQLUSER'),
+#        'PASSWORD': config('MYSQLPASSWORD'),
+#        'HOST': config('MYSQLHOST'),
+#        'PORT': config('MYSQLPORT'),
+#        'OPTIONS': {
+#            'init_command': "SET sql_mode='STRICT_TRANS_TABLES'",
+#            'charset': 'utf8mb4'
+#        }
+#    }
+#}
 
 # Alternativa usando DATABASE_URL
 #DATABASES = {
