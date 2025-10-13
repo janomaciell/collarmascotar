@@ -198,7 +198,17 @@ SECURE_CONTENT_TYPE_NOSNIFF = True
 
 # Media files
 MEDIA_URL = '/media/'
-MEDIA_ROOT = BASE_DIR / 'media'
+if os.environ.get('RENDER'):
+    MEDIA_ROOT = '/var/media'
+else:
+    MEDIA_ROOT = BASE_DIR / 'media'
+
+# Asegurar que el directorio de media exista
+try:
+    os.makedirs(str(MEDIA_ROOT), exist_ok=True)
+except Exception:
+    # En entornos restringidos puede fallar la creación; continuar sin interrumpir
+    pass
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field
