@@ -89,21 +89,39 @@ WSGI_APPLICATION = 'config.wsgi.application'
 ## https://docs.djangoproject.com/en/5.1/ref/settings/#databases
 
 
-#DATABASES DE RAILWAY
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.mysql',
-        'NAME': config('MYSQLDATABASE'),
-        'USER': config('MYSQLUSER'),
-        'PASSWORD': config('MYSQLPASSWORD'),
-        'HOST': config('MYSQLHOST'),
-        'PORT': config('MYSQLPORT'),
-        'OPTIONS': {
-            'init_command': "SET sql_mode='STRICT_TRANS_TABLES'",
-            'charset': 'utf8mb4'
+#DATABASES DE RAILWAY / Render
+if os.environ.get('RENDER'):
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.mysql',
+            'NAME': config('MYSQLDATABASE'),
+            'USER': config('MYSQLUSER'),
+            'PASSWORD': config('MYSQLPASSWORD'),
+            'HOST': config('MYSQLHOST'),
+            'PORT': config('MYSQLPORT', cast=int),
+            'OPTIONS': {
+                'init_command': "SET sql_mode='STRICT_TRANS_TABLES'",
+                'charset': 'utf8mb4',
+                'connect_timeout': 10,
+            },
+            'CONN_MAX_AGE': 0,
         }
     }
-}
+else:
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.mysql',
+            'NAME': config('MYSQLDATABASE', default='pet_qr_db'),
+            'USER': config('MYSQLUSER', default='root'),
+            'PASSWORD': config('MYSQLPASSWORD', default=''),
+            'HOST': config('MYSQLHOST', default='localhost'),
+            'PORT': config('MYSQLPORT', default='3306', cast=int),
+            'OPTIONS': {
+                'init_command': "SET sql_mode='STRICT_TRANS_TABLES'",
+                'charset': 'utf8mb4'
+            }
+        }
+    }
 
 
 #LOCAL
@@ -168,9 +186,11 @@ USE_TZ = True
 STATIC_URL = '/static/'
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 
-STATICFILES_DIRS = [
-    os.path.join(BASE_DIR, 'static')
-]
+# Solo incluir en STATICFILES_DIRS si existe la carpeta 'static'
+STATICFILES_DIRS = []
+static_dir = os.path.join(BASE_DIR, 'static')
+if os.path.exists(static_dir):
+    STATICFILES_DIRS.append(static_dir)
 
 # Configuración de Whitenoise
 STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
