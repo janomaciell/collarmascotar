@@ -34,20 +34,14 @@ DEBUG = config('DEBUG', default=False, cast=bool)
 
 ALLOWED_HOSTS = [
     'collarmascotar.onrender.com',
-    'collarmascotar.vercel.app', 
-    'localhost', 
+    'collarmascotar.vercel.app',
+    'www.encuentrameqr.com',
+    'encuentrameqr.com',
+    'localhost',
     '127.0.0.1',
-    'api.whatsapp.com',
-    'web.whatsapp.com',
-    'wa.me',
-    '*'
 ]
 
-                
-
-
 # Application definition
-
 INSTALLED_APPS = [
     'django.contrib.admin',
     'django.contrib.auth',
@@ -61,10 +55,19 @@ INSTALLED_APPS = [
     'api',
 ]
 
-
+MIDDLEWARE = [
+    'django.middleware.security.SecurityMiddleware',
+    'whitenoise.middleware.WhiteNoiseMiddleware',
+    'corsheaders.middleware.CorsMiddleware',
+    'django.contrib.sessions.middleware.SessionMiddleware',
+    'django.middleware.common.CommonMiddleware',
+    'django.middleware.csrf.CsrfViewMiddleware',
+    'django.contrib.auth.middleware.AuthenticationMiddleware',
+    'django.contrib.messages.middleware.MessageMiddleware',
+    'django.middleware.clickjacking.XFrameOptionsMiddleware',
+]
 
 ROOT_URLCONF = 'config.urls'
-
 
 TEMPLATES = [
     {
@@ -123,11 +126,11 @@ else:
             'DISABLE_SERVER_SIDE_CURSORS': True,
         }
     }
+
 # Configuración de Supabase para uso con el cliente de Supabase (opcional)
 SUPABASE_URL = config('SUPABASE_URL', default='')
 SUPABASE_SERVICE_ROLE_KEY = config('SUPABASE_SERVICE_ROLE_KEY', default='')
 SUPABASE_ANON_KEY = config('SUPABASE_ANON_KEY', default='')
-
 
 
 # Password validation
@@ -175,7 +178,6 @@ if os.path.exists(static_dir):
 
 # Configuración de Whitenoise
 STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
-SECURE_CONTENT_TYPE_NOSNIFF = True
 
 # Media files
 MEDIA_URL = '/media/'
@@ -196,29 +198,33 @@ except Exception:
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
+
 # Configuración de CORS
-# En producción, usar CORS_ALLOWED_ORIGINS en lugar de CORS_ALLOW_ALL_ORIGINS
 CORS_ALLOWED_ORIGINS = [
     "https://collarmascotar.onrender.com",
     "https://www.encuentrameqr.com",
     "https://encuentrameqr.com",
-    "http://localhost:3000",
-    "http://localhost:5173",  # Vite default port
     "https://collarmascotar.vercel.app",
-    "http://localhost:8000",
-    "https://api.whatsapp.com",
-    "https://web.whatsapp.com",
-    "https://wa.me"
 ]
 
-# Permitir todos los orígenes solo en desarrollo
+# Solo para desarrollo local
 if DEBUG:
-    CORS_ALLOW_ALL_ORIGINS = True
-else:
-    CORS_ALLOW_ALL_ORIGINS = False
+    CORS_ALLOWED_ORIGINS += [
+        "http://localhost:3000",
+        "http://localhost:5173",
+        "http://localhost:8000",
+    ]
 
 # Configuración adicional de CORS
 CORS_ALLOW_CREDENTIALS = True
+CORS_ALLOW_METHODS = [
+    'DELETE',
+    'GET',
+    'OPTIONS',
+    'PATCH',
+    'POST',
+    'PUT',
+]
 CORS_ALLOW_HEADERS = [
     'accept',
     'accept-encoding',
@@ -231,6 +237,7 @@ CORS_ALLOW_HEADERS = [
     'x-requested-with',
 ]
 
+
 # Configuración de REST Framework
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': [
@@ -239,22 +246,25 @@ REST_FRAMEWORK = {
         'rest_framework.authentication.BasicAuthentication',
     ],
     'DEFAULT_PERMISSION_CLASSES': [
-        'rest_framework.permissions.AllowAny',  # Cambiado de IsAuthenticated a AllowAny
+        'rest_framework.permissions.AllowAny',
     ],
 }
 
+
+# Configuración de Email
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
-EMAIL_HOST = 'smtp.gmail.com'  # Cambia según tu proveedor
+EMAIL_HOST = 'smtp.gmail.com'
 EMAIL_PORT = 587
-EMAIL_USE_SSL=False
-EMAIL_USE_TLS=True
-EMAIL_HOST_USER = 'janomaciel1@gmail.com'  # Tu email
-EMAIL_HOST_PASSWORD = 'hcfmtsyiqpntlrkp'  # Contraseña o contraseña de aplicación
+EMAIL_USE_SSL = False
+EMAIL_USE_TLS = True
+EMAIL_HOST_USER = 'janomaciel1@gmail.com'
+EMAIL_HOST_PASSWORD = 'hcfmtsyiqpntlrkp'
 DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
 
 
 # Configuración de Firebase Admin SDK
 FIREBASE_CREDENTIALS_PATH = BASE_DIR / 'credentials' / 'firebase-adminsdk.json'
+
 
 # Configuración para Web Push
 WEBPUSH_SETTINGS = {
@@ -263,20 +273,33 @@ WEBPUSH_SETTINGS = {
     "VAPID_ADMIN_EMAIL": "janomaciel1@gmail.com"
 }
 
+
+# URLs de la aplicación
 REACT_APP_API_URL = config('API_URL', default='http://localhost:8000/api')
+API_URL = config('API_URL')
+FRONTEND_URL = config('FRONTEND_URL')
 
-API_URL=config('API_URL')
-FRONTEND_URL=config('FRONTEND_URL')
 
-
-MIDDLEWARE = [
-    'django.middleware.security.SecurityMiddleware',
-    'whitenoise.middleware.WhiteNoiseMiddleware',
-    'django.contrib.sessions.middleware.SessionMiddleware',
-    'corsheaders.middleware.CorsMiddleware',
-    'django.middleware.common.CommonMiddleware',
-    'django.middleware.csrf.CsrfViewMiddleware',
-    'django.contrib.auth.middleware.AuthenticationMiddleware',
-    'django.contrib.messages.middleware.MessageMiddleware',
-    'django.middleware.clickjacking.XFrameOptionsMiddleware',
-]
+# Configuración de seguridad para producción
+if not DEBUG:
+    # CSRF Protection
+    CSRF_TRUSTED_ORIGINS = [
+        "https://www.encuentrameqr.com",
+        "https://encuentrameqr.com",
+        "https://collarmascotar.onrender.com",
+        "https://collarmascotar.vercel.app",
+    ]
+    
+    # Security Headers
+    SECURE_SSL_REDIRECT = True
+    SESSION_COOKIE_SECURE = True
+    CSRF_COOKIE_SECURE = True
+    SECURE_BROWSER_XSS_FILTER = True
+    SECURE_CONTENT_TYPE_NOSNIFF = True
+    SECURE_HSTS_SECONDS = 31536000
+    SECURE_HSTS_INCLUDE_SUBDOMAINS = True
+    SECURE_HSTS_PRELOAD = True
+    
+    # Configuración adicional de cookies
+    SESSION_COOKIE_SAMESITE = 'Lax'
+    CSRF_COOKIE_SAMESITE = 'Lax'
