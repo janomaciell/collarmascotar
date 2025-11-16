@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { API_URL } from '../../services/api';
-import axios from 'axios';
+import emailjs from '@emailjs/browser';
 import './Support.css';
 
 const Support = () => {
@@ -28,18 +27,35 @@ const Support = () => {
     setSubmitted(false);
     setIsSubmitting(true);
 
-    const { name, email, message } = formData;
-
     try {
-      const response = await axios.post(`${API_URL}/support/send-email/`, {
-        name,
-        email,
-        message,
-      });
+      // Configurar parámetros para EmailJS
+      const templateParams = {
+        from_name: formData.name,
+        from_email: formData.email,
+        message: formData.message,
+        to_email: 'janomaciel1@gmail.com', // Tu email de destino
+      };
+
+      // Enviar email usando EmailJS
+      const response = await emailjs.send(
+        import.meta.env.VITE_EMAILJS_SERVICE_ID,
+        import.meta.env.VITE_EMAILJS_TEMPLATE_ID,
+        templateParams,
+        import.meta.env.VITE_EMAILJS_PUBLIC_KEY
+      );
+
+      console.log('Email enviado exitosamente:', response);
       setSubmitted(true);
       setFormData({ name: '', email: '', message: '' });
+      
+      // Ocultar mensaje de éxito después de 5 segundos
+      setTimeout(() => {
+        setSubmitted(false);
+      }, 5000);
+
     } catch (err) {
-      setError(err.response?.data?.error || 'Error al enviar el mensaje');
+      console.error('Error al enviar email:', err);
+      setError('Error al enviar el mensaje. Por favor, intenta nuevamente.');
     } finally {
       setIsSubmitting(false);
     }
@@ -159,7 +175,6 @@ const Support = () => {
               
               <div className="social-buttons">
                 <a 
-                
                   href="https://www.instagram.com/encuentrameqr"
                   target="_blank"
                   rel="noopener noreferrer"
