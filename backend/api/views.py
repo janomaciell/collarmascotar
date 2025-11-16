@@ -14,6 +14,7 @@ from django.urls import reverse
 from pywebpush import webpush
 import json
 import base64
+import traceback
 from rest_framework.views import APIView
 from firebase_admin import credentials, initialize_app, messaging
 from rest_framework.authtoken.views import ObtainAuthToken
@@ -796,14 +797,20 @@ def send_support_email(request):
         send_mail(
             subject=subject,
             message=plain_message,
-            from_email=email,
+            from_email=settings.DEFAULT_FROM_EMAIL,
             recipient_list=[settings.EMAIL_HOST_USER],
             html_message=html_message,
             fail_silently=False,
         )
         return Response({"message": "Correo enviado exitosamente"}, status=status.HTTP_200_OK)
     except Exception as e:
-        return Response({"error": f"Error al enviar el correo: {str(e)}"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+        error_details = str(e)
+        print(f"Error al enviar correo: {error_details}")
+        print(f"Traceback: {traceback.format_exc()}")
+        return Response({
+            "error": "Error al enviar el correo",
+            "details": error_details if settings.DEBUG else "Error interno del servidor"
+        }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 # views.py - Agregar vistas para gestionar QRs pre-generados
 

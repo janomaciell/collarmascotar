@@ -235,7 +235,8 @@ REACT_APP_API_URL = config('API_URL', default='http://localhost:8000/api')
 
 CORS_ALLOWED_ORIGINS = [
     "https://collarmascotar.onrender.com",
-    
+    "https://www.encuentrameqr.com",
+    "https://encuentrameqr.com",
     "http://localhost:3000",
     "https://collarmascotar.vercel.app",
     "http://localhost:8000",
