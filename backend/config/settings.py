@@ -196,8 +196,40 @@ except Exception:
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-# Configuración para desarrollo
-CORS_ALLOW_ALL_ORIGINS = True  # En producción, especificar orígenes
+# Configuración de CORS
+# En producción, usar CORS_ALLOWED_ORIGINS en lugar de CORS_ALLOW_ALL_ORIGINS
+CORS_ALLOWED_ORIGINS = [
+    "https://collarmascotar.onrender.com",
+    "https://www.encuentrameqr.com",
+    "https://encuentrameqr.com",
+    "http://localhost:3000",
+    "http://localhost:5173",  # Vite default port
+    "https://collarmascotar.vercel.app",
+    "http://localhost:8000",
+    "https://api.whatsapp.com",
+    "https://web.whatsapp.com",
+    "https://wa.me"
+]
+
+# Permitir todos los orígenes solo en desarrollo
+if DEBUG:
+    CORS_ALLOW_ALL_ORIGINS = True
+else:
+    CORS_ALLOW_ALL_ORIGINS = False
+
+# Configuración adicional de CORS
+CORS_ALLOW_CREDENTIALS = True
+CORS_ALLOW_HEADERS = [
+    'accept',
+    'accept-encoding',
+    'authorization',
+    'content-type',
+    'dnt',
+    'origin',
+    'user-agent',
+    'x-csrftoken',
+    'x-requested-with',
+]
 
 # Configuración de REST Framework
 REST_FRAMEWORK = {
@@ -232,21 +264,6 @@ WEBPUSH_SETTINGS = {
 }
 
 REACT_APP_API_URL = config('API_URL', default='http://localhost:8000/api')
-
-CORS_ALLOWED_ORIGINS = [
-    "https://collarmascotar.onrender.com",
-    "https://www.encuentrameqr.com",
-    "https://encuentrameqr.com",
-    "http://localhost:3000",
-    "https://collarmascotar.vercel.app",
-    "http://localhost:8000",
-    "https://api.whatsapp.com",
-    "https://web.whatsapp.com",
-    "https://wa.me"
-    
-]
-
-#CORS_ALLOW_CREDENTIALS = True
 
 API_URL=config('API_URL')
 FRONTEND_URL=config('FRONTEND_URL')
