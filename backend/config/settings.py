@@ -200,6 +200,9 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 
 # Configuración de CORS
+# IMPORTANTE: No permitir todos los orígenes en producción
+CORS_ALLOW_ALL_ORIGINS = False
+
 CORS_ALLOWED_ORIGINS = [
     "https://collarmascotar.onrender.com",
     "https://www.encuentrameqr.com",
@@ -213,10 +216,14 @@ if DEBUG:
         "http://localhost:3000",
         "http://localhost:5173",
         "http://localhost:8000",
+        "http://127.0.0.1:3000",
+        "http://127.0.0.1:5173",
+        "http://127.0.0.1:8000",
     ]
 
 # Configuración adicional de CORS
 CORS_ALLOW_CREDENTIALS = True
+CORS_PREFLIGHT_MAX_AGE = 86400  # 24 horas - cache de preflight requests
 CORS_ALLOW_METHODS = [
     'DELETE',
     'GET',
@@ -235,6 +242,14 @@ CORS_ALLOW_HEADERS = [
     'user-agent',
     'x-csrftoken',
     'x-requested-with',
+    'x-csrf-token',
+    'cache-control',
+]
+
+# Exponer headers adicionales si es necesario
+CORS_EXPOSE_HEADERS = [
+    'content-type',
+    'authorization',
 ]
 
 
@@ -282,7 +297,7 @@ FRONTEND_URL = config('FRONTEND_URL')
 
 # Configuración de seguridad para producción
 if not DEBUG:
-    # CSRF Protection
+    # CSRF Protection - IMPORTANTE: Debe incluir todos los orígenes permitidos
     CSRF_TRUSTED_ORIGINS = [
         "https://www.encuentrameqr.com",
         "https://encuentrameqr.com",
@@ -303,3 +318,13 @@ if not DEBUG:
     # Configuración adicional de cookies
     SESSION_COOKIE_SAMESITE = 'Lax'
     CSRF_COOKIE_SAMESITE = 'Lax'
+else:
+    # En desarrollo, también configurar CSRF_TRUSTED_ORIGINS
+    CSRF_TRUSTED_ORIGINS = [
+        "http://localhost:3000",
+        "http://localhost:5173",
+        "http://localhost:8000",
+        "http://127.0.0.1:3000",
+        "http://127.0.0.1:5173",
+        "http://127.0.0.1:8000",
+    ]
