@@ -13,10 +13,11 @@ https://docs.djangoproject.com/en/5.1/ref/settings/
 from pathlib import Path
 from decouple import config
 import os
-from urllib.parse import urlparse
-
+from dotenv import load_dotenv
 import dj_database_url
 
+# Load environment variables from .env
+load_dotenv()
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -86,68 +87,48 @@ WSGI_APPLICATION = 'config.wsgi.application'
 
 # Database
 # https://docs.djangoproject.com/en/5.1/ref/settings/#databases
-## https://docs.djangoproject.com/en/5.1/ref/settings/#databases
 
+DATABASE_URL = config('DATABASE_URL', default=None)
 
-#DATABASES DE RAILWAY / Render
-if os.environ.get('RENDER'):
+if DATABASE_URL:
     DATABASES = {
-        'default': {
-            'ENGINE': 'django.db.backends.mysql',
-            'NAME': config('MYSQLDATABASE'),
-            'USER': config('MYSQLUSER'),
-            'PASSWORD': config('MYSQLPASSWORD'),
-            'HOST': config('MYSQLHOST'),
-            'PORT': config('MYSQLPORT', cast=int),
-            'OPTIONS': {
-                'init_command': "SET sql_mode='STRICT_TRANS_TABLES'",
-                'charset': 'utf8mb4',
-                'connect_timeout': 10,
-            },
-            'CONN_MAX_AGE': 0,
-        }
+        'default': dj_database_url.config(
+            default=DATABASE_URL,
+            conn_max_age=0,  # Importante: Transaction Pooler no soporta conexiones persistentes
+            conn_health_checks=True,
+        )
     }
+    # Configuración específica para Transaction Pooler de Supabase
+    DATABASES['default']['OPTIONS'] = {
+        'connect_timeout': 10,
+        'sslmode': 'require',
+    }
+    # IMPORTANTE: Deshabilitar server-side cursors para Transaction Pooler
+    DATABASES['default']['DISABLE_SERVER_SIDE_CURSORS'] = True
 else:
+    # Opción 2: Configuración manual con variables de entorno individuales
     DATABASES = {
         'default': {
-            'ENGINE': 'django.db.backends.mysql',
-            'NAME': config('MYSQLDATABASE', default='pet_qr_db'),
-            'USER': config('MYSQLUSER', default='root'),
-            'PASSWORD': config('MYSQLPASSWORD', default=''),
-            'HOST': config('MYSQLHOST', default='localhost'),
-            'PORT': config('MYSQLPORT', default='3306', cast=int),
+            'ENGINE': 'django.db.backends.postgresql',
+            'NAME': config('SUPABASE_DB_NAME', default='postgres'),
+            'USER': config('SUPABASE_DB_USER', default='postgres'),
+            'PASSWORD': config('SUPABASE_DB_PASSWORD', default=''),
+            'HOST': config('SUPABASE_DB_HOST', default=''),
+            'PORT': config('SUPABASE_DB_PORT', default='6543'),
             'OPTIONS': {
-                'init_command': "SET sql_mode='STRICT_TRANS_TABLES'",
-                'charset': 'utf8mb4'
-            }
+                'connect_timeout': 10,
+                'sslmode': 'require',
+            },
+            'CONN_MAX_AGE': 0,  # Sin pooling de conexiones
+            'DISABLE_SERVER_SIDE_CURSORS': True,
         }
     }
+# Configuración de Supabase para uso con el cliente de Supabase (opcional)
+SUPABASE_URL = config('SUPABASE_URL', default='')
+SUPABASE_SERVICE_ROLE_KEY = config('SUPABASE_SERVICE_ROLE_KEY', default='')
+SUPABASE_ANON_KEY = config('SUPABASE_ANON_KEY', default='')
 
 
-#LOCAL
-#DATABASES = {
-#     'default': {
-#        'ENGINE': 'django.db.backends.mysql',
-#        'NAME': config('MYSQLDATABASE'),
-#        'USER': config('MYSQLUSER'),
-#        'PASSWORD': config('MYSQLPASSWORD'),
-#        'HOST': config('MYSQLHOST'),
-#        'PORT': config('MYSQLPORT'),
-#        'OPTIONS': {
-#            'init_command': "SET sql_mode='STRICT_TRANS_TABLES'",
-#            'charset': 'utf8mb4'
-#        }
-#    }
-#}
-
-# Alternativa usando DATABASE_URL
-#DATABASES = {
-#    'default': dj_database_url.config(
-#        default=config('DATABASE_URL'),
-#        conn_max_age=600,
-#        conn_health_checks=True,
-#    )
-#}
 
 # Password validation
 # https://docs.djangoproject.com/en/5.1/ref/settings/#auth-password-validators
