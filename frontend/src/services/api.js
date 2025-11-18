@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-export const API_URL = import.meta.env.VITE_API_URL.replace(/\/+$/, '');
+export const API_URL = (import.meta.env.VITE_API_URL || 'http://localhost:8000/api').replace(/\/+$/, '');
 
 
 axios.interceptors.request.use(
@@ -91,7 +91,7 @@ const getFullImageUrl = (relativePath) => {
   if (relativePath.startsWith('http')) return relativePath;
   
   // Si es una ruta relativa, construir la URL completa
-  return `${API_BASE}${relativePath}`;
+  return `${API_URL}${relativePath}`;
 };
 
 export const getPetById = async (id) => {
@@ -287,5 +287,32 @@ export const getQRRedirectInfo = async (uuid) => {
   } catch (error) {
     console.error('Error en getQRRedirectInfo:', error.response?.data || error.message);
     throw new Error(error.response?.data?.error || 'Error al verificar el QR');
+  }
+};
+
+export const requestPasswordReset = async (emailOrUsername) => {
+  try {
+    const response = await axios.post(`${API_URL}/password-reset/request/`, {
+      email: emailOrUsername.includes('@') ? emailOrUsername : undefined,
+      username: emailOrUsername.includes('@') ? undefined : emailOrUsername
+    });
+    return response.data;
+  } catch (error) {
+    console.error('Error en requestPasswordReset:', error.response?.data || error.message);
+    throw error.response?.data || error.message;
+  }
+};
+
+export const resetPassword = async (uid, token, newPassword) => {
+  try {
+    const response = await axios.post(`${API_URL}/password-reset/reset/`, {
+      uid,
+      token,
+      new_password: newPassword
+    });
+    return response.data;
+  } catch (error) {
+    console.error('Error en resetPassword:', error.response?.data || error.message);
+    throw error.response?.data || error.message;
   }
 };

@@ -223,7 +223,7 @@ if DEBUG:
 
 # Configuración adicional de CORS
 CORS_ALLOW_CREDENTIALS = True
-CORS_PREFLIGHT_MAX_AGE = 86400  # 24 horas - cache de preflight requests
+CORS_PREFLIGHT_MAX_AGE = 86400  
 CORS_ALLOW_METHODS = [
     'DELETE',
     'GET',

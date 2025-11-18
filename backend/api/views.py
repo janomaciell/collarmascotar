@@ -11,6 +11,9 @@ from django.core.files.base import ContentFile
 from django.conf import settings
 from django.utils import timezone
 from django.urls import reverse
+from django.contrib.auth.tokens import default_token_generator
+from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
+from django.utils.encoding import force_bytes, force_str
 from pywebpush import webpush
 import json
 import base64
@@ -1060,4 +1063,131 @@ def qr_redirect(request, uuid):
         return Response({
             "error": f"Error al procesar el QR: {str(e)}",
             "redirect_to": "/error"
+        }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+@api_view(['POST'])
+@permission_classes([AllowAny])
+def request_password_reset(request):
+    """
+    Endpoint para solicitar recuperación de contraseña.
+    Recibe email o username y envía un email con instrucciones.
+    """
+    try:
+        email_or_username = request.data.get('email') or request.data.get('username')
+        
+        if not email_or_username:
+            return Response({
+                "error": "Por favor proporciona un email o nombre de usuario"
+            }, status=status.HTTP_400_BAD_REQUEST)
+        
+        # Buscar usuario por email o username
+        try:
+            if '@' in email_or_username:
+                user = User.objects.get(email=email_or_username)
+            else:
+                user = User.objects.get(username=email_or_username)
+        except User.DoesNotExist:
+            # Por seguridad, no revelamos si el usuario existe o no
+            return Response({
+                "message": "Si el usuario existe, se enviará un email con instrucciones para recuperar la contraseña"
+            }, status=status.HTTP_200_OK)
+        
+        # Generar token de recuperación
+        token = default_token_generator.make_token(user)
+        uid = urlsafe_base64_encode(force_bytes(user.pk))
+        
+        # Construir URL de reset (el frontend manejará la página de reset)
+        reset_url = f"{settings.FRONTEND_URL}/reset-password/{uid}/{token}/"
+        
+        # Enviar email
+        subject = 'Recuperación de contraseña - Encuéntrame'
+        message = f"""
+        Hola {user.username},
+        
+        Has solicitado recuperar tu contraseña en EncuéntraME.
+        
+        Para restablecer tu contraseña, haz clic en el siguiente enlace:
+        {reset_url}
+        
+        Si no solicitaste este cambio, puedes ignorar este email.
+        
+        Este enlace expirará en 24 horas.
+        
+        Saludos,
+        El equipo de EncuéntraME
+        """
+        
+        try:
+            send_mail(
+                subject,
+                message,
+                settings.DEFAULT_FROM_EMAIL,
+                [user.email],
+                fail_silently=False,
+            )
+        except Exception as e:
+            print(f"Error enviando email: {str(e)}")
+            return Response({
+                "error": "Error al enviar el email. Por favor intenta más tarde."
+            }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+        
+        return Response({
+            "message": "Si el usuario existe, se enviará un email con instrucciones para recuperar la contraseña"
+        }, status=status.HTTP_200_OK)
+        
+    except Exception as e:
+        print(f"Error en request_password_reset: {str(e)}")
+        return Response({
+            "error": "Error al procesar la solicitud"
+        }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+@api_view(['POST'])
+@permission_classes([AllowAny])
+def reset_password(request):
+    """
+    Endpoint para restablecer la contraseña usando el token.
+    """
+    try:
+        uid = request.data.get('uid')
+        token = request.data.get('token')
+        new_password = request.data.get('new_password')
+        
+        if not all([uid, token, new_password]):
+            return Response({
+                "error": "Faltan datos requeridos"
+            }, status=status.HTTP_400_BAD_REQUEST)
+        
+        # Decodificar uid
+        try:
+            user_id = force_str(urlsafe_base64_decode(uid))
+            user = User.objects.get(pk=user_id)
+        except (TypeError, ValueError, OverflowError, User.DoesNotExist):
+            return Response({
+                "error": "Token inválido o expirado"
+            }, status=status.HTTP_400_BAD_REQUEST)
+        
+        # Verificar token
+        if not default_token_generator.check_token(user, token):
+            return Response({
+                "error": "Token inválido o expirado"
+            }, status=status.HTTP_400_BAD_REQUEST)
+        
+        # Validar nueva contraseña
+        if len(new_password) < 8:
+            return Response({
+                "error": "La contraseña debe tener al menos 8 caracteres"
+            }, status=status.HTTP_400_BAD_REQUEST)
+        
+        # Cambiar contraseña
+        user.set_password(new_password)
+        user.save()
+        
+        return Response({
+            "message": "Contraseña restablecida exitosamente"
+        }, status=status.HTTP_200_OK)
+        
+    except Exception as e:
+        print(f"Error en reset_password: {str(e)}")
+        return Response({
+            "error": "Error al restablecer la contraseña"
         }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)

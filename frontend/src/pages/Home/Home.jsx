@@ -20,7 +20,7 @@ const Home = () => {
         <div className="hero-container">
           <div className="hero-content">
             <h1 className="hero-title-home">
-              ENCUÉNTRAME
+              ENCUENTRAME
             </h1>
             <p className="hero-subtitle-home">
               Mascotas seguras, familias tranquilas
@@ -56,7 +56,7 @@ const Home = () => {
       <section className="how-works-section" id="como-funciona">
         <div className="pattern-bg-home"></div>
         <div className="how-works-container">
-          <h2 className="section-title">¿Cómo funciona?</h2>
+          <h2 className="section-title">¿Como funciona?</h2>
           <div className="steps-grid-horizontal">
             <div className="step">
               <div className="step-number">1</div>
@@ -75,7 +75,7 @@ const Home = () => {
             <div className="step">
               <div className="step-number">3</div>
               <div className="step-icon">🏠</div>
-              <h3>Reencuentra</h3>
+              <h3>Encuentra</h3>
               <p>Tu mascota regresa segura a casa</p>
             </div>
           </div>

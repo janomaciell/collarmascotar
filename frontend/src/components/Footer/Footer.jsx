@@ -17,7 +17,7 @@ const Footer = () => {
           <div className="footer-brand">
             <div className="brand-header">
               <img src={logoUrl} alt="ENCUÉNTRAME Logo" className="footer-logo" />
-              <h3 className="brand-name">ENCUÉNTRAME</h3>
+              <h3 className="brand-name">ENCUENTRAME</h3>
             </div>
             <p className="brand-slogan">Mascotas seguras, familias tranquilas</p>
             <p className="brand-description">

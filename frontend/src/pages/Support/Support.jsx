@@ -71,7 +71,6 @@ const Support = () => {
       <section className="support-hero">
         <div className="pattern-bg"></div>
         <div className="hero-content">
-          <img src={mascotaImage} alt="Mascota EncuentraME" className="hero-mascota" />
           <h1 className="hero-title">SOPORTE</h1>
           <p className="hero-subtitle">Estamos aquí para ayudarte</p>
         </div>

@@ -28,4 +28,6 @@ urlpatterns = [
     path('complete-registration/', views.complete_pending_registration, name='complete-registration'),
     path('qr/<uuid:uuid>/', views.qr_redirect, name='qr-redirect'),
     path('pets/uuid/<str:uuid>/', views.get_pet_by_uuid, name='get-pet-by-uuid'),
+    path('password-reset/request/', views.request_password_reset, name='request-password-reset'),
+    path('password-reset/reset/', views.reset_password, name='reset-password'),
 ]

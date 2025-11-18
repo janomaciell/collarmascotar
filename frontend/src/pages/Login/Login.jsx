@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
-import { login } from '../../services/api';
+import { login, requestPasswordReset } from '../../services/api';
 import './Login.css';
 
 const Login = () => {
@@ -10,6 +10,11 @@ const Login = () => {
   });
   const [error, setError] = useState('');
   const [showPassword, setShowPassword] = useState(false);
+  const [showForgotPassword, setShowForgotPassword] = useState(false);
+  const [forgotPasswordEmail, setForgotPasswordEmail] = useState('');
+  const [forgotPasswordError, setForgotPasswordError] = useState('');
+  const [forgotPasswordSuccess, setForgotPasswordSuccess] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
 
   const mascotaImage = 'src/img/personaje2.png';
@@ -29,6 +34,25 @@ const Login = () => {
     } catch (err) {
       setError('Credenciales inválidas. Por favor intente nuevamente.');
       console.error(err);
+    }
+  };
+
+  const handleForgotPasswordSubmit = async (e) => {
+    e.preventDefault();
+    setForgotPasswordError('');
+    setForgotPasswordSuccess(false);
+    setIsLoading(true);
+    
+    try {
+      await requestPasswordReset(forgotPasswordEmail);
+      setForgotPasswordSuccess(true);
+      setForgotPasswordEmail('');
+    } catch (err) {
+      setForgotPasswordError(
+        err?.error || err?.message || 'Error al solicitar recuperación de contraseña. Por favor intente nuevamente.'
+      );
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -92,6 +116,16 @@ const Login = () => {
               </div>
             </div>
             
+            <div className="forgot-password-link">
+              <button
+                type="button"
+                className="forgot-password-button"
+                onClick={() => setShowForgotPassword(true)}
+              >
+                ¿Olvidaste tu contraseña?
+              </button>
+            </div>
+            
             <button type="submit" className="login-button">
               Iniciar sesión
             </button>
@@ -100,6 +134,70 @@ const Login = () => {
           <p className="register-link">
             ¿No tienes cuenta? <Link to="/register">Regístrate aquí</Link>
           </p>
+          
+          {/* Modal de recuperación de contraseña */}
+          {showForgotPassword && (
+            <div className="modal-overlay" onClick={() => {
+              setShowForgotPassword(false);
+              setForgotPasswordEmail('');
+              setForgotPasswordError('');
+              setForgotPasswordSuccess(false);
+            }}>
+              <div className="modal-content" onClick={(e) => e.stopPropagation()}>
+                <button
+                  className="modal-close"
+                  onClick={() => {
+                    setShowForgotPassword(false);
+                    setForgotPasswordEmail('');
+                    setForgotPasswordError('');
+                    setForgotPasswordSuccess(false);
+                  }}
+                >
+                  ×
+                </button>
+                <h2>Recuperar contraseña</h2>
+                {forgotPasswordSuccess ? (
+                  <div className="success-message">
+                    <span className="success-icon">✓</span>
+                    <p>Se ha enviado un email con instrucciones para recuperar tu contraseña.</p>
+                    <p className="success-note">Por favor revisa tu bandeja de entrada.</p>
+                  </div>
+                ) : (
+                  <>
+                    <p className="modal-description">
+                      Ingresa tu email o nombre de usuario y te enviaremos un enlace para recuperar tu contraseña.
+                    </p>
+                    {forgotPasswordError && (
+                      <div className="error-message">
+                        <span className="error-icon">⚠️</span>
+                        {forgotPasswordError}
+                      </div>
+                    )}
+                    <form onSubmit={handleForgotPasswordSubmit} className="forgot-password-form">
+                      <div className="form-group">
+                        <label htmlFor="forgot-email">Email o Usuario</label>
+                        <input
+                          type="text"
+                          id="forgot-email"
+                          value={forgotPasswordEmail}
+                          onChange={(e) => setForgotPasswordEmail(e.target.value)}
+                          placeholder="Tu email o nombre de usuario"
+                          required
+                        />
+                      </div>
+                      <button 
+                        type="submit" 
+                        className="login-button"
+                        disabled={isLoading}
+                      >
+                        {isLoading ? 'Enviando...' : 'Enviar'}
+                      </button>
+                    </form>
+                  </>
+                )}
+              </div>
+            </div>
+          )}
         </div>
       </div>
     </div>

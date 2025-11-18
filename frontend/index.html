@@ -32,9 +32,28 @@
     <!-- Fuentes -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link rel="preconnect" href="https://fonts.cdnfonts.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
-    <link href="https://fonts.cdnfonts.com/css/jackerton" rel="stylesheet">
+    <!-- Jackerton font - CDN temporalmente deshabilitado por error 500 -->
+    <!-- Si tienes los archivos de la fuente, descomenta y ajusta la ruta: -->
+    
+    <style>
+      @font-face {
+        font-family: 'Jackerton';
+        src: url('/fonts/Jackerton-Regular.woff') format('woff');
+        font-weight: normal;
+        font-style: normal;
+        font-display: swap;
+      }
+      
+      @font-face {
+        font-family: 'Horizon';
+        src: url('/fonts/Horizon.woff2') format('woff2');
+        font-weight: normal;
+        font-style: normal;
+        font-display: swap;
+      }
+    </style>
+    
   </head>
   <body>
     <div id="root"></div>

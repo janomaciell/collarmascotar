@@ -6,29 +6,34 @@ import html2canvas from 'html2canvas';
 import jsPDF from 'jspdf';
 const BASE_URL = import.meta.env.VITE_BASE_URL;
 
-// Logo de EncuentraME - Reemplazar con la URL real de tu logo cuando esté disponible
-const logoUrl = new URL('../../img/logo.png', import.meta.url).href; 
-// Usando URL para obtener la ruta correcta
+const logoUrl = new URL('../../img/logo.png', import.meta.url).href;
+
+const fallbackPhotos = [
+  'https://images.unsplash.com/photo-1548199973-03cce0bbc87b?auto=format&fit=crop&w=800&q=80',
+  'https://images.unsplash.com/photo-1518364538800-6bae3c2ea5fd?auto=format&fit=crop&w=800&q=80',
+  'https://images.unsplash.com/photo-1507146426996-ef05306b995a?auto=format&fit=crop&w=800&q=80',
+];
+
+const getRandomFallbackPhoto = () => {
+  const index = Math.floor(Math.random() * fallbackPhotos.length);
+  return fallbackPhotos[index];
+};
+
 const LostPoster = () => {
-  const { petId } = useParams(); // Este es el qr_uuid desde la URL
+  const { petId } = useParams();
   const [pet, setPet] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState('');
-  const [shareOptions, setShareOptions] = useState(false);
   const [posterUrl, setPosterUrl] = useState('');
   const [isGenerating, setIsGenerating] = useState(false);
   const posterRef = useRef(null);
   const navigate = useNavigate();
 
-  console.log('Pet UUID from URL:', petId);
-
   useEffect(() => {
     const fetchPet = async () => {
       try {
-        console.log('Fetching pet with UUID:', petId);
         setIsLoading(true);
         const data = await getPetByUuid(petId);
-        console.log('Pet data received:', data);
         setPet(data);
         setTimeout(() => generatePosterImage(), 1000);
       } catch (err) {
@@ -40,6 +45,13 @@ const LostPoster = () => {
     };
     fetchPet();
   }, [petId]);
+
+  const handleImageError = (imgElement) => {
+    console.warn('Error loading photo, switching to fallback image');
+    if (!imgElement) return;
+    imgElement.onerror = null;
+    imgElement.src = getRandomFallbackPhoto();
+  };
 
   const generatePosterImage = async () => {
     if (!posterRef.current) return;
@@ -62,13 +74,13 @@ const LostPoster = () => {
       );
 
       const canvas = await html2canvas(posterRef.current, {
-        scale: 3, // Mayor resolución para impresión
+        scale: 3,
         useCORS: true,
         allowTaint: true,
         logging: false,
         backgroundColor: '#ffffff',
-        width: 794, // Ancho A4 en píxeles (210mm)
-        height: 1123, // Alto A4 en píxeles (297mm)
+        width: 794,
+        height: 1123,
       });
       const imgData = canvas.toDataURL('image/png', 1.0);
       setPosterUrl(imgData);
@@ -105,8 +117,6 @@ const LostPoster = () => {
     }
   };
 
-
-
   if (isLoading) return <div className="loading">Cargando cartel...</div>;
   if (error) return <div className="error-container">{error}</div>;
   if (!pet) return <div className="not-found">Mascota no encontrada</div>;
@@ -114,18 +124,12 @@ const LostPoster = () => {
   const lastSeenDate = pet.last_seen_date ? new Date(pet.last_seen_date).toLocaleDateString() : new Date().toLocaleDateString();
 
   return (
-
-    
     <div className="lost-poster-page">
-
       <div className="poster-actions">
-        
         <button onClick={() => navigate(-1)} className="back-button">Volver</button>
         <button onClick={downloadPdf} disabled={isGenerating} className="download-button">
           {isGenerating ? 'Generando...' : 'Descargar Cartel (PDF)'}
         </button>
-
-
       </div>
 
       <div className="lost-poster-container">
@@ -147,14 +151,22 @@ const LostPoster = () => {
             </div>
           </div>
 
-          {/* Foto de la Mascota */}
+          {/* Foto de la Mascota - ALTURA FIJA */}
           <div className="pet-photo-container-poster">
-            <img
-              src={pet.photo ? `${BASE_URL}${pet.photo}` : 'https://via.placeholder.com/500x400/94618E/ffffff?text=Sin+Foto'}
-              alt={`Foto de ${pet.name}`}
-              className="pet-photo-lost-poster"
-              crossOrigin="anonymous"
-            />
+            {pet.photo || true ? (
+              <img
+                src={pet.photo ? `${BASE_URL}${pet.photo}` : getRandomFallbackPhoto()}
+                alt={`Foto de ${pet.name}`}
+                className="pet-photo-lost-poster"
+                crossOrigin="anonymous"
+                onError={(event) => handleImageError(event.currentTarget)}
+              />
+            ) : (
+              <div className="no-photo-placeholder">
+                <span className="no-photo-icon">🐾</span>
+                <p>Sin foto</p>
+              </div>
+            )}
           </div>
 
           {/* Nombre de la Mascota */}
@@ -203,7 +215,7 @@ const LostPoster = () => {
             <p>¡Por favor ayúdame a volver a casa! ¡Mi familia me extraña!</p>
           </div>
 
-          {/* Sección de Contacto y QR */}
+          {/* Sección de Contacto */}
           <div className="contact-qr-section">
             <div className="contact-section">
               <h3>INFORMACIÓN DE CONTACTO</h3>
@@ -220,10 +232,9 @@ const LostPoster = () => {
                 )}
               </div>
             </div>
-            
           </div>
 
-          {/* Pie de Página con Marca */}
+          {/* Pie de Página con Marca - SIEMPRE AL FINAL */}
           <div className="poster-footer">
             <p className="footer-text">Póster generado con <strong>EncuentraME</strong> - Collares QR para mascotas</p>
           </div>

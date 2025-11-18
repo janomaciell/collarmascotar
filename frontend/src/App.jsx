@@ -15,6 +15,7 @@ import Support from './pages/Support/Support';
 import HowItWorks from './pages/HowItWorks/HowItWorks';
 import NotificationPromptModal from './components/NotificationPromptModal/NotificationPromptModal';
 import LostPoster from './pages/LostPoster/LostPoster'; // Import the LostPoster component
+import ResetPassword from './pages/ResetPassword/ResetPassword';
 import Analytics from './components/Analytics';
 import EditProfile from './pages/EditProfile/EditProfile';
 import Compra from './components/Compra/Compra';
@@ -82,6 +83,7 @@ function App() {
             <Route path="/register-pet/:uuid" element={<QRRegistrationPage />} />
             <Route path="/qr/:uuid" element={<QRRedirectPage />} />
             <Route path="/lost-poster/:petId" element={<LostPoster />} /> {/* Add this route */}
+            <Route path="/reset-password/:uid/:token" element={<ResetPassword />} />
           </Routes>
         </main>
         <Footer />
