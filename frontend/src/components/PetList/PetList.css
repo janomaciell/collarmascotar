@@ -177,6 +177,25 @@
   transition: all 0.3s ease;
 }
 
+.edit-btn {
+  background-color: #87a8d0; /* Azul pastel */
+  color: white;
+  padding: 0.75rem 1.5rem;
+  border: none;
+  border-radius: 50px;
+  cursor: pointer;
+  font-size: 1rem;
+  font-weight: 600;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 12px rgba(74, 60, 49, 0.2);
+}
+
+.edit-btn:hover {
+  background-color: #7393b8; /* Azul pastel más oscuro */
+  transform: translateY(-2px);
+  box-shadow: 0 6px 18px rgba(74, 60, 49, 0.3);
+}
+
 /* Estilos Responsivos */
 @media (max-width: 768px) {
   .pet-list {

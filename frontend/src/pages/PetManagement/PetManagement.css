@@ -417,6 +417,51 @@
   border: 1px solid #86efac;
 }
 
+.edit-form-container {
+  background: var(--blanco-principal);
+  border-radius: 20px;
+  padding: 2rem;
+  margin-bottom: 2rem;
+  box-shadow: 0 8px 30px rgba(0,0,0,0.1);
+  border: 3px solid var(--azul-principal);
+}
+
+.edit-form-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 2rem;
+  padding-bottom: 1rem;
+  border-bottom: 2px solid var(--gris-suave);
+}
+
+.edit-form-header h2 {
+  font-family: 'Horizon', serif;
+  font-size: 1.8rem;
+  font-weight: 800;
+  color: var(--negro-principal);
+  text-transform: uppercase;
+  margin: 0;
+}
+
+.cancel-edit-btn {
+  background: var(--gris-texto);
+  color: var(--blanco-principal);
+  border: none;
+  padding: 0.6rem 1.2rem;
+  border-radius: 20px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  text-transform: uppercase;
+  font-size: 0.85rem;
+}
+
+.cancel-edit-btn:hover {
+  background: var(--negro-principal);
+  transform: translateY(-2px);
+}
+
 /* Responsividad */
 @media (max-width: 768px) {
   .pet-hero {
@@ -472,5 +517,16 @@
   .location-prompt,
   .scan-history-container {
     padding: 1.5rem;
+  }
+}
+@media (max-width: 768px) {
+  .edit-form-header {
+    flex-direction: column;
+    gap: 1rem;
+    align-items: stretch;
+  }
+  
+  .edit-form-header h2 {
+    font-size: 1.3rem;
   }
 }

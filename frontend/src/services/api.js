@@ -316,3 +316,12 @@ export const resetPassword = async (uid, token, newPassword) => {
     throw error.response?.data || error.message;
   }
 };
+
+export const updatePet = async (petId, petData) => {
+  try {
+    const response = await axios.put(`${API_URL}/pets/${petId}/`, petData);
+    return response.data;
+  } catch (error) {
+    throw error.response?.data || error.message;
+  }
+};

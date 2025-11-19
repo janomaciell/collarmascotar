@@ -1,7 +1,7 @@
 import React from 'react';
 import './PetList.css';
 
-const PetList = ({ pets, onToggleLost, onShowHistory }) => {
+const PetList = ({ pets, onToggleLost, onShowHistory, onEdit }) => {
   return (
     <div className="pet-list">
       {pets.length === 0 ? (
@@ -17,14 +17,21 @@ const PetList = ({ pets, onToggleLost, onShowHistory }) => {
                 <p><strong>Teléfono:</strong> {pet.phone}</p>
               </div>
               
-
               <div className="pet-actions">
+                <button
+                  className="edit-btn"
+                  onClick={() => onEdit(pet)}
+                >
+                  ✏️ Editar
+                </button>
+                
                 <button
                   className={`toggle-lost-btn ${pet.is_lost ? 'is-lost' : ''}`}
                   onClick={() => onToggleLost(pet.id, pet.is_lost)}
                 >
                   {pet.is_lost ? 'Marcar como encontrada' : 'Marcar como perdida'}
                 </button>
+                
                 <button
                   className="history-btn"
                   onClick={() => onShowHistory(pet.id)}

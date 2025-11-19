@@ -1,10 +1,9 @@
-import React, { useState, useEffect, useRef } from 'react';
-import { getPets, createPet, updatePetLostStatus, getScanHistory, updateUserLocation, generateLostPoster } from '../../services/api';
+import React, { useState, useEffect } from 'react';
+import { getPets, updatePet, updatePetLostStatus, getScanHistory, updateUserLocation } from '../../services/api';
 import PetList from '../../components/PetList/PetList';
+import PetForm from '../../components/PetForm/PetForm';
 import HeatMapComponent from '../../components/HeatMapComponent/HeatMapComponent';
 import './PetManagement.css';
-import html2canvas from 'html2canvas';
-import jsPDF from 'jspdf';
 import { API_URL } from '../../services/api';
 import { useNavigate } from 'react-router-dom';
 
@@ -195,6 +194,8 @@ const PetManagement = () => {
   const [userLocation, setUserLocation] = useState(null);
   const [locationPermission, setLocationPermission] = useState('prompt');
   const [showLocationPrompt, setShowLocationPrompt] = useState(false);
+  const [isEditing, setIsEditing] = useState(false);
+  const [editingPet, setEditingPet] = useState(null);
   const alertRadius = 5;
   const navigate = useNavigate();
 
@@ -396,6 +397,58 @@ const PetManagement = () => {
     }
   };
 
+  const handleEditPet = (pet) => {
+    setEditingPet(pet);
+    setIsEditing(true);
+    // Scroll al formulario
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
+  const handleUpdatePet = async (updatedData) => {
+    try {
+      setIsLoading(true);
+      setError('');
+      
+      // Crear FormData para enviar todos los campos incluyendo la foto
+      const formData = new FormData();
+      
+      // Agregar todos los campos
+      Object.keys(updatedData).forEach(key => {
+        if (key === 'photo') {
+          // Solo agregar la foto si es un archivo nuevo
+          if (updatedData[key] instanceof File) {
+            formData.append(key, updatedData[key]);
+          }
+        } else if (updatedData[key] !== null && updatedData[key] !== undefined && updatedData[key] !== '') {
+          formData.append(key, updatedData[key]);
+        }
+      });
+
+      const response = await updatePet(editingPet.id, formData);
+      
+      // Actualizar la lista de mascotas
+      setPets(pets.map(pet => pet.id === editingPet.id ? response : pet));
+      
+      setSuccessMessage('¡Mascota actualizada exitosamente!');
+      setTimeout(() => setSuccessMessage(''), 5000);
+      
+      // Cerrar el formulario de edición
+      setIsEditing(false);
+      setEditingPet(null);
+      
+    } catch (err) {
+      setError('Error al actualizar la mascota: ' + (err.message || err));
+      console.error('Error en handleUpdatePet:', err);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handleCancelEdit = () => {
+    setIsEditing(false);
+    setEditingPet(null);
+  };
+
   return (
     <div className="pet-management-wrapper">
       {/* Hero */}
@@ -413,6 +466,22 @@ const PetManagement = () => {
       </section>
 
       <div className="pet-management-container">
+        {/* Formulario de edición */}
+        {isEditing && editingPet && (
+          <div className="edit-form-container">
+            <div className="edit-form-header">
+              <h2>✏️ Editar Mascota: {editingPet.name}</h2>
+              <button onClick={handleCancelEdit} className="cancel-edit-btn">
+                ✕ Cancelar
+              </button>
+            </div>
+            <PetForm
+              onSubmit={handleUpdatePet}
+              initialData={editingPet}
+            />
+          </div>
+        )}
+
         {showLocationPrompt && (
           <div className="location-prompt">
             <div className="prompt-content">
@@ -450,6 +519,7 @@ const PetManagement = () => {
               pets={pets}
               onToggleLost={handleToggleLost}
               onShowHistory={fetchScanHistory}
+              onEdit={handleEditPet}
             />
 
             {selectedPetId && (
