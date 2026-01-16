@@ -1,15 +1,16 @@
-# models.py (update to add notification models)
-
 from django.db import models
 from django.contrib.auth.models import User
 import qrcode
+import qrcode.image.svg
 from io import BytesIO
 from django.core.files import File
+from django.core.files.base import ContentFile
 from PIL import Image
 import uuid
 from django.utils import timezone
 import math
 from django.conf import settings
+
 
 class Pet(models.Model):
     owner = models.ForeignKey(User, on_delete=models.CASCADE)
@@ -21,6 +22,7 @@ class Pet(models.Model):
     email = models.EmailField(blank=True, null=True)
     notes = models.TextField(blank=True)
     qr_code = models.ImageField(upload_to='qr_codes/', blank=True)
+    qr_code_svg = models.FileField(upload_to='qr_codes_svg/', blank=True, null=True)
     qr_uuid = models.UUIDField(default=uuid.uuid4, editable=False, unique=True)
     created_at = models.DateTimeField(auto_now_add=True)
     is_lost = models.BooleanField(default=False)
@@ -54,14 +56,53 @@ class Pet(models.Model):
     vet_address = models.TextField(blank=True, null=True)
 
     def save(self, *args, **kwargs):
-
         if self.is_lost and not self.last_seen_date:
             self.last_seen_date = timezone.now()
+        
+        # Generar QR codes si no existen
+        if not self.qr_code or not self.qr_code_svg:
+            # Construir la URL del QR
+            frontend_url = getattr(settings, 'FRONTEND_URL', 'https://www.encuentrameqr.com/')
+            qr_url = f'{frontend_url}/qr/{self.qr_uuid}'
+            
+            # Generar QR code PNG (para visualización)
+            qr_png = qrcode.QRCode(
+                version=1,
+                error_correction=qrcode.constants.ERROR_CORRECT_L,
+                box_size=10,
+                border=4,
+            )
+            qr_png.add_data(qr_url)
+            qr_png.make(fit=True)
+            img_png = qr_png.make_image(fill_color="black", back_color="white")
+            
+            buffer_png = BytesIO()
+            img_png.save(buffer_png, format='PNG')
+            file_name_png = f'pet_qr_{self.qr_uuid}.png'
+            self.qr_code.save(file_name_png, File(buffer_png), save=False)
+            
+            # Generar QR code SVG vectorizado (para impresión/grabado láser)
+            factory = qrcode.image.svg.SvgPathImage
+            qr_svg = qrcode.QRCode(
+                version=1,
+                error_correction=qrcode.constants.ERROR_CORRECT_L,
+                box_size=10,
+                border=4,
+                image_factory=factory,
+            )
+            qr_svg.add_data(qr_url)
+            qr_svg.make(fit=True)
+            img_svg = qr_svg.make_image(fill_color="black", back_color="white")
+            
+            buffer_svg = BytesIO()
+            img_svg.save(buffer_svg)
+            file_name_svg = f'pet_qr_{self.qr_uuid}.svg'
+            self.qr_code_svg.save(file_name_svg, ContentFile(buffer_svg.getvalue()), save=False)
             
         super().save(*args, **kwargs)
 
     class Meta:
-        unique_together = ['owner', 'name']  
+        unique_together = ['owner', 'name']
 
 
 class Scan(models.Model):
@@ -72,6 +113,7 @@ class Scan(models.Model):
     
     def __str__(self):
         return f"Scan de {self.pet.name} el {self.timestamp}"
+
 
 class UserLocation(models.Model):
     """Model to store user's location for notifications"""
@@ -106,6 +148,7 @@ class UserLocation(models.Model):
         
         return distance <= radius_km
 
+
 class DeviceRegistration(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='devices')
     registration_id = models.CharField(max_length=500)
@@ -123,6 +166,7 @@ class DeviceRegistration(models.Model):
     def __str__(self):
         return f"{self.device_type} device for {self.user.username}"
 
+
 class PosterShare(models.Model):
     """Model to store lost pet posters for sharing"""
     pet = models.ForeignKey(Pet, on_delete=models.CASCADE, related_name='posters')
@@ -135,6 +179,7 @@ class PosterShare(models.Model):
     def __str__(self):
         return f"Poster for {self.pet.name}"
 
+
 class LostPetAlert(models.Model):
     """Model to store records of lost pet alerts sent"""
     pet = models.ForeignKey(Pet, on_delete=models.CASCADE, related_name='alerts')
@@ -146,31 +191,61 @@ class LostPetAlert(models.Model):
     
     def __str__(self):
         return f"Alert for {self.pet.name} at {self.sent_at}"
-    
 
 
 class PreGeneratedQR(models.Model):
     qr_uuid = models.UUIDField(default=uuid.uuid4, editable=False, unique=True)
     qr_code = models.ImageField(upload_to='pre_generated_qr_codes/', blank=True)
+    qr_code_svg = models.FileField(upload_to='pre_generated_qr_codes_svg/', blank=True, null=True)
     is_assigned = models.BooleanField(default=False)
     is_printed = models.BooleanField(default=False)
     created_at = models.DateTimeField(auto_now_add=True)
     
+    class Meta:
+        verbose_name = "QR Pre-generado"
+        verbose_name_plural = "QRs Pre-generados"
+        ordering = ['-created_at']
+    
     def save(self, *args, **kwargs):
-        if not self.qr_code:
-            qr = qrcode.QRCode(
+        if not self.qr_code or not self.qr_code_svg:
+            # Construir la URL del QR
+            frontend_url = getattr(settings, 'FRONTEND_URL', 'https://tupetid.com')
+            qr_url = f'{frontend_url}/qr/{self.qr_uuid}'
+            
+            # Generar QR code PNG (para visualización en admin)
+            qr_png = qrcode.QRCode(
                 version=1,
                 error_correction=qrcode.constants.ERROR_CORRECT_L,
                 box_size=10,
                 border=4,
             )
-            # Cambiar para que apunte a /qr/ en lugar de /register-pet/
-            qr.add_data(f'{settings.FRONTEND_URL}/qr/{self.qr_uuid}')
-            qr.make(fit=True)
-            img = qr.make_image(fill_color="black", back_color="white")
-            buffer = BytesIO()
-            img.save(buffer, format='PNG')
-            self.qr_code.save(f'pre_qr_{self.qr_uuid}.png', File(buffer), save=False)
+            qr_png.add_data(qr_url)
+            qr_png.make(fit=True)
+            img_png = qr_png.make_image(fill_color="black", back_color="white")
+            
+            buffer_png = BytesIO()
+            img_png.save(buffer_png, format='PNG')
+            file_name_png = f'pre_qr_{self.qr_uuid}.png'
+            self.qr_code.save(file_name_png, File(buffer_png), save=False)
+            
+            # Generar QR code SVG vectorizado (para impresión/grabado láser)
+            factory = qrcode.image.svg.SvgPathImage
+            qr_svg = qrcode.QRCode(
+                version=1,
+                error_correction=qrcode.constants.ERROR_CORRECT_L,
+                box_size=10,
+                border=4,
+                image_factory=factory,
+            )
+            qr_svg.add_data(qr_url)
+            qr_svg.make(fit=True)
+            img_svg = qr_svg.make_image(fill_color="black", back_color="white")
+            
+            buffer_svg = BytesIO()
+            img_svg.save(buffer_svg)
+            file_name_svg = f'pre_qr_{self.qr_uuid}.svg'
+            self.qr_code_svg.save(file_name_svg, ContentFile(buffer_svg.getvalue()), save=False)
+            
         super().save(*args, **kwargs)
     
     def __str__(self):

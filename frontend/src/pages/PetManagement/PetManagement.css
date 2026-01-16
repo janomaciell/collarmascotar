@@ -130,7 +130,7 @@
 }
 
 .prompt-text h3 {
-  font-family: 'Horizon', serif;
+  font-family: 'Poppins', sans-serif;
   font-size: 1.3rem;
   font-weight: 800;
   color: var(--negro-principal);
@@ -200,7 +200,7 @@
 }
 
 .history-header h3 {
-  font-family: 'Horizon', serif;
+  font-family: 'Poppins', sans-serif;
   font-size: 1.5rem;
   font-weight: 800;
   color: var(--negro-principal);
@@ -277,7 +277,7 @@
 }
 
 .heatmap-section h3 {
-  font-family: 'Horizon', serif;
+  font-family: 'Poppins', sans-serif;
   font-size: 1.2rem;
   font-weight: 800;
   color: var(--negro-principal);
@@ -291,7 +291,7 @@
 }
 
 .frequent-locations h4 {
-  font-family: 'Horizon', serif;
+  font-family: 'Poppins', sans-serif;
   font-size: 1.1rem;
   font-weight: 800;
   color: var(--negro-principal);
@@ -436,7 +436,7 @@
 }
 
 .edit-form-header h2 {
-  font-family: 'Horizon', serif;
+  font-family: 'Poppins', sans-serif;
   font-size: 1.8rem;
   font-weight: 800;
   color: var(--negro-principal);

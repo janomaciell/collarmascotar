@@ -60,21 +60,21 @@ const Home = () => {
           <div className="steps-grid-horizontal">
             <div className="step">
               <div className="step-number">1</div>
-              <div className="step-icon">📱</div>
+              <div className="step-icon"></div>
               <h3>Escanea</h3>
               <p>Cualquier persona escanea el código QR del collar</p>
             </div>
             <div className="step-arrow">→</div>
             <div className="step">
               <div className="step-number">2</div>
-              <div className="step-icon">📋</div>
+              <div className="step-icon"></div>
               <h3>Accede</h3>
               <p>Ve inmediatamente la información de contacto</p>
             </div>
             <div className="step-arrow">→</div>
             <div className="step">
               <div className="step-number">3</div>
-              <div className="step-icon">🏠</div>
+              <div className="step-icon"></div>
               <h3>Encuentra</h3>
               <p>Tu mascota regresa segura a casa</p>
             </div>
@@ -90,7 +90,7 @@ const Home = () => {
             <div className="product-card">
               <div className="product-image">
                 <div className="placeholder-product black-collar">
-                  <div className="collar-icon">🐕</div>
+                  <div className="collar-icon"></div>
                 </div>
               </div>
               <h3>Collar Básico</h3>
@@ -102,7 +102,7 @@ const Home = () => {
               <div className="featured-badge">Más popular</div>
               <div className="product-image">
                 <div className="placeholder-product green-collar">
-                  <div className="collar-icon">💚</div>
+                  <div className="collar-icon"></div>
                 </div>
               </div>
               <h3>Collar Completo</h3>
@@ -113,7 +113,7 @@ const Home = () => {
             <div className="product-card">
               <div className="product-image">
                 <div className="placeholder-product pink-collar">
-                  <div className="collar-icon">❤️</div>
+                  <div className="collar-icon"></div>
                 </div>
               </div>
               <h3>Collar Completo</h3>
@@ -130,32 +130,32 @@ const Home = () => {
           <h2 className="section-title">BENEFICIOS QUE AMARÁS</h2>
           <div className="benefits-grid">
             <div className="benefit-card">
-              <div className="benefit-icon">📍</div>
+              <div className="benefit-icon"></div>
               <h3>Ubicación</h3>
               <p>Ubicación actualizada si se pierde</p>
             </div>
             <div className="benefit-card">
-              <div className="benefit-icon">📋</div>
+              <div className="benefit-icon"></div>
               <h3>Salud</h3>
               <p>Libreta sanitaria digital</p>
             </div>
             <div className="benefit-card">
-              <div className="benefit-icon">🏥</div>
+              <div className="benefit-icon"></div>
               <h3>Placa QR</h3>
               <p>Datos del veterinario siempre a mano</p>
             </div>
             <div className="benefit-card">
-              <div className="benefit-icon">🔒</div>
+              <div className="benefit-icon"></div>
               <h3>Privacidad</h3>
               <p>Privacidad y seguridad garantizadas</p>
             </div>
             <div className="benefit-card">
-              <div className="benefit-icon">📞</div>
+              <div className="benefit-icon"></div>
               <h3>Contacto</h3>
               <p>Comunicación directa con el dueño</p>
             </div>
             <div className="benefit-card">
-              <div className="benefit-icon">🐾</div>
+              <div className="benefit-icon"></div>
               <h3>Fácil de usar</h3>
               <p>Fácil de usar y duradero</p>
             </div>

@@ -62,7 +62,6 @@ const Login = () => {
       <section className="login-hero">
         <div className="pattern-bg"></div>
         <div className="hero-content">
-          <img src={mascotaImage} alt="Mascota EncuentraME" className="hero-mascota" />
           <h1 className="hero-title">¡BIENVENIDO DE VUELTA!</h1>
           <p className="hero-subtitle">Accede a tu cuenta EncuéntraME</p>
         </div>

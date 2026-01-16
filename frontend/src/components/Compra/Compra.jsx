@@ -132,11 +132,10 @@ const Compra = () => {
       {/* Hero de Compra */}
       <section className="compra-hero">
         <div className="hero-content">
-          <img src={mascotaImage} alt="Mascota EncuentraME" className="hero-mascota" />
           <h1 className="hero-title">¡PROTEGE A TU MEJOR AMIGO!</h1>
           <p className="hero-subtitle">Collar QR que salva vidas</p>
           <div className="hero-badge">
-            <span>📱 Tecnología simple, resultados inmediatos</span>
+            <span>Tecnología simple, resultados inmediatos</span>
           </div>
         </div>
       </section>

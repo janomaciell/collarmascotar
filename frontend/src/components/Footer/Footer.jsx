@@ -69,31 +69,11 @@ const Footer = () => {
             </ul>
           </div>
 
-          {/* Contacto */}
-          <div className="footer-section">
-            <h4>Contacto</h4>
-            <div className="contact-info">
-              <div className="contact-item">
-                <span className="contact-icon">📧</span>
-                <a href="mailto:janomaciel1@gmail.com">janomaciel1@gmail.com</a>
-              </div>
-              <div className="contact-item">
-                <span className="contact-icon">📱</span>
-                <a href="tel:+5422674055599">+54 2267-405599</a>
-              </div>
-              <div className="contact-item">
-                <span className="contact-icon">📍</span>
-                <span>General Juan Madariaga, Buenos Aires, AR</span>
-              </div>
-            </div>
-          </div>
+         
         </div>
       </div>
 
-      {/* Mascota decorativa */}
-      <div className="footer-mascot">
-        <img src={mascotaImage} alt="Mascota EncuentraME" className="mascot-image" />
-      </div>
+
 
       {/* Footer bottom */}
       <div className="footer-bottom">

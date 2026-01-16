@@ -110,7 +110,7 @@
 
 /* Secciones del footer */
 .footer-section h4 {
-  font-family: 'Jackerton', serif;
+  font-family: 'Poppins', sans-serif;
   font-size: 1.2rem;
   font-weight: 800;
   color: var(--verde-secundario);
@@ -142,19 +142,7 @@
   position: relative;
 }
 
-.footer-links a::before {
-  content: '';
-  position: absolute;
-  left: -15px;
-  top: 50%;
-  transform: translateY(-50%);
-  width: 6px;
-  height: 6px;
-  border-radius: 50%;
-  background: var(--verde-secundario);
-  opacity: 0;
-  transition: all 0.3s ease;
-}
+
 
 .footer-links a:hover { color: var(--negro-principal); padding-left: 20px; }
 
@@ -184,7 +172,6 @@
   transition: color 0.3s ease;
 }
 
-.contact-item a:hover { color: var(--azul-principal); }
 
 .contact-item span { color: #333; }
 

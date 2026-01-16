@@ -10,13 +10,18 @@ from .models import PreGeneratedQR, Pet
 
 class GenerateBatchForm(forms.Form):
     quantity = forms.IntegerField(min_value=1, max_value=100, initial=1, label="Cantidad de QRs")
+    format_choice = forms.ChoiceField(
+        choices=[('svg', 'SVG (Vectorizado)'), ('png', 'PNG (Imagen)')],
+        initial='svg',
+        label="Formato de exportación"
+    )
 
 @admin.register(PreGeneratedQR)
 class PreGeneratedQRAdmin(admin.ModelAdmin):
     list_display = ('qr_uuid', 'is_assigned', 'is_printed', 'created_at', 'qr_code')
     list_filter = ('is_assigned', 'is_printed', 'created_at')
     search_fields = ('qr_uuid',)
-    actions = ['mark_as_printed', 'export_unused_qrs']
+    actions = ['mark_as_printed', 'export_unused_qrs', 'export_unused_qrs_svg']
     readonly_fields = ('qr_uuid', 'qr_code', 'created_at')
 
     def generate_batch(self, request, queryset=None):
@@ -51,6 +56,7 @@ class PreGeneratedQRAdmin(admin.ModelAdmin):
     mark_as_printed.short_description = "Marcar como impresos"
 
     def export_unused_qrs(self, request, queryset):
+        """Exportar QRs en PNG (método original)"""
         unused_qrs = PreGeneratedQR.objects.filter(is_assigned=False, is_printed=False)
         if not unused_qrs.exists():
             self.message_user(request, "No hay QR no usados y no impresos para exportar.", level='warning')
@@ -65,10 +71,58 @@ class PreGeneratedQRAdmin(admin.ModelAdmin):
         
         buffer.seek(0)
         response = HttpResponse(buffer, content_type='application/zip')
-        response['Content-Disposition'] = 'attachment; filename=unused_qrs.zip'
+        response['Content-Disposition'] = 'attachment; filename=unused_qrs_png.zip'
         return response
 
-    export_unused_qrs.short_description = "Exportar QR no usados y no impresos como ZIP"
+    export_unused_qrs.short_description = "Exportar QR como PNG (imágenes)"
+
+    def export_unused_qrs_svg(self, request, queryset):
+        """Exportar QRs en formato SVG vectorizado para grabado láser"""
+        import qrcode
+        import qrcode.image.svg
+        from django.conf import settings
+        
+        unused_qrs = PreGeneratedQR.objects.filter(is_assigned=False, is_printed=False)
+        if not unused_qrs.exists():
+            self.message_user(request, "No hay QR no usados y no impresos para exportar.", level='warning')
+            return
+
+        buffer = BytesIO()
+        with zipfile.ZipFile(buffer, 'w', zipfile.ZIP_DEFLATED) as zip_file:
+            for index, qr_obj in enumerate(unused_qrs, start=1):
+                # Construir la URL completa del QR
+                base_url = getattr(settings, 'SITE_URL', 'https://encuentrameqr.com')
+                qr_url = f"{base_url}/pet/register/{qr_obj.qr_uuid}/"
+                
+                # Crear QR code vectorizado usando la fábrica SVG path
+                factory = qrcode.image.svg.SvgPathImage
+                qr = qrcode.QRCode(
+                    version=1,
+                    error_correction=qrcode.constants.ERROR_CORRECT_L,
+                    box_size=10,
+                    border=4,
+                    image_factory=factory,
+                )
+                qr.add_data(qr_url)
+                qr.make(fit=True)
+                
+                # Generar imagen SVG
+                img = qr.make_image(fill_color="black", back_color="white")
+                
+                # Guardar SVG en memoria
+                svg_buffer = BytesIO()
+                img.save(svg_buffer)
+                svg_content = svg_buffer.getvalue()
+                
+                # Agregar al ZIP con nombre enumerado
+                zip_file.writestr(f"qr_{index}.svg", svg_content)
+        
+        buffer.seek(0)
+        response = HttpResponse(buffer, content_type='application/zip')
+        response['Content-Disposition'] = 'attachment; filename=unused_qrs_vectorized.zip'
+        return response
+
+    export_unused_qrs_svg.short_description = "Exportar QR como SVG vectorizado (para láser)"
 
     def get_urls(self):
         urls = super().get_urls()
