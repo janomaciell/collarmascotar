@@ -2,10 +2,11 @@ import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { login, requestPasswordReset } from '../../services/api';
 import './Login.css';
+import { FaExclamationTriangle, FaEye, FaEyeSlash, FaCheck } from 'react-icons/fa';
 
 const Login = () => {
   const [credentials, setCredentials] = useState({
-    username: '',
+    email: '',
     password: ''
   });
   const [error, setError] = useState('');
@@ -74,21 +75,21 @@ const Login = () => {
           
           {error && (
             <div className="error-message">
-              <span className="error-icon">⚠️</span>
+              <span className="error-icon"><FaExclamationTriangle /></span>
               {error}
             </div>
           )}
           
           <form onSubmit={handleSubmit} className="login-form">
             <div className="form-group">
-              <label htmlFor="username">Usuario</label>
+              <label htmlFor="email">Correo electrónico</label>
               <input
-                type="text"
-                id="username"
-                name="username"
-                value={credentials.username}
+                type="email"
+                id="email"
+                name="email"
+                value={credentials.email}
                 onChange={handleChange}
-                placeholder="Tu nombre de usuario"
+                placeholder="Tu correo electrónico"
                 required
               />
             </div>
@@ -110,7 +111,7 @@ const Login = () => {
                   className="toggle-password"
                   onClick={() => setShowPassword(!showPassword)}
                 >
-                  {showPassword ? "👁️" : "👁️‍🗨️"}
+                  {showPassword ? <FaEyeSlash /> : <FaEye />}
                 </button>
               </div>
             </div>
@@ -157,7 +158,7 @@ const Login = () => {
                 <h2>Recuperar contraseña</h2>
                 {forgotPasswordSuccess ? (
                   <div className="success-message">
-                    <span className="success-icon">✓</span>
+                    <span className="success-icon"><FaCheck /></span>
                     <p>Se ha enviado un email con instrucciones para recuperar tu contraseña.</p>
                     <p className="success-note">Por favor revisa tu bandeja de entrada.</p>
                   </div>
@@ -168,7 +169,7 @@ const Login = () => {
                     </p>
                     {forgotPasswordError && (
                       <div className="error-message">
-                        <span className="error-icon">⚠️</span>
+                        <span className="error-icon"><FaExclamationTriangle /></span>
                         {forgotPasswordError}
                       </div>
                     )}

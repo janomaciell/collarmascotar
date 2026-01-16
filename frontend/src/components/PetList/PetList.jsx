@@ -1,5 +1,6 @@
 import React from 'react';
 import './PetList.css';
+import { FaEdit } from 'react-icons/fa';
 
 const PetList = ({ pets, onToggleLost, onShowHistory, onEdit }) => {
   return (
@@ -22,7 +23,7 @@ const PetList = ({ pets, onToggleLost, onShowHistory, onEdit }) => {
                   className="edit-btn"
                   onClick={() => onEdit(pet)}
                 >
-                  ✏️ Editar
+                  <FaEdit /> Editar
                 </button>
                 
                 <button

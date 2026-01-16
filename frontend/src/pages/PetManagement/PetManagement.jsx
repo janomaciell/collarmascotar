@@ -6,6 +6,7 @@ import HeatMapComponent from '../../components/HeatMapComponent/HeatMapComponent
 import './PetManagement.css';
 import { API_URL } from '../../services/api';
 import { useNavigate } from 'react-router-dom';
+import { FaLightbulb, FaSearch, FaEdit, FaMapMarkerAlt, FaExclamationTriangle, FaCheck } from 'react-icons/fa';
 
 const calculateDistance = (lat1, lon1, lat2, lon2) => {
   const R = 6371;
@@ -169,14 +170,14 @@ const ScanHistoryDetail = ({ scanHistory, userLocation, pet }) => {
 
           {pattern && (
             <div className="pattern-insight">
-              <span className="pattern-icon">💡</span>
+              <span className="pattern-icon"><FaLightbulb /></span>
               <p>{pattern.message}</p>
             </div>
           )}
         </>
       ) : (
         <div className="no-scans">
-          <span className="no-scans-icon">🔍</span>
+          <span className="no-scans-icon"><FaSearch /></span>
           <p>No hay escaneos registrados para {pet.name}</p>
         </div>
       )}
@@ -470,7 +471,7 @@ const PetManagement = () => {
         {isEditing && editingPet && (
           <div className="edit-form-container">
             <div className="edit-form-header">
-              <h2>✏️ Editar Mascota: {editingPet.name}</h2>
+              <h2><FaEdit /> Editar Mascota: {editingPet.name}</h2>
               <button onClick={handleCancelEdit} className="cancel-edit-btn">
                 ✕ Cancelar
               </button>
@@ -485,7 +486,7 @@ const PetManagement = () => {
         {showLocationPrompt && (
           <div className="location-prompt">
             <div className="prompt-content">
-              <span className="prompt-icon">📍</span>
+              <span className="prompt-icon"><FaMapMarkerAlt /></span>
               <div className="prompt-text">
                 <h3>Permiso de ubicación</h3>
                 <p>
@@ -549,14 +550,14 @@ const PetManagement = () => {
 
         {error && (
           <div className="message error-message">
-            <span className="message-icon">⚠️</span>
+            <span className="message-icon"><FaExclamationTriangle /></span>
             <span>{error}</span>
           </div>
         )}
 
         {successMessage && (
           <div className="message success-message">
-            <span className="message-icon">✅</span>
+            <span className="message-icon"><FaCheck /></span>
             <span>{successMessage}</span>
           </div>
         )}

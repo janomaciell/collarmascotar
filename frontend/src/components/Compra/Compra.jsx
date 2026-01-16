@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { getPets } from '../../services/api';
 import './Compra.css';
+import { FaTag, FaDog, FaCrown, FaCheck, FaWhatsapp, FaArrowRight } from 'react-icons/fa';
 
 const Compra = () => {
   const [pets, setPets] = useState([]);
@@ -41,7 +42,7 @@ const Compra = () => {
       oldPrice: 30000,
       available: true,
       description: 'Placa resistente con código QR único',
-      icon: '🏷️'
+      icon: FaTag
     },
     { 
       id: 'collar-simple', 
@@ -50,7 +51,7 @@ const Compra = () => {
       oldPrice: 30000,
       available: false,
       description: 'Collar + chapita QR incluida',
-      icon: '🦮'
+      icon: FaDog
     },
     { 
       id: 'collar-premium', 
@@ -59,7 +60,7 @@ const Compra = () => {
       oldPrice: 30000,
       available: false,
       description: 'Collar reforzado + chapita personalizada',
-      icon: '👑'
+      icon: FaCrown
     },
   ];
 
@@ -83,7 +84,8 @@ const Compra = () => {
       return;
     }
 
-    if (lostPet === true && !selectedPetId) {
+    // Solo requiere seleccionar mascota si hay mascotas disponibles
+    if (lostPet === true && pets.length > 0 && !selectedPetId) {
       setError('Por favor selecciona una mascota.');
       return;
     }
@@ -223,7 +225,7 @@ const Compra = () => {
                     className={`product-card ${selectedOption === option.id ? 'selected' : ''} ${!option.available ? 'unavailable' : ''}`}
                     onClick={() => option.available && setSelectedOption(option.id)}
                   >
-                    <div className="product-icon">{option.icon}</div>
+                    <div className="product-icon">{React.createElement(option.icon)}</div>
                     <h3>{option.name}</h3>
                     <p className="product-description">{option.description}</p>
                     <div className="product-price">
@@ -239,7 +241,7 @@ const Compra = () => {
                         <span className="coming-soon">Próximamente</span>
                       )}
                     </div>
-                    {option.available && <div className="selection-indicator">✓</div>}
+                    {option.available && <div className="selection-indicator"><FaCheck /></div>}
                   </div>
                 ))}
               </div>
@@ -284,7 +286,7 @@ const Compra = () => {
             
             {successMessage && (
               <div className="message success-message">
-                <span className="message-icon">✅</span>
+                <span className="message-icon"><FaCheck /></span>
                 {successMessage}
               </div>
             )}
@@ -295,9 +297,9 @@ const Compra = () => {
               className="submit-btn"
               disabled={!selectedOption || !validatePhone()}
             >
-              <span className="btn-icon">📱</span>
+              <span className="btn-icon"><FaWhatsapp /></span>
               <span>Enviar por WhatsApp</span>
-              <span className="btn-arrow">→</span>
+              <span className="btn-arrow"><FaArrowRight /></span>
             </button>
           </form>
         )}

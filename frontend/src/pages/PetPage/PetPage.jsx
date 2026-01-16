@@ -3,6 +3,7 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { getPetByUuid, notifyOwner, sendCommunityNotification, checkQRStatus } from '../../services/api';
 import './PetPage.css';
 import mascotaImage from '../../img/personaje2.png';
+import { FaExclamationTriangle, FaPhone, FaWhatsapp, FaEnvelope } from 'react-icons/fa';
 
 const BASE_URL = import.meta.env.VITE_BASE_URL;
 
@@ -125,7 +126,7 @@ const PetPage = () => {
     return (
       <div className="pet-page-wrapper">
         <div className="error-container">
-          <span className="error-icon">⚠️</span>
+          <span className="error-icon"><FaExclamationTriangle /></span>
           <h2>Error</h2>
           <p>{error || 'No se encontró la mascota.'}</p>
         </div>
@@ -189,9 +190,9 @@ const PetPage = () => {
             <PetIntro name={pet.name} isLost={pet.is_lost} />
           </div>
           <div className="pet-actions" style={{ justifyContent: 'center', gap: '2rem' }}>
-            <a href={`tel:${pet.phone}`} className="action-btn call-btn">📞 Llamar dueño</a>
-            <button onClick={handleWhatsApp} className="action-btn whatsapp-btn">💬 WhatsApp</button>
-            <a href={`mailto:${pet.email}`} className="action-btn message-btn">✉️ Mensaje dueño</a>
+            <a href={`tel:${pet.phone}`} className="action-btn call-btn"><FaPhone /> Llamar dueño</a>
+            <button onClick={handleWhatsApp} className="action-btn whatsapp-btn"><FaWhatsapp /> WhatsApp</button>
+            <a href={`mailto:${pet.email}`} className="action-btn message-btn"><FaEnvelope /> Mensaje dueño</a>
           </div>
         </section>
 

@@ -4,6 +4,7 @@ import { getPetByUuid, generateLostPoster } from '../../services/api';
 import './LostPoster.css';
 import html2canvas from 'html2canvas';
 import jsPDF from 'jspdf';
+import { FaPaw, FaCalendarAlt, FaHome, FaBirthdayCake, FaPhone, FaEnvelope } from 'react-icons/fa';
 const BASE_URL = import.meta.env.VITE_BASE_URL;
 
 const logoUrl = new URL('../../img/logo.png', import.meta.url).href;
@@ -163,7 +164,7 @@ const LostPoster = () => {
               />
             ) : (
               <div className="no-photo-placeholder">
-                <span className="no-photo-icon">🐾</span>
+                <span className="no-photo-icon"><FaPaw /></span>
                 <p>Sin foto</p>
               </div>
             )}
@@ -178,14 +179,14 @@ const LostPoster = () => {
           <div className="pet-details">
             <div className="detail-row">
               <div className="detail-item">
-                <span className="detail-icon">🗓️</span>
+                <span className="detail-icon"><FaCalendarAlt /></span>
                 <div className="detail-text">
                   <strong>Última vez visto:</strong>
                   <p>{lastSeenDate}</p>
                 </div>
               </div>
               <div className="detail-item">
-                <span className="detail-icon">🐾</span>
+                <span className="detail-icon"><FaPaw /></span>
                 <div className="detail-text">
                   <strong>Raza:</strong>
                   <p>{pet.breed || 'No especificada'}</p>
@@ -194,14 +195,14 @@ const LostPoster = () => {
             </div>
             <div className="detail-row">
               <div className="detail-item">
-                <span className="detail-icon">🏠</span>
+                <span className="detail-icon"><FaHome /></span>
                 <div className="detail-text">
                   <strong>Dueño:</strong>
                   <p>{pet.owner || 'No especificado'}</p>
                 </div>
               </div>
               <div className="detail-item">
-                <span className="detail-icon">🎂</span>
+                <span className="detail-icon"><FaBirthdayCake /></span>
                 <div className="detail-text">
                   <strong>Edad:</strong>
                   <p>{pet.birthday ? `Nacido: ${pet.birthday}` : 'No especificada'}</p>
@@ -221,12 +222,12 @@ const LostPoster = () => {
               <h3>INFORMACIÓN DE CONTACTO</h3>
               <div className="contact-info">
                 <div className="contact-item">
-                  <span className="contact-icon">📞</span>
+                  <span className="contact-icon"><FaPhone /></span>
                   <strong>{pet.phone}</strong>
                 </div>
                 {pet.email && (
                   <div className="contact-item">
-                    <span className="contact-icon">✉️</span>
+                    <span className="contact-icon"><FaEnvelope /></span>
                     <strong>{pet.email}</strong>
                   </div>
                 )}

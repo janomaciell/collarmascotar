@@ -267,14 +267,30 @@ REST_FRAMEWORK = {
 
 
 # Configuración de Email
-EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
-EMAIL_HOST = 'smtp.gmail.com'
-EMAIL_PORT = 587
-EMAIL_USE_SSL = False
-EMAIL_USE_TLS = True
-EMAIL_HOST_USER = 'janomaciel1@gmail.com'
-EMAIL_HOST_PASSWORD = 'hcfmtsyiqpntlrkp'
-DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
+# Usa SMTP para enviar emails reales
+# Si EMAIL_USE_CONSOLE está en True, usa el backend de consola (solo para desarrollo)
+USE_CONSOLE_EMAIL = config('EMAIL_USE_CONSOLE', default=False, cast=bool)
+
+if USE_CONSOLE_EMAIL:
+    EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+    DEFAULT_FROM_EMAIL = config('DEFAULT_FROM_EMAIL', default='noreply@encuentrameqr.com')
+    print("⚠️  MODO CONSOLA: Los emails se mostrarán en la consola, no se enviarán realmente.")
+else:
+    EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+    EMAIL_HOST = config('EMAIL_HOST', default='smtp.gmail.com')
+    EMAIL_PORT = config('EMAIL_PORT', default=587, cast=int)
+    EMAIL_USE_SSL = config('EMAIL_USE_SSL', default=False, cast=bool)
+    EMAIL_USE_TLS = config('EMAIL_USE_TLS', default=True, cast=bool)
+    EMAIL_HOST_USER = config('EMAIL_HOST_USER', default='')
+    EMAIL_HOST_PASSWORD = config('EMAIL_HOST_PASSWORD', default='')
+    DEFAULT_FROM_EMAIL = config('DEFAULT_FROM_EMAIL', default=EMAIL_HOST_USER)
+    
+    # Validar que las credenciales estén configuradas
+    if not EMAIL_HOST_USER or not EMAIL_HOST_PASSWORD:
+        print("⚠️  ADVERTENCIA: EMAIL_HOST_USER o EMAIL_HOST_PASSWORD no están configurados.")
+        print("⚠️  Los emails no se podrán enviar. Configura estas variables en tu archivo .env")
+    else:
+        print("✓  Configuración de email SMTP cargada correctamente.")
 
 
 # Configuración de Firebase Admin SDK
@@ -292,7 +308,7 @@ WEBPUSH_SETTINGS = {
 # URLs de la aplicación
 REACT_APP_API_URL = config('API_URL', default='http://localhost:8000/api')
 API_URL = config('API_URL')
-FRONTEND_URL = config('FRONTEND_URL')
+FRONTEND_URL = config('FRONTEND_URL', default='http://localhost:3000')
 
 
 # Configuración de seguridad para producción

@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { API_URL } from '../../services/api';
+import { FaBell } from 'react-icons/fa';
 
 const NotificationPromptModal = () => {
   const [showModal, setShowModal] = useState(false);
@@ -59,7 +60,7 @@ const NotificationPromptModal = () => {
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
       <div className="bg-white rounded-lg p-6 max-w-sm w-full mx-4">
         <h2 className="text-xl font-bold text-gray-800 mb-4">
-          🔔 ¡No te pierdas ninguna mascota perdida!
+          <FaBell /> ¡No te pierdas ninguna mascota perdida!
         </h2>
         <p className="text-gray-600 mb-6">
           Activa las notificaciones para recibir alertas instantáneas sobre mascotas cerca de ti.

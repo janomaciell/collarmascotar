@@ -1,6 +1,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import './HowItWorks.css';
+import { FaMobileAlt, FaEye, FaHome, FaLock, FaMapMarkerAlt, FaClipboardList } from 'react-icons/fa';
 
 const HowItWorks = () => {
   return (
@@ -25,19 +26,19 @@ const HowItWorks = () => {
           <div className="hiw-steps-grid">
             <div className="hiw-step">
               <div className="hiw-step-number">1</div>
-              <div className="hiw-step-icon">📱</div>
+              <div className="hiw-step-icon"><FaMobileAlt /></div>
               <h3>Escanea</h3>
               <p>Quien encuentre a tu mascota escanea el código QR del collar.</p>
             </div>
             <div className="hiw-step">
               <div className="hiw-step-number">2</div>
-              <div className="hiw-step-icon">👀</div>
+              <div className="hiw-step-icon"><FaEye /></div>
               <h3>Ve tus datos</h3>
               <p>Accede de inmediato a tu teléfono y datos de contacto.</p>
             </div>
             <div className="hiw-step">
               <div className="hiw-step-number">3</div>
-              <div className="hiw-step-icon">🏠</div>
+              <div className="hiw-step-icon"><FaHome /></div>
               <h3>Reencuentro</h3>
               <p>Se contactan contigo y tu mascota vuelve a casa segura.</p>
             </div>
@@ -50,17 +51,17 @@ const HowItWorks = () => {
           <h2 className="section-title-dark">Qué incluye</h2>
           <div className="hiw-features-grid">
             <div className="hiw-feature-card">
-              <div className="hiw-feature-icon">🔒</div>
+              <div className="hiw-feature-icon"><FaLock /></div>
               <h3>Privacidad</h3>
               <p>Tus datos visibles solo cuando alguien escanea tu QR.</p>
             </div>
             <div className="hiw-feature-card">
-              <div className="hiw-feature-icon">📍</div>
+              <div className="hiw-feature-icon"><FaMapMarkerAlt /></div>
               <h3>Ubicación</h3>
               <p>Guarda el punto del escaneo para facilitar el reencuentro.</p>
             </div>
             <div className="hiw-feature-card">
-              <div className="hiw-feature-icon">📋</div>
+              <div className="hiw-feature-icon"><FaClipboardList /></div>
               <h3>Salud</h3>
               <p>Libreta sanitaria digital y datos del veterinario.</p>
             </div>

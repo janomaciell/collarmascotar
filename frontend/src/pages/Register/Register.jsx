@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { register } from '../../services/api';
 import './Register.css';
+import { FaExclamationTriangle, FaEye, FaEyeSlash } from 'react-icons/fa';
 
 const Register = () => {
   const navigate = useNavigate();
@@ -98,7 +99,7 @@ const Register = () => {
           
           {errors.general && (
             <div className="error-message">
-              <span className="error-icon">⚠️</span>
+              <span className="error-icon"><FaExclamationTriangle /></span>
               {errors.general}
             </div>
           )}
@@ -179,7 +180,7 @@ const Register = () => {
                   className="toggle-password"
                   onClick={() => setShowPassword(!showPassword)}
                 >
-                  {showPassword ? "👁️" : "👁️‍🗨️"}
+                  {showPassword ? <FaEyeSlash /> : <FaEye />}
                 </button>
               </div>
               {errors.password && <span className="error-text">{errors.password}</span>}

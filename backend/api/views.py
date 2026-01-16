@@ -32,6 +32,8 @@ default_app = initialize_app(cred, name='petqr')
 
 
 class CustomAuthToken(ObtainAuthToken):
+    serializer_class = EmailAuthTokenSerializer
+    
     def post(self, request, *args, **kwargs):
         serializer = self.serializer_class(data=request.data, context={'request': request})
         serializer.is_valid(raise_exception=True)
@@ -1083,11 +1085,19 @@ def request_password_reset(request):
         # Buscar usuario por email o username
         try:
             if '@' in email_or_username:
-                user = User.objects.get(email=email_or_username)
+                # Usar filter().first() para evitar error si hay múltiples usuarios con el mismo email
+                user = User.objects.filter(email=email_or_username).first()
             else:
-                user = User.objects.get(username=email_or_username)
-        except User.DoesNotExist:
+                user = User.objects.filter(username=email_or_username).first()
+            
+            if not user:
+                # Por seguridad, no revelamos si el usuario existe o no
+                return Response({
+                    "message": "Si el usuario existe, se enviará un email con instrucciones para recuperar la contraseña"
+                }, status=status.HTTP_200_OK)
+        except Exception as e:
             # Por seguridad, no revelamos si el usuario existe o no
+            print(f"Error en request_password_reset: {e}")
             return Response({
                 "message": "Si el usuario existe, se enviará un email con instrucciones para recuperar la contraseña"
             }, status=status.HTTP_200_OK)
@@ -1126,10 +1136,21 @@ def request_password_reset(request):
                 fail_silently=False,
             )
         except Exception as e:
-            print(f"Error enviando email: {str(e)}")
+            # Log del error para debugging
+            error_msg = str(e)
+            print(f"Error enviando email: {error_msg}")
+            
+            # En modo desarrollo, mostrar más información
+            if settings.DEBUG:
+                print(f"⚠️  DEBUG: Error al enviar email a {user.email}")
+                print(f"⚠️  DEBUG: Verifica la configuración de EMAIL en settings.py")
+                print(f"⚠️  DEBUG: Si estás en desarrollo, los emails se mostrarán en la consola")
+            
+            # Por seguridad, devolvemos el mismo mensaje genérico aunque falle el envío
+            # Esto evita revelar información sobre el estado del sistema o si el usuario existe
             return Response({
-                "error": "Error al enviar el email. Por favor intenta más tarde."
-            }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+                "message": "Si el usuario existe, se enviará un email con instrucciones para recuperar la contraseña"
+            }, status=status.HTTP_200_OK)
         
         return Response({
             "message": "Si el usuario existe, se enviará un email con instrucciones para recuperar la contraseña"

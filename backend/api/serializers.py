@@ -1,8 +1,51 @@
 # serializers.py (update)
 
 from rest_framework import serializers
+from rest_framework.authtoken.serializers import AuthTokenSerializer
 from .models import *
 from django.contrib.auth.models import User
+from django.contrib.auth import authenticate
+
+class EmailAuthTokenSerializer(AuthTokenSerializer):
+    """Serializer personalizado que acepta email en lugar de username"""
+    email = serializers.EmailField(label="Email")
+    username = None  # Eliminamos el campo username
+    
+    def validate(self, attrs):
+        email = attrs.get('email')
+        password = attrs.get('password')
+
+        if email and password:
+            # Buscar usuarios por email (puede haber múltiples)
+            users = User.objects.filter(email=email)
+            
+            if not users.exists():
+                msg = 'No se puede iniciar sesión con las credenciales proporcionadas.'
+                raise serializers.ValidationError(msg, code='authorization')
+            
+            # Intentar autenticar con cada usuario que tenga ese email
+            # hasta encontrar el que tenga la contraseña correcta
+            authenticated_user = None
+            for user in users:
+                authenticated_user = authenticate(
+                    request=self.context.get('request'),
+                    username=user.username,
+                    password=password
+                )
+                if authenticated_user:
+                    break
+            
+            if not authenticated_user:
+                msg = 'No se puede iniciar sesión con las credenciales proporcionadas.'
+                raise serializers.ValidationError(msg, code='authorization')
+            
+            user = authenticated_user
+        else:
+            msg = 'Debe incluir "email" y "password".'
+            raise serializers.ValidationError(msg, code='authorization')
+
+        attrs['user'] = user
+        return attrs
 
 class UserSerializer(serializers.ModelSerializer):
     class Meta:

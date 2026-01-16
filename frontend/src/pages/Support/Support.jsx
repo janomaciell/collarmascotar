@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import emailjs from '@emailjs/browser';
 import './Support.css';
+import { FaEnvelope, FaCheck, FaExclamationTriangle, FaMobileAlt, FaPaperPlane } from 'react-icons/fa';
 
 const Support = () => {
   const navigate = useNavigate();
@@ -88,7 +89,7 @@ const Support = () => {
           <div className="contact-form-section">
             <div className="form-header">
               <h3>Envíanos un mensaje</h3>
-              <span className="form-icon">📧</span>
+              <span className="form-icon"><FaEnvelope /></span>
             </div>
             
             <form className="support-form" onSubmit={handleSubmit}>
@@ -140,7 +141,7 @@ const Support = () => {
                   </>
                 ) : (
                   <>
-                    <span className="btn-icon">📤</span>
+                    <span className="btn-icon"><FaPaperPlane /></span>
                     Enviar mensaje
                   </>
                 )}
@@ -148,14 +149,14 @@ const Support = () => {
               
               {submitted && (
                 <div className="success-message">
-                  <span className="success-icon">✅</span>
+                  <span className="success-icon"><FaCheck /></span>
                   <p>¡Mensaje enviado exitosamente! Te responderemos pronto.</p>
                 </div>
               )}
               
               {error && (
                 <div className="error-message">
-                  <span className="error-icon">⚠️</span>
+                  <span className="error-icon"><FaExclamationTriangle /></span>
                   <p>{error}</p>
                 </div>
               )}
@@ -166,7 +167,7 @@ const Support = () => {
           <div className="social-section">
             <div className="social-header">
               <h3>Síguenos en redes</h3>
-              <span className="social-icon">📱</span>
+              <span className="social-icon"><FaMobileAlt /></span>
             </div>
             
             <div className="social-content">

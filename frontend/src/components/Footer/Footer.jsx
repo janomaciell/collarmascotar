@@ -1,6 +1,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import './Footer.css';
+import { FaInstagram, FaFacebook } from 'react-icons/fa';
 
 const Footer = () => {
   const mascotaImage = new URL('../../img/personaje2.png', import.meta.url).href;
@@ -33,7 +34,7 @@ const Footer = () => {
                 className="social-link instagram"
                 aria-label="Síguenos en Instagram"
               >
-                <span className="social-icon">📸</span>
+                <span className="social-icon"><FaInstagram /></span>
               </a>
               <a 
                 href="https://www.facebook.com/encuentrameqr" 
@@ -42,7 +43,7 @@ const Footer = () => {
                 className="social-link facebook"
                 aria-label="Síguenos en Facebook"
               >
-                <span className="social-icon">👥</span>
+                <span className="social-icon"><FaFacebook /></span>
               </a>
             </div>
           </div>

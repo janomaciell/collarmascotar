@@ -1,6 +1,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import './About.css';
+import { FaHeart, FaBullseye, FaStar, FaLightbulb, FaShieldAlt, FaShoppingCart, FaGlobe, FaHandshake, FaBolt, FaUsers } from 'react-icons/fa';
 
 const About = () => {
   const mascotaImage = 'src/img/personaje2.png';
@@ -23,7 +24,7 @@ const About = () => {
           <div className="section-card">
             <div className="card-header">
               <h2>Mi Historia</h2>
-              <span className="card-icon">❤️</span>
+              <span className="card-icon"><FaHeart /></span>
             </div>
             
             <div className="card-content">
@@ -59,7 +60,7 @@ const About = () => {
           <div className="section-card mission-card">
             <div className="card-header">
               <h2>Nuestra Misión</h2>
-              <span className="card-icon">🎯</span>
+              <span className="card-icon"><FaBullseye /></span>
             </div>
             
             <div className="card-content">
@@ -97,7 +98,7 @@ const About = () => {
           <div className="section-card vision-card">
             <div className="card-header">
               <h2>Nuestra Visión</h2>
-              <span className="card-icon">🌟</span>
+              <span className="card-icon"><FaStar /></span>
             </div>
             
             <div className="card-content">
@@ -109,15 +110,15 @@ const About = () => {
               
               <div className="vision-goals">
                 <div className="goal-item">
-                  <span className="goal-icon">🌍</span>
+                  <span className="goal-icon"><FaGlobe /></span>
                   <span>Comunidad global</span>
                 </div>
                 <div className="goal-item">
-                  <span className="goal-icon">💡</span>
+                  <span className="goal-icon"><FaLightbulb /></span>
                   <span>Innovación constante</span>
                 </div>
                 <div className="goal-item">
-                  <span className="goal-icon">🤝</span>
+                  <span className="goal-icon"><FaHandshake /></span>
                   <span>Apoyo mutuo</span>
                 </div>
               </div>
@@ -134,7 +135,7 @@ const About = () => {
           
           <div className="benefits-grid">
             <div className="benefit-card">
-              <div className="benefit-icon">⚡</div>
+              <div className="benefit-icon"><FaBolt /></div>
               <h3>Reencuentros instantáneos</h3>
               <p>
                 Un simple escaneo del QR conecta al instante a quien encuentra 
@@ -143,7 +144,7 @@ const About = () => {
             </div>
             
             <div className="benefit-card">
-              <div className="benefit-icon">👥</div>
+              <div className="benefit-icon"><FaUsers /></div>
               <h3>Comunidad activa</h3>
               <p>
                 Cuando tu mascota se marca como perdida, se notifica automáticamente 
@@ -152,7 +153,7 @@ const About = () => {
             </div>
             
             <div className="benefit-card">
-              <div className="benefit-icon">🛡️</div>
+              <div className="benefit-icon"><FaShieldAlt /></div>
               <h3>Tranquilidad total</h3>
               <p>
                 Tu mascota lleva su identidad digital, historial de salud y datos 
@@ -174,7 +175,7 @@ const About = () => {
             de que tu mejor amigo siempre encontrará el camino de regreso.
           </p>
           <Link to="/compra" className="cta-button">
-            <span className="btn-icon">🛒</span>
+            <span className="btn-icon"><FaShoppingCart /></span>
             Proteger a mi mascota
           </Link>
         </div>

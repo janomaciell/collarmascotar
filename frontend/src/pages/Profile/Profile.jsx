@@ -4,6 +4,7 @@ import { getPets, updateUserLocation, logout } from '../../services/api';
 import EditProfileModal from '../EditProfile/EditProfile';
 import './Profile.css';
 import { API_URL } from '../../services/api';
+import { FaExclamationTriangle, FaUser, FaPaw, FaCog, FaShoppingCart, FaSignOutAlt } from 'react-icons/fa';
 
 const Profile = () => {
   const navigate = useNavigate();
@@ -174,7 +175,7 @@ const Profile = () => {
       <div className="profile-container">
         {error && (
           <div className="error-message">
-            <span className="error-icon">⚠️</span>
+            <span className="error-icon"><FaExclamationTriangle /></span>
             <span>{error}</span>
             <button onClick={handleRetry} className="retry-button">
               Reintentar
@@ -187,7 +188,7 @@ const Profile = () => {
           <div className="profile-card">
             <div className="card-header">
               <h2>Información Personal</h2>
-              <span className="card-icon">👤</span>
+              <span className="card-icon"><FaUser /></span>
             </div>
             
             {userData && (
@@ -217,7 +218,7 @@ const Profile = () => {
           <div className="profile-card">
             <div className="card-header">
               <h2>Mis Mascotas</h2>
-              <span className="card-icon">🐾</span>
+              <span className="card-icon"><FaPaw /></span>
             </div>
             
             <div className="card-content">
@@ -231,7 +232,7 @@ const Profile = () => {
                   {memoizedPets.map((pet) => (
                     <div key={pet.id} className="pet-item">
                       <img
-                        src={pet.photo || 'https://via.placeholder.com/60'}
+                        src={pet.photo}
                         alt={`Foto de ${pet.name}`}
                         className="pet-photo"
                       />
@@ -246,7 +247,6 @@ const Profile = () => {
               ) : (
                 <div className="no-pets">
                   <p>No tienes mascotas registradas</p>
-                  <img src={mascotaImage} alt="Sin mascotas" className="no-pets-image" />
                 </div>
               )}
               
@@ -263,7 +263,7 @@ const Profile = () => {
           <div className="profile-card actions-card">
             <div className="card-header">
               <h2>Acciones</h2>
-              <span className="card-icon">⚙️</span>
+              <span className="card-icon"><FaCog /></span>
             </div>
             
             <div className="card-content">
@@ -271,7 +271,7 @@ const Profile = () => {
                 className="action-btn purchase-btn"
                 onClick={() => navigate('/compra')}
               >
-                <span className="btn-icon">🛒</span>
+                <span className="btn-icon"><FaShoppingCart /></span>
                 Comprar collar
               </button>
               
@@ -279,7 +279,7 @@ const Profile = () => {
                 className="action-btn logout-btn"
                 onClick={handleLogout}
               >
-                <span className="btn-icon">🚪</span>
+                <span className="btn-icon"><FaSignOutAlt /></span>
                 Cerrar sesión
               </button>
             </div>
