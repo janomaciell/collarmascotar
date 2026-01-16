@@ -181,17 +181,29 @@ STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
 # Media files
 MEDIA_URL = '/media/'
-if os.environ.get('RENDER'):
-    MEDIA_ROOT = '/var/media'
-else:
-    MEDIA_ROOT = BASE_DIR / 'media'
+# Usar directorio dentro del proyecto para evitar problemas de permisos
+MEDIA_ROOT = BASE_DIR / 'media'
 
-# Asegurar que el directorio de media exista
+# Asegurar que el directorio de media y sus subdirectorios existan
 try:
     os.makedirs(str(MEDIA_ROOT), exist_ok=True)
-except Exception:
-    # En entornos restringidos puede fallar la creación; continuar sin interrumpir
-    pass
+    # Crear subdirectorios necesarios
+    subdirs = [
+        'pre_generated_qr_codes',
+        'pre_generated_qr_codes_svg',
+        'qr_codes',
+        'qr_codes_svg',
+        'pet_photos',
+        'lost_posters',
+    ]
+    for subdir in subdirs:
+        subdir_path = MEDIA_ROOT / subdir
+        os.makedirs(str(subdir_path), exist_ok=True)
+except Exception as e:
+    # Log del error pero continuar sin interrumpir
+    import logging
+    logger = logging.getLogger(__name__)
+    logger.warning(f"No se pudo crear el directorio de media: {str(e)}")
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field
@@ -344,3 +356,37 @@ else:
         "http://127.0.0.1:5173",
         "http://127.0.0.1:8000",
     ]
+
+# Configuración de Logging
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'formatters': {
+        'verbose': {
+            'format': '{levelname} {asctime} {module} {message}',
+            'style': '{',
+        },
+    },
+    'handlers': {
+        'console': {
+            'class': 'logging.StreamHandler',
+            'formatter': 'verbose',
+        },
+    },
+    'root': {
+        'handlers': ['console'],
+        'level': 'INFO',
+    },
+    'loggers': {
+        'api': {
+            'handlers': ['console'],
+            'level': 'INFO',
+            'propagate': False,
+        },
+        'django': {
+            'handlers': ['console'],
+            'level': 'INFO',
+            'propagate': False,
+        },
+    },
+}

@@ -208,43 +208,52 @@ class PreGeneratedQR(models.Model):
     
     def save(self, *args, **kwargs):
         if not self.qr_code or not self.qr_code_svg:
-            # Construir la URL del QR
-            frontend_url = getattr(settings, 'FRONTEND_URL', 'https://tupetid.com')
-            qr_url = f'{frontend_url}/qr/{self.qr_uuid}'
-            
-            # Generar QR code PNG (para visualización en admin)
-            qr_png = qrcode.QRCode(
-                version=1,
-                error_correction=qrcode.constants.ERROR_CORRECT_L,
-                box_size=10,
-                border=4,
-            )
-            qr_png.add_data(qr_url)
-            qr_png.make(fit=True)
-            img_png = qr_png.make_image(fill_color="black", back_color="white")
-            
-            buffer_png = BytesIO()
-            img_png.save(buffer_png, format='PNG')
-            file_name_png = f'pre_qr_{self.qr_uuid}.png'
-            self.qr_code.save(file_name_png, File(buffer_png), save=False)
-            
-            # Generar QR code SVG vectorizado (para impresión/grabado láser)
-            factory = qrcode.image.svg.SvgPathImage
-            qr_svg = qrcode.QRCode(
-                version=1,
-                error_correction=qrcode.constants.ERROR_CORRECT_L,
-                box_size=10,
-                border=4,
-                image_factory=factory,
-            )
-            qr_svg.add_data(qr_url)
-            qr_svg.make(fit=True)
-            img_svg = qr_svg.make_image(fill_color="black", back_color="white")
-            
-            buffer_svg = BytesIO()
-            img_svg.save(buffer_svg)
-            file_name_svg = f'pre_qr_{self.qr_uuid}.svg'
-            self.qr_code_svg.save(file_name_svg, ContentFile(buffer_svg.getvalue()), save=False)
+            try:
+                # Construir la URL del QR
+                frontend_url = getattr(settings, 'FRONTEND_URL', 'https://tupetid.com')
+                qr_url = f'{frontend_url}/qr/{self.qr_uuid}'
+                
+                # Generar QR code PNG (para visualización en admin)
+                qr_png = qrcode.QRCode(
+                    version=1,
+                    error_correction=qrcode.constants.ERROR_CORRECT_L,
+                    box_size=10,
+                    border=4,
+                )
+                qr_png.add_data(qr_url)
+                qr_png.make(fit=True)
+                img_png = qr_png.make_image(fill_color="black", back_color="white")
+                
+                buffer_png = BytesIO()
+                img_png.save(buffer_png, format='PNG')
+                buffer_png.seek(0)
+                file_name_png = f'pre_qr_{self.qr_uuid}.png'
+                self.qr_code.save(file_name_png, File(buffer_png), save=False)
+                
+                # Generar QR code SVG vectorizado (para impresión/grabado láser)
+                factory = qrcode.image.svg.SvgPathImage
+                qr_svg = qrcode.QRCode(
+                    version=1,
+                    error_correction=qrcode.constants.ERROR_CORRECT_L,
+                    box_size=10,
+                    border=4,
+                    image_factory=factory,
+                )
+                qr_svg.add_data(qr_url)
+                qr_svg.make(fit=True)
+                img_svg = qr_svg.make_image(fill_color="black", back_color="white")
+                
+                buffer_svg = BytesIO()
+                img_svg.save(buffer_svg)
+                buffer_svg.seek(0)
+                file_name_svg = f'pre_qr_{self.qr_uuid}.svg'
+                self.qr_code_svg.save(file_name_svg, ContentFile(buffer_svg.getvalue()), save=False)
+            except Exception as e:
+                # Si hay un error al generar los archivos, registrar y re-lanzar para que admin.py lo capture
+                import logging
+                logger = logging.getLogger(__name__)
+                logger.error(f"Error al generar QR codes para {self.qr_uuid}: {str(e)}")
+                raise
             
         super().save(*args, **kwargs)
     
