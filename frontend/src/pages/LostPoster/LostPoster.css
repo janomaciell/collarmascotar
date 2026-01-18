@@ -1,5 +1,9 @@
 @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800;900&display=swap');
 
+body {
+  overflow-x: hidden;
+}
+
 :root {
   --azul-principal: #05408F;
   --negro-principal: #181818;
@@ -94,7 +98,7 @@ h1, h2, h3, h4, h5, h6 {
 .poster-header {
   display: flex;
   flex-direction: column;
-  flex-shrink: 0; /* No se encoge */
+  flex-shrink: 0;
 }
 
 .brand-container {
@@ -161,9 +165,9 @@ h1, h2, h3, h4, h5, h6 {
   justify-content: center;
   align-items: center;
   width: 100%;
-  height: 280px; /* ALTURA FIJA */
+  height: 280px;
   padding: 1rem 0;
-  flex-shrink: 0; /* No se encoge */
+  flex-shrink: 0;
   background: linear-gradient(to bottom, #ffffff 0%, var(--gris-claro) 100%);
 }
 
@@ -294,7 +298,7 @@ h1, h2, h3, h4, h5, h6 {
 /* SECCIÓN DE CONTACTO - CRECE PARA LLENAR ESPACIO */
 .contact-qr-section {
   background: linear-gradient(135deg, var(--azul-principal) 0%, #043870 100%);
-  flex-grow: 1; /* OCUPA EL ESPACIO DISPONIBLE */
+  flex-grow: 1;
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -358,8 +362,8 @@ h1, h2, h3, h4, h5, h6 {
   padding: 0.7rem;
   background-color: var(--azul-principal);
   text-align: center;
-  flex-shrink: 0; /* NUNCA SE ENCOGE */
-  margin-top: auto; /* SE EMPUJA AL FINAL */
+  flex-shrink: 0;
+  margin-top: auto;
 }
 
 .footer-text {
@@ -390,20 +394,58 @@ h1, h2, h3, h4, h5, h6 {
   color: #e53e3e;
 }
 
-/* Responsivo */
+/* ======================================= */
+/* AJUSTES PARA MÓVIL - ESCALA VISUAL */
+/* ======================================= */
 @media (max-width: 830px) {
-  .lost-poster {
-    width: 100%;
-    height: auto;
-    min-height: 297mm;
+  /* El póster mantiene dimensiones A4 pero se escala visualmente */
+  .lost-poster-container {
+    padding: 0.5rem;
+    display: flex;
+    justify-content: center;
+    overflow-x: hidden;
   }
-  
-  .detail-row {
+
+  .lost-poster {
+    /* Escalar visualmente sin cambiar dimensiones reales */
+    transform: scale(0.48);
+    transform-origin: center center;
+    margin: 0;
+  }
+
+  /* Ajustar botones de acción en móvil */
+  .poster-actions {
+    padding: 0 1rem;
+    margin-bottom: 1rem;
+    gap: 0.5rem;
+  }
+
+  .back-button,
+  .download-button,
+  .share-button {
+    padding: 0.7rem 1.2rem;
+    font-size: 0.9rem;
+  }
+}
+
+/* Para pantallas muy pequeñas - escala aún más reducida */
+@media (max-width: 400px) {
+  .lost-poster-page {
+    padding-top: 60px;
+  }
+
+  .lost-poster {
+    transform: scale(0.45);
+  }
+
+  .poster-actions {
     flex-direction: column;
   }
-  
-  .contact-item {
-    min-width: 250px;
+
+  .back-button,
+  .download-button,
+  .share-button {
+    width: 100%;
   }
 }
 

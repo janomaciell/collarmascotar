@@ -55,7 +55,7 @@ const LostPoster = () => {
   };
 
   const generatePosterImage = async () => {
-    if (!posterRef.current) return;
+    if (!posterRef.current) return null;
 
     setIsGenerating(true);
     try {
@@ -74,41 +74,86 @@ const LostPoster = () => {
         )
       );
 
+      // Detectar si estamos en móvil y forzar dimensiones A4 completas para el PDF
+      const isMobile = window.innerWidth <= 830;
+      const posterElement = posterRef.current;
+      
+      // Guardar estilos originales
+      const originalStyles = {
+        width: posterElement.style.width,
+        height: posterElement.style.height,
+        maxWidth: posterElement.style.maxWidth,
+        aspectRatio: posterElement.style.aspectRatio,
+      };
+
+      // Forzar dimensiones A4 completas antes de capturar (especialmente en móvil)
+      if (isMobile) {
+        // 794px = ancho A4 a 96 DPI, 1123px = alto A4 a 96 DPI
+        posterElement.style.width = '794px';
+        posterElement.style.height = '1123px';
+        posterElement.style.maxWidth = '794px';
+        posterElement.style.aspectRatio = 'none';
+        
+        // Esperar un frame para que los estilos se apliquen
+        await new Promise(resolve => requestAnimationFrame(resolve));
+      }
+
+      // Dimensiones A4 en píxeles a 300 DPI
+      const a4Width = 2480;
+      const a4Height = 3508;
+
       const canvas = await html2canvas(posterRef.current, {
         scale: 3,
         useCORS: true,
         allowTaint: true,
         logging: false,
         backgroundColor: '#ffffff',
-        width: 794,
-        height: 1123,
+        width: a4Width / 3,
+        height: a4Height / 3,
+        windowWidth: 794,
+        windowHeight: 1123,
       });
+      
+      // Restaurar estilos originales
+      if (isMobile) {
+        posterElement.style.width = originalStyles.width;
+        posterElement.style.height = originalStyles.height;
+        posterElement.style.maxWidth = originalStyles.maxWidth;
+        posterElement.style.aspectRatio = originalStyles.aspectRatio;
+      }
+      
       const imgData = canvas.toDataURL('image/png', 1.0);
       setPosterUrl(imgData);
+      return imgData;
     } catch (err) {
       console.error('Error generating poster image:', err);
       setError('Error al generar imagen del cartel');
+      return null;
     } finally {
       setIsGenerating(false);
     }
   };
 
   const downloadPdf = async () => {
-    if (!posterUrl) await generatePosterImage();
-
     setIsGenerating(true);
     try {
+      // Generar la imagen del poster (siempre regenerar para asegurar dimensiones correctas)
+      const imageUrl = await generatePosterImage();
+
+      if (!imageUrl) {
+        throw new Error('No se pudo generar la imagen del poster');
+      }
+
       const pdf = new jsPDF({
         orientation: 'portrait',
         unit: 'mm',
         format: 'a4',
       });
 
-      const imgProps = pdf.getImageProperties(posterUrl);
       const pdfWidth = pdf.internal.pageSize.getWidth();
       const pdfHeight = pdf.internal.pageSize.getHeight();
       
-      pdf.addImage(posterUrl, 'PNG', 0, 0, pdfWidth, pdfHeight);
+      pdf.addImage(imageUrl, 'PNG', 0, 0, pdfWidth, pdfHeight);
       pdf.save(`mascota_perdida_${pet.name}_ENCUENTRAME.pdf`);
     } catch (err) {
       console.error('Error generating PDF:', err);
@@ -134,7 +179,8 @@ const LostPoster = () => {
       </div>
 
       <div className="lost-poster-container">
-        <div ref={posterRef} className="lost-poster">
+        <div className="lost-poster-scale">
+          <div ref={posterRef} className="lost-poster">
           {/* Encabezado con Branding */}
           <div className="poster-header">
             <div className="brand-container">
@@ -152,7 +198,7 @@ const LostPoster = () => {
             </div>
           </div>
 
-          {/* Foto de la Mascota - ALTURA FIJA */}
+          {/* Foto de la Mascota */}
           <div className="pet-photo-container-poster">
             {pet.photo || true ? (
               <img
@@ -235,9 +281,10 @@ const LostPoster = () => {
             </div>
           </div>
 
-          {/* Pie de Página con Marca - SIEMPRE AL FINAL */}
+          {/* Pie de Página con Marca */}
           <div className="poster-footer">
             <p className="footer-text">Póster generado con <strong>EncuentraME</strong> - Collares QR para mascotas</p>
+          </div>
           </div>
         </div>
       </div>
