@@ -106,7 +106,26 @@
 
 .social-link:hover { transform: translateY(-3px); border-color: var(--rosa-secundario); }
 
-.social-icon { font-size: 1.2rem; color: var(--blanco-principal); }
+.social-icon { 
+  font-size: 1.2rem; 
+  color: var(--blanco-principal) !important;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+  line-height: 1;
+}
+
+.social-icon svg {
+  color: var(--blanco-principal) !important;
+  fill: var(--blanco-principal) !important;
+}
+
+.social-link svg {
+  color: var(--blanco-principal) !important;
+  fill: var(--blanco-principal) !important;
+}
 
 /* Secciones del footer */
 .footer-section h4 {

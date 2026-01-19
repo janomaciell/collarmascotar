@@ -116,12 +116,27 @@ export const getScanHistory = async (petId) => {
 
 export const notifyOwner = async (uuid, location) => {
   try {
-    const response = await axios.post(`${API_URL}/pets/${uuid}/scan/`, {
+    const url = `${API_URL}/pets/${uuid}/scan/`;
+    const payload = {
       latitude: location.latitude,
       longitude: location.longitude,
-    });
+    };
+    
+    console.log('[API] Enviando POST a:', url);
+    console.log('[API] Payload:', payload);
+    
+    const response = await axios.post(url, payload);
+    
+    console.log('[API] Respuesta exitosa:', response.status, response.data);
     return response.data;
   } catch (error) {
+    console.error('[API] Error en notifyOwner:', {
+      message: error.message,
+      response: error.response?.data,
+      status: error.response?.status,
+      statusText: error.response?.statusText,
+      url: error.config?.url
+    });
     throw error.response?.data || error.message;
   }
 };

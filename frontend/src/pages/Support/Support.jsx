@@ -2,7 +2,8 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import emailjs from '@emailjs/browser';
 import './Support.css';
-import { FaEnvelope, FaCheck, FaExclamationTriangle, FaMobileAlt, FaPaperPlane } from 'react-icons/fa';
+import { FaPaw, FaCalendarAlt, FaHome, FaBirthdayCake, FaPhone, FaEnvelope ,FaCheck, FaExclamationTriangle, FaMobileAlt, FaPaperPlane, FaQuestion, FaInstagram, FaFacebook } from 'react-icons/fa';
+
 
 const Support = () => {
   const navigate = useNavigate();
@@ -180,8 +181,8 @@ const Support = () => {
                   rel="noopener noreferrer"
                   className="social-btn instagram"
                 >
-                  <span className="social-btn-icon">📸</span>
-                  @encuentrameQR
+                  <span className="social-btn-icon"><FaInstagram /></span>
+                  <span>@encuentrameQR</span>
                 </a>
                 
                 <a 
@@ -190,8 +191,8 @@ const Support = () => {
                   rel="noopener noreferrer"
                   className="social-btn facebook"
                 >
-                  <span className="social-btn-icon">👥</span>
-                  EncuéntraME
+                  <span className="social-btn-icon"><FaFacebook /></span>
+                  <span>EncuéntraME</span>
                 </a>
               </div>
             </div>
@@ -201,7 +202,7 @@ const Support = () => {
           <div className="faq-section">
             <div className="faq-header">
               <h3>Preguntas frecuentes</h3>
-              <span className="faq-icon">❓</span>
+              <span className="faq-icon"><FaQuestion /></span>
             </div>
             
             <div className="faq-grid">
@@ -232,11 +233,10 @@ const Support = () => {
       {/* CTA Final */}
       <section className="support-cta">
         <div className="cta-content">
-          <img src={mascotaImage} alt="Mascota EncuentraME" className="cta-mascota" />
           <h2>¿Todo listo?</h2>
           <p>Vuelve al inicio y protege a tu mejor amigo</p>
           <button onClick={handleNavigateHome} className="cta-btn">
-            <span className="btn-icon">🏠</span>
+            <span className="btn-icon"><FaHome /></span>
             Ir al inicio
           </button>
         </div>

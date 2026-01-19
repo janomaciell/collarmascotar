@@ -199,6 +199,146 @@ body {
   transform: translateY(0);
 }
 
+/* ==================== BANNER DE AYUDA ==================== */
+.help-banner {
+  background: linear-gradient(135deg, #FFE066 0%, #FFD700 100%);
+  border-radius: 20px;
+  border: 4px solid #FFA500;
+  padding: 2rem;
+  margin: 2rem auto;
+  max-width: 1000px;
+  box-shadow: 0 8px 32px rgba(255, 165, 0, 0.4);
+  animation: slideDown 0.5s ease-out, pulse 2s ease-in-out infinite;
+  position: relative;
+  overflow: hidden;
+}
+
+.help-banner::before {
+  content: '';
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background: repeating-linear-gradient(
+    45deg,
+    transparent,
+    transparent 10px,
+    rgba(255, 255, 255, 0.1) 10px,
+    rgba(255, 255, 255, 0.1) 20px
+  );
+  animation: shimmer 3s linear infinite;
+  pointer-events: none;
+}
+
+@keyframes shimmer {
+  0% { transform: translateX(-50%) translateY(-50%) rotate(0deg); }
+  100% { transform: translateX(-50%) translateY(-50%) rotate(360deg); }
+}
+
+.help-banner-content {
+  display: flex;
+  align-items: center;
+  gap: 2rem;
+  position: relative;
+  z-index: 1;
+}
+
+.help-banner-icon {
+  font-size: 3.5rem;
+  animation: bounce 1s ease-in-out infinite;
+  flex-shrink: 0;
+}
+
+@keyframes bounce {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-10px); }
+}
+
+.help-banner-text {
+  flex: 1;
+  color: var(--negro-principal);
+}
+
+.help-banner-text strong {
+  font-size: 1.5rem;
+  color: var(--rojo-secundario);
+  display: block;
+  margin-bottom: 0.5rem;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.help-banner-text p {
+  font-size: 1.1rem;
+  color: var(--negro-principal);
+  margin: 0;
+  line-height: 1.6;
+}
+
+.help-banner-btn {
+  background: var(--rojo-secundario);
+  color: var(--blanco-principal);
+  border: none;
+  border-radius: 50px;
+  padding: 1.2rem 3rem;
+  font-weight: 800;
+  font-size: 1.2rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  box-shadow: 0 6px 24px rgba(255, 49, 49, 0.5);
+  white-space: nowrap;
+  animation: pulseScale 1.5s ease-in-out infinite;
+  flex-shrink: 0;
+}
+
+@keyframes pulseScale {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.05); }
+}
+
+.help-banner-btn:hover {
+  background: #d92828;
+  transform: scale(1.1);
+  box-shadow: 0 8px 32px rgba(255, 49, 49, 0.6);
+}
+
+.help-banner-btn:active {
+  transform: scale(1);
+}
+
+/* ==================== MENSAJES DE ESTADO DE UBICACIÓN ==================== */
+.location-status {
+  max-width: 1000px;
+  margin: 1.5rem auto;
+  padding: 1rem 1.5rem;
+  border-radius: 12px;
+  font-size: 1rem;
+  font-weight: 500;
+  text-align: center;
+  animation: slideDown 0.3s ease-out;
+}
+
+.location-status-info {
+  background: linear-gradient(135deg, #E3F2FD 0%, #BBDEFB 100%);
+  color: var(--azul-principal);
+  border: 2px solid var(--azul-principal);
+}
+
+.location-status-error {
+  background: linear-gradient(135deg, #FFEBEE 0%, #FFCDD2 100%);
+  color: var(--rojo-secundario);
+  border: 2px solid var(--rojo-secundario);
+}
+
+.location-status-success {
+  background: linear-gradient(135deg, #E8F5E9 0%, #C8E6C9 100%);
+  color: #2E7D32;
+  border: 2px solid #4CAF50;
+}
+
 /* ==================== CONTENT ==================== */
 .pet-content {
   margin: 0 auto;

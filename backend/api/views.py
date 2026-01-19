@@ -218,14 +218,28 @@ def record_scan(request, uuid):
 
     plain_message = f"¡Tu mascota {pet_name} ha sido encontrada!\nFecha y hora: {scan_time}\nUbicación: {google_maps_link}\nRevisa el historial de escaneos en tu cuenta."
 
-    send_mail(
-        subject=subject,
-        message=plain_message,
-        from_email=settings.DEFAULT_FROM_EMAIL,
-        recipient_list=[pet.owner.email],
-        html_message=html_message,
-        fail_silently=False,
-    )
+    # Enviar email con manejo de errores
+    try:
+        send_mail(
+            subject=subject,
+            message=plain_message,
+            from_email=settings.DEFAULT_FROM_EMAIL,
+            recipient_list=[pet.owner.email],
+            html_message=html_message,
+            fail_silently=False,
+        )
+        print(f"✓ Email enviado exitosamente a {pet.owner.email} para mascota {pet_name}")
+    except Exception as e:
+        # Log del error pero continuar con el proceso
+        error_details = str(e)
+        print(f"⚠️ ERROR al enviar email a {pet.owner.email}: {error_details}")
+        print(f"⚠️ Traceback: {traceback.format_exc()}")
+        # Log adicional para diagnóstico en producción
+        if not settings.DEBUG:
+            import logging
+            logger = logging.getLogger('api')
+            logger.error(f"Error enviando email de escaneo QR: {error_details}")
+            logger.error(f"Traceback completo: {traceback.format_exc()}")
 
     if pet.is_lost:
         try:

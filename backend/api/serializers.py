@@ -99,7 +99,6 @@ class PetSerializer(serializers.ModelSerializer):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         # Log de los campos requeridos
-        print("Campos requeridos en el serializer:")
         for field_name, field in self.fields.items():
             print(f"{field_name}: required={field.required}")
     

@@ -3,7 +3,7 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { getPetByUuid, notifyOwner, sendCommunityNotification, checkQRStatus } from '../../services/api';
 import './PetPage.css';
 import mascotaImage from '../../img/personaje2.png';
-import { FaExclamationTriangle, FaPhone, FaWhatsapp, FaEnvelope } from 'react-icons/fa';
+import { FaExclamationTriangle, FaPhone, FaWhatsapp, FaEnvelope ,FaMapMarkerAlt} from 'react-icons/fa';
 
 const BASE_URL = import.meta.env.VITE_BASE_URL;
 
@@ -27,6 +27,10 @@ const PetPage = () => {
   const [locationRequested, setLocationRequested] = useState(false);
   const [locationShared, setLocationShared] = useState(false);
   const [activeTab, setActiveTab] = useState('basic');
+  const [locationAttempts, setLocationAttempts] = useState(0);
+  const [showHelpButton, setShowHelpButton] = useState(false);
+  const locationSentRef = useRef(false); // Para evitar múltiples envíos
+  const retryTimeoutRef = useRef(null); // Para limpiar timeouts
 
   // Referencias para scroll
   const basicRef = useRef(null);
@@ -53,8 +57,129 @@ const PetPage = () => {
     fetchPetData();
   }, [uuid, navigate]);
 
-  const requestLocation = () => {
+  // Función para intentar obtener y enviar ubicación
+  const attemptLocationRequest = (attemptNumber = 1) => {
+    console.log(`[PetPage] Intento ${attemptNumber} de obtener ubicación`);
+    
+    if (!navigator.geolocation) {
+      console.error('[PetPage] Geolocalización no soportada por el navegador');
+      setLocationError('Geolocalización no soportada por el navegador.');
+      setShowHelpButton(true);
+      return;
+    }
+
     setLocationRequested(true);
+    
+    const geoOptions = {
+      enableHighAccuracy: false, // Cambiado a false para mejor compatibilidad
+      timeout: 10000, // Aumentado a 10 segundos
+      maximumAge: 60000 // Cache de 1 minuto
+    };
+    
+    console.log('[PetPage] Solicitando ubicación con opciones:', geoOptions);
+    
+    navigator.geolocation.getCurrentPosition(
+      async (position) => {
+        console.log('[PetPage] Ubicación obtenida exitosamente:', position.coords);
+        const location = {
+          latitude: position.coords.latitude,
+          longitude: position.coords.longitude,
+        };
+        console.log('[PetPage] Enviando notificación al dueño con ubicación:', location);
+        
+        try {
+          await notifyOwner(uuid, location);
+          console.log('[PetPage] Notificación al dueño enviada exitosamente');
+          
+          if (pet?.is_lost) {
+            console.log('[PetPage] Mascota perdida, enviando notificación a la comunidad');
+            await sendCommunityNotification(uuid, location, 50);
+            console.log('[PetPage] Notificación a la comunidad enviada exitosamente');
+          }
+          
+          setLocationError('');
+          setLocationShared(true);
+          setShowHelpButton(false);
+          // Limpiar timeout si existe
+          if (retryTimeoutRef.current) {
+            clearTimeout(retryTimeoutRef.current);
+          }
+        } catch (err) {
+          console.error('[PetPage] Error enviando notificaciones:', err);
+          console.error('[PetPage] Detalles del error:', {
+            message: err.message,
+            response: err.response?.data,
+            status: err.response?.status
+          });
+          setLocationError('No se pudieron enviar las notificaciones de ubicación.');
+          setShowHelpButton(true);
+        }
+      },
+      (err) => {
+        console.error(`[PetPage] Error obteniendo ubicación (intento ${attemptNumber}):`, err);
+        console.error('[PetPage] Tipo de error:', {
+          code: err.code,
+          message: err.message,
+          PERMISSION_DENIED: err.PERMISSION_DENIED,
+          POSITION_UNAVAILABLE: err.POSITION_UNAVAILABLE,
+          TIMEOUT: err.TIMEOUT
+        });
+        
+        setLocationAttempts(attemptNumber);
+        
+        // Si es el último intento (3), mostrar el botón de ayuda
+        if (attemptNumber >= 3) {
+          setLocationError('No se pudo obtener tu ubicación después de varios intentos. Por favor, comparte tu ubicación manualmente para ayudar al dueño.');
+          setShowHelpButton(true);
+        } else {
+          // Intentar de nuevo después de 3 segundos
+          setLocationError(`Solicitando ubicación... (Intento ${attemptNumber}/3)`);
+          retryTimeoutRef.current = setTimeout(() => {
+            attemptLocationRequest(attemptNumber + 1);
+          }, 3000);
+        }
+      },
+      geoOptions
+    );
+  };
+
+  // Efecto para enviar ubicación automáticamente al cargar la página
+  useEffect(() => {
+    console.log('[PetPage] useEffect ejecutado - Estado:', {
+      pet: !!pet,
+      isLoading,
+      locationSentRef: locationSentRef.current,
+      locationShared
+    });
+    
+    // Solo ejecutar si hay datos de mascota, no está cargando, y no se ha enviado ya la ubicación
+    if (!pet || isLoading || locationSentRef.current || locationShared) {
+      console.log('[PetPage] Condiciones no cumplidas, saliendo del useEffect');
+      return;
+    }
+
+    console.log('[PetPage] Iniciando solicitud de ubicación automática');
+    
+    // Marcar que intentamos enviar la ubicación
+    locationSentRef.current = true;
+    
+    // Iniciar primer intento
+    attemptLocationRequest(1);
+
+    // Limpiar timeout al desmontar
+    return () => {
+      if (retryTimeoutRef.current) {
+        clearTimeout(retryTimeoutRef.current);
+      }
+    };
+  }, [pet, isLoading, uuid, locationShared]);
+
+  const requestLocation = () => {
+    // Resetear intentos y ocultar botón de ayuda si se intenta manualmente
+    setLocationAttempts(0);
+    setShowHelpButton(false);
+    setLocationError('');
+    
     if (navigator.geolocation) {
       navigator.geolocation.getCurrentPosition(
         async (position) => {
@@ -64,20 +189,26 @@ const PetPage = () => {
           };
           try {
             await notifyOwner(uuid, location);
-            await sendCommunityNotification(uuid, location, 50);
+            if (pet?.is_lost) {
+              await sendCommunityNotification(uuid, location, 50);
+            }
             setLocationError('');
             setLocationShared(true);
+            setShowHelpButton(false);
           } catch {
             setLocationError('No se pudieron enviar las notificaciones de ubicación.');
+            setShowHelpButton(true);
           }
         },
         () => {
           setLocationError('No se pudo obtener la ubicación para enviar notificaciones.');
+          setShowHelpButton(true);
         },
         { enableHighAccuracy: true, timeout: 5000 }
       );
     } else {
       setLocationError('Geolocalización no soportada por el navegador.');
+      setShowHelpButton(true);
     }
   };
 
@@ -153,6 +284,36 @@ const PetPage = () => {
       </header>
 
       <main className="pet-content">
+        {/* Banner de ayuda prominente - aparece después de 3 intentos fallidos */}
+        {showHelpButton && !locationShared && (
+          <div className="help-banner">
+            <div className="help-banner-content">
+              <div className="help-banner-icon"><FaMapMarkerAlt /></div>
+              <div className="help-banner-text">
+                <strong>¡Ayuda a encontrar a {pet.name}!</strong>
+                <p>Comparte tu ubicación para notificar al dueño y ayudar a que {pet.name} regrese a casa.</p>
+              </div>
+              <button className="help-banner-btn" onClick={requestLocation}>
+                Compartir ubicación
+              </button>
+            </div>
+          </div>
+        )}
+
+        {/* Mensaje de estado de ubicación */}
+        {locationError && (
+          <div className={`location-status ${showHelpButton ? 'location-status-error' : 'location-status-info'}`}>
+            {locationError}
+          </div>
+        )}
+
+        {/* Mensaje de éxito */}
+        {locationShared && (
+          <div className="location-status location-status-success">
+            ✅ Ubicación compartida exitosamente. El dueño ha sido notificado.
+          </div>
+        )}
+
         {/* Alerta de mascota perdida */}
         {pet.is_lost && (
           <div className="pet-alert">
