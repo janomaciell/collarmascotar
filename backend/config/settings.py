@@ -264,6 +264,15 @@ CORS_EXPOSE_HEADERS = [
     'authorization',
 ]
 
+# Configuración adicional para asegurar que CORS funcione correctamente
+# Permitir todos los subdominios de encuentrameqr.com
+CORS_ALLOWED_ORIGIN_REGEXES = [
+    r"^https://.*\.encuentrameqr\.com$",
+]
+
+# Asegurar que el middleware procese las requests OPTIONS (preflight)
+CORS_URLS_REGEX = r'^/api/.*$'
+
 
 # Configuración de REST Framework
 REST_FRAMEWORK = {
