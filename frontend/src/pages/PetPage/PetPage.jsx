@@ -6,6 +6,7 @@ import mascotaImage from '../../img/personaje2.png';
 import { FaExclamationTriangle, FaPhone, FaWhatsapp, FaEnvelope ,FaMapMarkerAlt} from 'react-icons/fa';
 
 const BASE_URL = import.meta.env.VITE_BASE_URL;
+const isDevelopment = import.meta.env.DEV || import.meta.env.MODE === 'development';
 
 const PetIntro = ({ name, isLost }) => (
   <div className="pet-intro">
@@ -59,7 +60,9 @@ const PetPage = () => {
 
   // Función para intentar obtener y enviar ubicación
   const attemptLocationRequest = (attemptNumber = 1) => {
-    console.log(`[PetPage] Intento ${attemptNumber} de obtener ubicación`);
+    if (isDevelopment) {
+      console.log(`[PetPage] Intento ${attemptNumber} de obtener ubicación`);
+    }
     
     if (!navigator.geolocation) {
       console.error('[PetPage] Geolocalización no soportada por el navegador');
@@ -76,54 +79,79 @@ const PetPage = () => {
       maximumAge: 60000 // Cache de 1 minuto
     };
     
-    console.log('[PetPage] Solicitando ubicación con opciones:', geoOptions);
+    if (isDevelopment) {
+      console.log('[PetPage] Solicitando ubicación con opciones:', geoOptions);
+    }
     
     navigator.geolocation.getCurrentPosition(
       async (position) => {
-        console.log('[PetPage] Ubicación obtenida exitosamente:', position.coords);
+        if (isDevelopment) {
+          console.log('[PetPage] Ubicación obtenida exitosamente:', position.coords);
+        }
+        
+        // Crear objeto de ubicación limpio
         const location = {
           latitude: position.coords.latitude,
-          longitude: position.coords.longitude,
+          longitude: position.coords.longitude
         };
-        console.log('[PetPage] Enviando notificación al dueño con ubicación:', location);
+        
+        // Log detallado ANTES de enviar (solo en desarrollo)
+        if (isDevelopment) {
+          console.log('[PetPage] Objeto location a enviar:', location);
+          console.log('[PetPage] JSON.stringify(location):', JSON.stringify(location));
+          console.log('[PetPage] Tipo de latitude:', typeof location.latitude);
+          console.log('[PetPage] Tipo de longitude:', typeof location.longitude);
+        }
         
         try {
-          await notifyOwner(uuid, location);
-          console.log('[PetPage] Notificación al dueño enviada exitosamente');
+          // Enviar notificación al dueño
+          if (isDevelopment) {
+            console.log('[PetPage] Llamando a notifyOwner...');
+          }
+          const response = await notifyOwner(uuid, location);
+          if (isDevelopment) {
+            console.log('[PetPage] Respuesta de notifyOwner:', response);
+          }
           
           if (pet?.is_lost) {
-            console.log('[PetPage] Mascota perdida, enviando notificación a la comunidad');
-            await sendCommunityNotification(uuid, location, 50);
-            console.log('[PetPage] Notificación a la comunidad enviada exitosamente');
+            if (isDevelopment) {
+              console.log('[PetPage] Enviando notificación a comunidad...');
+            }
+            const communityResponse = await sendCommunityNotification(uuid, location, 50);
+            if (isDevelopment) {
+              console.log('[PetPage] Respuesta de comunidad:', communityResponse);
+            }
           }
           
           setLocationError('');
           setLocationShared(true);
           setShowHelpButton(false);
-          // Limpiar timeout si existe
+          
           if (retryTimeoutRef.current) {
             clearTimeout(retryTimeoutRef.current);
           }
         } catch (err) {
-          console.error('[PetPage] Error enviando notificaciones:', err);
-          console.error('[PetPage] Detalles del error:', {
-            message: err.message,
-            response: err.response?.data,
-            status: err.response?.status
-          });
+          console.error('[PetPage] Error completo:', err);
+          console.error('[PetPage] Error response:', err.response);
+          console.error('[PetPage] Error data:', err.response?.data);
+          console.error('[PetPage] Error status:', err.response?.status);
+          console.error('[PetPage] Error config:', err.config);
+          
           setLocationError('No se pudieron enviar las notificaciones de ubicación.');
           setShowHelpButton(true);
         }
       },
       (err) => {
         console.error(`[PetPage] Error obteniendo ubicación (intento ${attemptNumber}):`, err);
-        console.error('[PetPage] Tipo de error:', {
-          code: err.code,
-          message: err.message,
-          PERMISSION_DENIED: err.PERMISSION_DENIED,
-          POSITION_UNAVAILABLE: err.POSITION_UNAVAILABLE,
-          TIMEOUT: err.TIMEOUT
-        });
+        if (isDevelopment) {
+          console.error('[PetPage] Tipo de error:', {
+            code: err.code,
+            message: err.message,
+            PERMISSION_DENIED: err.PERMISSION_DENIED,
+            POSITION_UNAVAILABLE: err.POSITION_UNAVAILABLE,
+            TIMEOUT: err.TIMEOUT
+          });
+        }
         
         setLocationAttempts(attemptNumber);
         
@@ -145,20 +173,26 @@ const PetPage = () => {
 
   // Efecto para enviar ubicación automáticamente al cargar la página
   useEffect(() => {
-    console.log('[PetPage] useEffect ejecutado - Estado:', {
-      pet: !!pet,
-      isLoading,
-      locationSentRef: locationSentRef.current,
-      locationShared
-    });
+    if (isDevelopment) {
+      console.log('[PetPage] useEffect ejecutado - Estado:', {
+        pet: !!pet,
+        isLoading,
+        locationSentRef: locationSentRef.current,
+        locationShared
+      });
+    }
     
     // Solo ejecutar si hay datos de mascota, no está cargando, y no se ha enviado ya la ubicación
     if (!pet || isLoading || locationSentRef.current || locationShared) {
-      console.log('[PetPage] Condiciones no cumplidas, saliendo del useEffect');
+      if (isDevelopment) {
+        console.log('[PetPage] Condiciones no cumplidas, saliendo del useEffect');
+      }
       return;
     }
 
-    console.log('[PetPage] Iniciando solicitud de ubicación automática');
+    if (isDevelopment) {
+      console.log('[PetPage] Iniciando solicitud de ubicación automática');
+    }
     
     // Marcar que intentamos enviar la ubicación
     locationSentRef.current = true;

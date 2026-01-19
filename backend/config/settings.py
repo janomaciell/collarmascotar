@@ -41,7 +41,6 @@ ALLOWED_HOSTS = [
     '127.0.0.1',
 ]
 
-# Application definition
 INSTALLED_APPS = [
     'django.contrib.admin',
     'django.contrib.auth',
@@ -66,7 +65,6 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
-
 ROOT_URLCONF = 'config.urls'
 
 TEMPLATES = [
@@ -211,9 +209,8 @@ except Exception as e:
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 
-# Configuración de CORS
-# IMPORTANTE: No permitir todos los orígenes en producción
-CORS_ALLOW_ALL_ORIGINS = False
+# Configuración de CORS - PRODUCCIÓN
+CORS_ALLOW_ALL_ORIGINS = False  # Mantener en False por seguridad
 
 CORS_ALLOWED_ORIGINS = [
     "https://collarmascotar.onrender.com",
@@ -236,6 +233,7 @@ if DEBUG:
 # Configuración adicional de CORS
 CORS_ALLOW_CREDENTIALS = True
 CORS_PREFLIGHT_MAX_AGE = 86400  
+
 CORS_ALLOW_METHODS = [
     'DELETE',
     'GET',
@@ -244,6 +242,7 @@ CORS_ALLOW_METHODS = [
     'POST',
     'PUT',
 ]
+
 CORS_ALLOW_HEADERS = [
     'accept',
     'accept-encoding',
@@ -258,20 +257,16 @@ CORS_ALLOW_HEADERS = [
     'cache-control',
 ]
 
-# Exponer headers adicionales si es necesario
+# Exponer headers adicionales
 CORS_EXPOSE_HEADERS = [
     'content-type',
     'authorization',
 ]
 
-# Configuración adicional para asegurar que CORS funcione correctamente
-# Permitir todos los subdominios de encuentrameqr.com
+# Permitir subdominios
 CORS_ALLOWED_ORIGIN_REGEXES = [
     r"^https://.*\.encuentrameqr\.com$",
 ]
-
-# Asegurar que el middleware procese las requests OPTIONS (preflight)
-CORS_URLS_REGEX = r'^/api/.*$'
 
 
 # Configuración de REST Framework

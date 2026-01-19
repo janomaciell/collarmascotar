@@ -2,16 +2,68 @@ import axios from 'axios';
 
 export const API_URL = (import.meta.env.VITE_API_URL || 'http://localhost:8000/api').replace(/\/+$/, '');
 
+// Configuración global de Axios
+axios.defaults.headers.common['Content-Type'] = 'application/json';
+axios.defaults.headers.common['Accept'] = 'application/json';
 
+// Detectar si estamos en desarrollo
+const isDevelopment = import.meta.env.DEV || import.meta.env.MODE === 'development';
+
+// Interceptor para requests (asegurar JSON válido)
 axios.interceptors.request.use(
   (config) => {
     const token = localStorage.getItem('token');
     if (token) {
       config.headers['Authorization'] = `Token ${token}`;
     }
+    
+    // Asegurar que el Content-Type sea JSON
+    if (!config.headers['Content-Type']) {
+      config.headers['Content-Type'] = 'application/json';
+    }
+    
+    // Log solo en desarrollo
+    if (isDevelopment) {
+      console.log('[Axios Request]', {
+        url: config.url,
+        method: config.method,
+        data: config.data,
+        headers: config.headers
+      });
+    }
+    
     return config;
   },
-  (error) => Promise.reject(error)
+  (error) => {
+    // Siempre loggear errores
+    console.error('[Axios Request Error]', error);
+    return Promise.reject(error);
+  }
+);
+
+// Interceptor para responses (debugging)
+axios.interceptors.response.use(
+  (response) => {
+    // Log solo en desarrollo
+    if (isDevelopment) {
+      console.log('[Axios Response Success]', {
+        url: response.config.url,
+        status: response.status,
+        data: response.data
+      });
+    }
+    return response;
+  },
+  (error) => {
+    // Siempre loggear errores
+    console.error('[Axios Response Error]', {
+      url: error.config?.url,
+      message: error.message,
+      response: error.response?.data,
+      status: error.response?.status
+    });
+    return Promise.reject(error);
+  }
 );
 export const getAuthHeaders = () => {
   const token = localStorage.getItem('token');
@@ -122,14 +174,31 @@ export const notifyOwner = async (uuid, location) => {
       longitude: location.longitude,
     };
     
-    console.log('[API] Enviando POST a:', url);
-    console.log('[API] Payload:', payload);
+    // Log detallado solo en desarrollo
+    if (isDevelopment) {
+      console.log('[API] Enviando POST a:', url);
+      console.log('[API] Payload:', payload);
+      console.log('[API] JSON.stringify(payload):', JSON.stringify(payload));
+      console.log('[API] Tipo de latitude:', typeof payload.latitude);
+      console.log('[API] Tipo de longitude:', typeof payload.longitude);
+    }
     
-    const response = await axios.post(url, payload);
+    const response = await axios.post(
+      url,
+      payload,  // Axios convierte automáticamente a JSON
+      {
+        headers: {
+          'Content-Type': 'application/json',
+        }
+      }
+    );
     
-    console.log('[API] Respuesta exitosa:', response.status, response.data);
+    if (isDevelopment) {
+      console.log('[API] Respuesta exitosa:', response.status, response.data);
+    }
     return response.data;
   } catch (error) {
+    // Siempre loggear errores
     console.error('[API] Error en notifyOwner:', {
       message: error.message,
       response: error.response?.data,
@@ -152,13 +221,43 @@ export const updatePetLostStatus = async (petId, isLost) => {
 
 export const sendCommunityNotification = async (petId, scannerLocation, radiusKm) => {
   try {
-    const response = await axios.post(`${API_URL}/notifications/community/`, {
+    const url = `${API_URL}/notifications/community/`;
+    const payload = {
       petId,
       scannerLocation,
       radiusKm,
-    });
+    };
+    
+    // Log solo en desarrollo
+    if (isDevelopment) {
+      console.log('[API] Enviando notificación comunitaria a:', url);
+      console.log('[API] Payload:', payload);
+      console.log('[API] JSON.stringify(payload):', JSON.stringify(payload));
+    }
+    
+    const response = await axios.post(
+      url,
+      payload,
+      {
+        headers: {
+          'Content-Type': 'application/json',
+        }
+      }
+    );
+    
+    if (isDevelopment) {
+      console.log('[API] Respuesta de notificación comunitaria:', response.status, response.data);
+    }
     return response.data;
   } catch (error) {
+    // Siempre loggear errores
+    console.error('[API] Error en sendCommunityNotification:', {
+      message: error.message,
+      response: error.response?.data,
+      status: error.response?.status,
+      statusText: error.response?.statusText,
+      url: error.config?.url
+    });
     throw error.response?.data || error.message;
   }
 };
