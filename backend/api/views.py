@@ -685,11 +685,22 @@ class LostPetView(APIView):
                 "error": f"Error procesando la alerta: {str(e)}"
             }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
-def send_lost_pet_email(pet, email, alert):
-    subject = f"¡Ayúdanos a encontrar a {pet.name}! - Mascota perdida cerca de ti"
+def send_lost_pet_email(pet, email, alert=None, scan_latitude=None, scan_longitude=None):
+    # Determinar si es una notificación de escaneo o de alerta de pérdida
+    is_scan_notification = alert is None and scan_latitude is not None and scan_longitude is not None
     
-    # Enlace a Google Maps con la última ubicación
-    maps_link = f"https://www.google.com/maps?q={alert.owner_latitude},{alert.owner_longitude}"
+    if is_scan_notification:
+        subject = f"¡{pet.name} ha sido visto cerca de ti! - Mascota perdida"
+        # Usar las coordenadas del escaneo
+        maps_link = f"https://www.google.com/maps?q={scan_latitude},{scan_longitude}"
+    else:
+        subject = f"¡Ayúdanos a encontrar a {pet.name}! - Mascota perdida cerca de ti"
+        # Enlace a Google Maps con la última ubicación del alert
+        if alert:
+            maps_link = f"https://www.google.com/maps?q={alert.owner_latitude},{alert.owner_longitude}"
+        else:
+            # Fallback: usar última ubicación conocida
+            maps_link = "#"
     
     # Construcción del mensaje HTML
     html_message = f"""
@@ -703,10 +714,10 @@ def send_lost_pet_email(pet, email, alert):
           </div>
           <!-- Contenido -->
           <div style="padding: 20px; background: #ffffff;">
-            <h2 style="color: #4a3c31; font-size: 22px; margin-bottom: 15px;">¡{pet.name} se ha perdido!</h2>
+            <h2 style="color: #4a3c31; font-size: 22px; margin-bottom: 15px;">{'¡' + pet.name + ' ha sido visto cerca de ti!' if is_scan_notification else '¡' + pet.name + ' se ha perdido!'}</h2>
             <p style="font-size: 16px; line-height: 1.5; color: #666;">
               Hola,<br>
-              Una mascota llamada <strong>{pet.name}</strong> se ha perdido cerca de tu área. Te pedimos que estés atento/a y nos ayudes a reunirla con su dueño.
+              {'Alguien acaba de escanear el QR de <strong>' + pet.name + '</strong>, una mascota perdida, cerca de tu ubicación. Esta es la ubicación exacta donde fue escaneado el código QR.' if is_scan_notification else 'Una mascota llamada <strong>' + pet.name + '</strong> se ha perdido cerca de tu área. Te pedimos que estés atento/a y nos ayudes a reunirla con su dueño.'}
             </p>
             <table style="width: 100%; margin: 20px 0; border-collapse: collapse;">
               <tr style="background: #f5f1e9;">
@@ -718,7 +729,7 @@ def send_lost_pet_email(pet, email, alert):
                 <td style="padding: 10px; color: #333;">{pet.breed or 'No especificada'}</td>
               </tr>
               <tr style="background: #f5f1e9;">
-                <td style="padding: 10px; font-weight: bold; color: #4a3c31;">Última ubicación:</td>
+                <td style="padding: 10px; font-weight: bold; color: #4a3c31;">{'Ubicación del escaneo:' if is_scan_notification else 'Última ubicación:'}</td>
                 <td style="padding: 10px; color: #333;">
                   <a href="{maps_link}" style="color: #87a8d0; text-decoration: none;">Ver en Google Maps</a>
                 </td>
@@ -736,7 +747,7 @@ def send_lost_pet_email(pet, email, alert):
               <a href="tel:{pet.phone}" style="background: #f4b084; color: #fff; padding: 10px 20px; text-decoration: none; border-radius: 5px; display: inline-block; margin: 5px;">Llamar al dueño</a>
             </div>
             <p style="font-size: 14px; color: #666; line-height: 1.5;">
-              Si ves a {pet.name}, por favor escanea su QR o contacta al dueño directamente. ¡Tu ayuda puede hacer la diferencia!
+              {'Si ves a ' + pet.name + ', por favor contacta al dueño directamente. ¡Tu ayuda puede hacer la diferencia!' if is_scan_notification else 'Si ves a ' + pet.name + ', por favor escanea su QR o contacta al dueño directamente. ¡Tu ayuda puede hacer la diferencia!'}
             </p>
           </div>
           <!-- Pie de página -->
@@ -752,16 +763,29 @@ def send_lost_pet_email(pet, email, alert):
     """
 
     # Mensaje plano como respaldo
-    plain_message = f"""
-    ¡Mascota perdida cerca de ti!
-    Nombre: {pet.name}
-    Raza: {pet.breed or 'No especificada'}
-    Última ubicación: {maps_link}
-    Contacto: {pet.phone or 'No disponible'}
-    Si la ves, escanea su QR o contacta al dueño.
-    Gracias por tu ayuda,
-    EncuentraME
-    """
+    if is_scan_notification:
+        plain_message = f"""
+        ¡{pet.name} ha sido visto cerca de ti!
+        Alguien acaba de escanear el QR de {pet.name}, una mascota perdida, cerca de tu ubicación.
+        Nombre: {pet.name}
+        Raza: {pet.breed or 'No especificada'}
+        Ubicación del escaneo: {maps_link}
+        Contacto: {pet.phone or 'No disponible'}
+        Si la ves, contacta al dueño directamente.
+        Gracias por tu ayuda,
+        EncuentraME
+        """
+    else:
+        plain_message = f"""
+        ¡Mascota perdida cerca de ti!
+        Nombre: {pet.name}
+        Raza: {pet.breed or 'No especificada'}
+        Última ubicación: {maps_link}
+        Contacto: {pet.phone or 'No disponible'}
+        Si la ves, escanea su QR o contacta al dueño.
+        Gracias por tu ayuda,
+        EncuentraME
+        """
 
     try:
         send_mail(
@@ -858,7 +882,7 @@ def send_community_scan_notification(pet, latitude, longitude, radius_km=50):
     for user in users_within_radius:
         try:
             if user.email:
-                send_lost_pet_email(pet, user.email, None)
+                send_lost_pet_email(pet, user.email, alert=None, scan_latitude=latitude, scan_longitude=longitude)
         except Exception as e:
             print(f"Error sending email to {user.email}: {str(e)}")
     
