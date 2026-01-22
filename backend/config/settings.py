@@ -86,8 +86,9 @@ TEMPLATES = [
 WSGI_APPLICATION = 'config.wsgi.application'
 
 
-# Database
-# https://docs.djangoproject.com/en/5.1/ref/settings/#databases
+# ============================================================================
+# DATABASE - Configuración para Supabase
+# ============================================================================
 
 DATABASE_URL = config('DATABASE_URL', default=None)
 
@@ -95,19 +96,29 @@ if DATABASE_URL:
     DATABASES = {
         'default': dj_database_url.config(
             default=DATABASE_URL,
-            conn_max_age=0,  # Importante: Transaction Pooler no soporta conexiones persistentes
+            conn_max_age=0,  # SIN pooling de conexiones (importante para Supabase)
             conn_health_checks=True,
+            ssl_require=True,  # Supabase requiere SSL
         )
     }
-    # Configuración específica para Transaction Pooler de Supabase
+    
+    # Configuración específica para Supabase
     DATABASES['default']['OPTIONS'] = {
         'connect_timeout': 10,
         'sslmode': 'require',
+        'options': '-c statement_timeout=30000',  # 30 segundos timeout
     }
-    # IMPORTANTE: Deshabilitar server-side cursors para Transaction Pooler
+    
+    # CRÍTICO: Deshabilitar server-side cursors para Transaction/Session Pooler
     DATABASES['default']['DISABLE_SERVER_SIDE_CURSORS'] = True
+    
+    # Log de conexión (solo en desarrollo)
+    if DEBUG:
+        print("✓ Conectado a Supabase via DATABASE_URL")
+        print(f"✓ Host: {DATABASES['default']['HOST']}")
+        print(f"✓ Puerto: {DATABASES['default']['PORT']}")
 else:
-    # Opción 2: Configuración manual con variables de entorno individuales
+    # Configuración manual (fallback)
     DATABASES = {
         'default': {
             'ENGINE': 'django.db.backends.postgresql',
@@ -115,12 +126,13 @@ else:
             'USER': config('SUPABASE_DB_USER', default='postgres'),
             'PASSWORD': config('SUPABASE_DB_PASSWORD', default=''),
             'HOST': config('SUPABASE_DB_HOST', default=''),
-            'PORT': config('SUPABASE_DB_PORT', default='6543'),
+            'PORT': config('SUPABASE_DB_PORT', default='5432'),  # ← CAMBIAR A 5432
             'OPTIONS': {
                 'connect_timeout': 10,
                 'sslmode': 'require',
+                'options': '-c statement_timeout=30000',
             },
-            'CONN_MAX_AGE': 0,  # Sin pooling de conexiones
+            'CONN_MAX_AGE': 0,
             'DISABLE_SERVER_SIDE_CURSORS': True,
         }
     }
