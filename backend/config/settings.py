@@ -213,9 +213,9 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 CORS_ALLOW_ALL_ORIGINS = False  # Mantener en False por seguridad
 
 CORS_ALLOWED_ORIGINS = [
-    "https://collarmascotar.onrender.com",
     "https://www.encuentrameqr.com",
     "https://encuentrameqr.com",
+    "https://collarmascotar.onrender.com",
     "https://collarmascotar.vercel.app",
 ]
 

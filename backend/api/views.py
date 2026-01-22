@@ -23,6 +23,7 @@ from rest_framework.views import APIView
 from firebase_admin import credentials, initialize_app, messaging
 from rest_framework.authtoken.views import ObtainAuthToken
 from rest_framework.authtoken.models import Token
+from django.views.decorators.csrf import csrf_exempt
 
 
 
@@ -153,6 +154,7 @@ def get_pet_by_uuid(request, uuid):
 
 @api_view(['POST'])
 @permission_classes([permissions.AllowAny])
+@csrf_exempt
 def record_scan(request, uuid):
     """
     Endpoint para notificar al dueño cuando alguien escanea el QR

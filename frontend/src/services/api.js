@@ -185,11 +185,13 @@ export const notifyOwner = async (uuid, location) => {
     
     const response = await axios.post(
       url,
-      payload,  // Axios convierte automáticamente a JSON
+      payload,
       {
         headers: {
           'Content-Type': 'application/json',
-        }
+          'Accept': 'application/json',
+        },
+        withCredentials: false,
       }
     );
     
