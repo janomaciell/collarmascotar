@@ -23,8 +23,8 @@ from rest_framework.views import APIView
 from firebase_admin import credentials, initialize_app, messaging
 from rest_framework.authtoken.views import ObtainAuthToken
 from rest_framework.authtoken.models import Token
-from django.views.decorators.csrf import csrf_exempt
-
+from django.views.decorators.csrf import ensure_csrf_cookie, csrf_exempt
+from django.utils.decorators import method_decorator
 
 
 # Inicializa Firebase Admin
@@ -154,16 +154,17 @@ def get_pet_by_uuid(request, uuid):
 
 @api_view(['POST'])
 @permission_classes([permissions.AllowAny])
-@csrf_exempt
+@csrf_exempt  # IMPORTANTE: Agregar esto para permitir POST sin CSRF desde origen externo
 def record_scan(request, uuid):
     """
     Endpoint para notificar al dueño cuando alguien escanea el QR
     """
     logger = logging.getLogger('api')
     try:
-        # Log para debugging (usar logger en producción, print en desarrollo)
+        # Log para debugging
         if settings.DEBUG:
             print(f"[SCAN] Request recibido para UUID: {uuid}")
+            print(f"[SCAN] Origin: {request.headers.get('Origin', 'No origin header')}")
             print(f"[SCAN] Content-Type: {request.content_type}")
             print(f"[SCAN] Request data: {request.data}")
         else:
@@ -205,6 +206,7 @@ def record_scan(request, uuid):
                 status=status.HTTP_400_BAD_REQUEST
             )
 
+        # Crear el escaneo
         scan = Scan.objects.create(
             pet=pet,
             latitude=latitude,
@@ -242,7 +244,7 @@ def record_scan(request, uuid):
                     <td style="padding: 8px;">{scan_time}</td>
                 </tr>
                 <tr>
-                    <td style="padding: 8px; font-weight: bold;">📍 Ubicación:</td>
+                    <td style="padding: 8px; font-weight: bold;">📍 Ubicación exacta:</td>
                     <td style="padding: 8px;">
                     <a href="{google_maps_link}" style="color: #05408F; font-weight: bold; text-decoration: none;">Ver en Google Maps</a>
                     </td>
@@ -261,7 +263,7 @@ def record_scan(request, uuid):
         </html>
         """
 
-        plain_message = f"¡Tu mascota {pet_name} ha sido encontrada!\nFecha y hora: {scan_time}\nUbicación: {google_maps_link}\nRevisa el historial de escaneos en tu cuenta."
+        plain_message = f"¡Tu mascota {pet_name} ha sido encontrada!\nFecha y hora: {scan_time}\nUbicación exacta: {google_maps_link}\nRevisa el historial de escaneos en tu cuenta."
 
         # Enviar email con manejo de errores
         try:
@@ -278,7 +280,6 @@ def record_scan(request, uuid):
             else:
                 logger.info(f"Email enviado exitosamente a {pet.owner.email} para mascota {pet_name}")
         except Exception as e:
-            # Log del error pero continuar con el proceso
             error_details = str(e)
             error_traceback = traceback.format_exc()
             if settings.DEBUG:
@@ -288,6 +289,7 @@ def record_scan(request, uuid):
                 logger.error(f"Error enviando email de escaneo QR: {error_details}")
                 logger.error(f"Traceback completo: {error_traceback}")
 
+        # Si la mascota está perdida, enviar notificación comunitaria
         if pet.is_lost:
             try:
                 recipients = send_community_scan_notification(pet, latitude, longitude)
@@ -302,7 +304,22 @@ def record_scan(request, uuid):
                 else:
                     logger.error(error_msg)
 
-        return Response({"message": "Escaneo registrado y notificación enviada"}, status=status.HTTP_201_CREATED)
+        # Respuesta exitosa
+        response = Response({
+            "message": "Escaneo registrado y notificación enviada",
+            "scan_id": scan.id,
+            "location": {
+                "latitude": latitude,
+                "longitude": longitude,
+                "maps_link": google_maps_link
+            }
+        }, status=status.HTTP_201_CREATED)
+        
+        # Agregar headers CORS manualmente para asegurar compatibilidad
+        response["Access-Control-Allow-Origin"] = request.headers.get('Origin', '*')
+        response["Access-Control-Allow-Credentials"] = "true"
+        
+        return response
         
     except json.JSONDecodeError as e:
         error_msg = f"[SCAN ERROR] JSON decode error: {str(e)}"

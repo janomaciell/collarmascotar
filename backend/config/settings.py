@@ -33,10 +33,10 @@ SECRET_KEY = config('SECRET_KEY')
 DEBUG = config('DEBUG', default=False, cast=bool)
 
 ALLOWED_HOSTS = [
-    'collarmascotar.onrender.com',
-    'collarmascotar.vercel.app',
     'www.encuentrameqr.com',
     'encuentrameqr.com',
+    'collarmascotar.onrender.com',
+    'collarmascotar.vercel.app',
     'localhost',
     '127.0.0.1',
 ]
@@ -210,7 +210,7 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 
 # Configuración de CORS - PRODUCCIÓN
-CORS_ALLOW_ALL_ORIGINS = False  # Mantener en False por seguridad
+CORS_ALLOW_ALL_ORIGINS = False
 
 CORS_ALLOWED_ORIGINS = [
     "https://www.encuentrameqr.com",
@@ -232,7 +232,7 @@ if DEBUG:
 
 # Configuración adicional de CORS
 CORS_ALLOW_CREDENTIALS = True
-CORS_PREFLIGHT_MAX_AGE = 86400  
+CORS_PREFLIGHT_MAX_AGE = 86400
 
 CORS_ALLOW_METHODS = [
     'DELETE',
@@ -257,17 +257,17 @@ CORS_ALLOW_HEADERS = [
     'cache-control',
 ]
 
-# Exponer headers adicionales
+# IMPORTANTE: Exponer headers adicionales
 CORS_EXPOSE_HEADERS = [
     'content-type',
     'authorization',
+    'access-control-allow-origin',
 ]
 
 # Permitir subdominios
 CORS_ALLOWED_ORIGIN_REGEXES = [
     r"^https://.*\.encuentrameqr\.com$",
 ]
-
 
 # Configuración de REST Framework
 REST_FRAMEWORK = {
@@ -329,29 +329,13 @@ FRONTEND_URL = config('FRONTEND_URL', default='http://localhost:3000')
 
 # Configuración de seguridad para producción
 if not DEBUG:
-    # CSRF Protection - IMPORTANTE: Debe incluir todos los orígenes permitidos
     CSRF_TRUSTED_ORIGINS = [
         "https://www.encuentrameqr.com",
         "https://encuentrameqr.com",
         "https://collarmascotar.onrender.com",
         "https://collarmascotar.vercel.app",
     ]
-    
-    # Security Headers
-    SECURE_SSL_REDIRECT = True
-    SESSION_COOKIE_SECURE = True
-    CSRF_COOKIE_SECURE = True
-    SECURE_BROWSER_XSS_FILTER = True
-    SECURE_CONTENT_TYPE_NOSNIFF = True
-    SECURE_HSTS_SECONDS = 31536000
-    SECURE_HSTS_INCLUDE_SUBDOMAINS = True
-    SECURE_HSTS_PRELOAD = True
-    
-    # Configuración adicional de cookies
-    SESSION_COOKIE_SAMESITE = 'Lax'
-    CSRF_COOKIE_SAMESITE = 'Lax'
 else:
-    # En desarrollo, también configurar CSRF_TRUSTED_ORIGINS
     CSRF_TRUSTED_ORIGINS = [
         "http://localhost:3000",
         "http://localhost:5173",

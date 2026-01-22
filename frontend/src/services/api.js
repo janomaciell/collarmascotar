@@ -13,12 +13,12 @@ const isDevelopment = import.meta.env.DEV || import.meta.env.MODE === 'developme
 axios.interceptors.request.use(
   (config) => {
     const token = localStorage.getItem('token');
-    if (token) {
+    if (token && config.headers) {
       config.headers['Authorization'] = `Token ${token}`;
     }
     
-    // Asegurar que el Content-Type sea JSON
-    if (!config.headers['Content-Type']) {
+    // Asegurar que el Content-Type sea JSON solo si hay data
+    if (config.data && !config.headers['Content-Type']) {
       config.headers['Content-Type'] = 'application/json';
     }
     
@@ -28,20 +28,20 @@ axios.interceptors.request.use(
         url: config.url,
         method: config.method,
         data: config.data,
-        headers: config.headers
+        headers: config.headers,
+        withCredentials: config.withCredentials,
       });
     }
     
     return config;
   },
   (error) => {
-    // Siempre loggear errores
     console.error('[Axios Request Error]', error);
     return Promise.reject(error);
   }
 );
 
-// Interceptor para responses (debugging)
+// Interceptor para responses (debugging mejorado)
 axios.interceptors.response.use(
   (response) => {
     // Log solo en desarrollo
@@ -49,22 +49,35 @@ axios.interceptors.response.use(
       console.log('[Axios Response Success]', {
         url: response.config.url,
         status: response.status,
-        data: response.data
+        statusText: response.statusText,
+        data: response.data,
       });
     }
     return response;
   },
   (error) => {
-    // Siempre loggear errores
-    console.error('[Axios Response Error]', {
+    // Logging mejorado de errores
+    const errorInfo = {
       url: error.config?.url,
       message: error.message,
       response: error.response?.data,
-      status: error.response?.status
-    });
+      status: error.response?.status,
+      statusText: error.response?.statusText,
+    };
+    
+    // Detectar errores CORS específicamente
+    if (error.message === 'Network Error' && !error.response) {
+      errorInfo.possibleCorsError = true;
+      console.error('[Axios Response Error - Posible CORS]', errorInfo);
+    } else {
+      console.error('[Axios Response Error]', errorInfo);
+    }
+    
     return Promise.reject(error);
   }
 );
+
+
 export const getAuthHeaders = () => {
   const token = localStorage.getItem('token');
   return {
@@ -170,17 +183,79 @@ export const notifyOwner = async (uuid, location) => {
   try {
     const url = `${API_URL}/pets/${uuid}/scan/`;
     const payload = {
-      latitude: location.latitude,
-      longitude: location.longitude,
+      latitude: parseFloat(location.latitude),
+      longitude: parseFloat(location.longitude),
     };
     
     // Log detallado solo en desarrollo
     if (isDevelopment) {
       console.log('[API] Enviando POST a:', url);
       console.log('[API] Payload:', payload);
-      console.log('[API] JSON.stringify(payload):', JSON.stringify(payload));
-      console.log('[API] Tipo de latitude:', typeof payload.latitude);
-      console.log('[API] Tipo de longitude:', typeof payload.longitude);
+    }
+    
+    const response = await axios.post(
+      url,
+      payload,
+      {
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json',
+        },
+        // IMPORTANTE: No enviar credenciales para evitar problemas CORS
+        withCredentials: false,
+      }
+    );
+    
+    if (isDevelopment) {
+      console.log('[API] Respuesta exitosa:', response.status, response.data);
+    }
+    return response.data;
+  } catch (error) {
+    // Logging mejorado de errores
+    console.error('[API] Error en notifyOwner:', {
+      message: error.message,
+      response: error.response?.data,
+      status: error.response?.status,
+      statusText: error.response?.statusText,
+      url: error.config?.url,
+      // Agregar información del error de red
+      isNetworkError: !error.response,
+      isCorsError: error.message === 'Network Error' && !error.response,
+    });
+    
+    // Proporcionar mensaje de error más útil
+    if (!error.response) {
+      throw new Error('Error de conexión. Verifica tu conexión a internet o los permisos de ubicación.');
+    }
+    
+    throw error.response?.data || error.message;
+  }
+};
+export const updatePetLostStatus = async (petId, isLost) => {
+  try {
+    const response = await axios.patch(`${API_URL}/pets/${petId}/`, { is_lost: isLost });
+    return response.data;
+  } catch (error) {
+    throw error.response?.data || error.message;
+  }
+};
+
+export const sendCommunityNotification = async (petId, scannerLocation, radiusKm) => {
+  try {
+    const url = `${API_URL}/notifications/community/`;
+    const payload = {
+      petId,
+      scannerLocation: {
+        latitude: parseFloat(scannerLocation.latitude),
+        longitude: parseFloat(scannerLocation.longitude),
+      },
+      radiusKm,
+    };
+    
+    // Log solo en desarrollo
+    if (isDevelopment) {
+      console.log('[API] Enviando notificación comunitaria a:', url);
+      console.log('[API] Payload:', payload);
     }
     
     const response = await axios.post(
@@ -196,70 +271,24 @@ export const notifyOwner = async (uuid, location) => {
     );
     
     if (isDevelopment) {
-      console.log('[API] Respuesta exitosa:', response.status, response.data);
-    }
-    return response.data;
-  } catch (error) {
-    // Siempre loggear errores
-    console.error('[API] Error en notifyOwner:', {
-      message: error.message,
-      response: error.response?.data,
-      status: error.response?.status,
-      statusText: error.response?.statusText,
-      url: error.config?.url
-    });
-    throw error.response?.data || error.message;
-  }
-};
-
-export const updatePetLostStatus = async (petId, isLost) => {
-  try {
-    const response = await axios.patch(`${API_URL}/pets/${petId}/`, { is_lost: isLost });
-    return response.data;
-  } catch (error) {
-    throw error.response?.data || error.message;
-  }
-};
-
-export const sendCommunityNotification = async (petId, scannerLocation, radiusKm) => {
-  try {
-    const url = `${API_URL}/notifications/community/`;
-    const payload = {
-      petId,
-      scannerLocation,
-      radiusKm,
-    };
-    
-    // Log solo en desarrollo
-    if (isDevelopment) {
-      console.log('[API] Enviando notificación comunitaria a:', url);
-      console.log('[API] Payload:', payload);
-      console.log('[API] JSON.stringify(payload):', JSON.stringify(payload));
-    }
-    
-    const response = await axios.post(
-      url,
-      payload,
-      {
-        headers: {
-          'Content-Type': 'application/json',
-        }
-      }
-    );
-    
-    if (isDevelopment) {
       console.log('[API] Respuesta de notificación comunitaria:', response.status, response.data);
     }
     return response.data;
   } catch (error) {
-    // Siempre loggear errores
     console.error('[API] Error en sendCommunityNotification:', {
       message: error.message,
       response: error.response?.data,
       status: error.response?.status,
       statusText: error.response?.statusText,
-      url: error.config?.url
+      url: error.config?.url,
+      isNetworkError: !error.response,
+      isCorsError: error.message === 'Network Error' && !error.response,
     });
+    
+    if (!error.response) {
+      throw new Error('Error de conexión al enviar notificación comunitaria.');
+    }
+    
     throw error.response?.data || error.message;
   }
 };
