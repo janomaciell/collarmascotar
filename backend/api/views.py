@@ -225,6 +225,15 @@ def record_scan(request, uuid):
         def send_email_in_background():
             """Envía el email en un thread separado"""
             try:
+                # Log de inicio ANTES de intentar enviar
+                logger.info(f"[EMAIL THREAD] Iniciando envío de email a {pet.owner.email}")
+                logger.info(f"[EMAIL THREAD] Configuración SMTP:")
+                logger.info(f"  - EMAIL_HOST: {settings.EMAIL_HOST}")
+                logger.info(f"  - EMAIL_PORT: {settings.EMAIL_PORT}")
+                logger.info(f"  - EMAIL_USE_TLS: {settings.EMAIL_USE_TLS}")
+                logger.info(f"  - EMAIL_HOST_USER: {settings.EMAIL_HOST_USER}")
+                logger.info(f"  - FROM_EMAIL: {settings.DEFAULT_FROM_EMAIL}")
+                
                 subject = f"¡Alguien escaneó el QR de {pet_name}!"
                 
                 html_message = f"""
@@ -271,6 +280,8 @@ def record_scan(request, uuid):
 
                 plain_message = f"¡Tu mascota {pet_name} ha sido encontrada!\nFecha y hora: {scan_time}\nUbicación exacta: {google_maps_link}\nRevisa el historial de escaneos en tu cuenta."
 
+                logger.info(f"[EMAIL THREAD] Llamando a send_mail()...")
+                
                 send_mail(
                     subject=subject,
                     message=plain_message,
@@ -280,20 +291,14 @@ def record_scan(request, uuid):
                     fail_silently=False,
                 )
                 
-                if settings.DEBUG:
-                    print(f"✓ [BACKGROUND] Email enviado exitosamente a {pet.owner.email}")
-                else:
-                    logger.info(f"Email enviado exitosamente a {pet.owner.email}")
+                logger.info(f"✓ [EMAIL THREAD] Email enviado exitosamente a {pet.owner.email}")
                     
             except Exception as e:
                 error_details = str(e)
                 error_traceback = traceback.format_exc()
-                if settings.DEBUG:
-                    print(f"⚠️ [BACKGROUND] ERROR al enviar email: {error_details}")
-                    print(f"⚠️ [BACKGROUND] Traceback: {error_traceback}")
-                else:
-                    logger.error(f"Error enviando email: {error_details}")
-                    logger.error(f"Traceback: {error_traceback}")
+                logger.error(f"⚠️ [EMAIL THREAD] ERROR al enviar email: {error_details}")
+                logger.error(f"⚠️ [EMAIL THREAD] Traceback completo:\n{error_traceback}")
+                # No hacer raise aquí - dejar que el thread termine normalmente
         
         # ====================================================================
         # FUNCIÓN PARA ENVIAR NOTIFICACIÓN COMUNITARIA EN BACKGROUND
@@ -685,39 +690,51 @@ class LostPetView(APIView):
                 "error": f"Error procesando la alerta: {str(e)}"
             }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
-def send_lost_pet_email(pet, email, alert=None, scan_latitude=None, scan_longitude=None):
-    # Determinar si es una notificación de escaneo o de alerta de pérdida
-    is_scan_notification = alert is None and scan_latitude is not None and scan_longitude is not None
+def send_lost_pet_email(pet, email, alert=None, latitude=None, longitude=None):
+    """
+    Envía email sobre mascota perdida.
     
-    if is_scan_notification:
-        subject = f"¡{pet.name} ha sido visto cerca de ti! - Mascota perdida"
-        # Usar las coordenadas del escaneo
-        maps_link = f"https://www.google.com/maps?q={scan_latitude},{scan_longitude}"
+    Args:
+        pet: Objeto Pet
+        email: Email del destinatario
+        alert: Objeto LostPetAlert (opcional)
+        latitude: Latitud manual (si alert es None)
+        longitude: Longitud manual (si alert es None)
+    """
+    subject = f"¡Ayúdanos a encontrar a {pet.name}! - Mascota perdida cerca de ti"
+    
+    # Determinar coordenadas
+    if alert:
+        lat = alert.owner_latitude
+        lon = alert.owner_longitude
+    elif latitude and longitude:
+        lat = latitude
+        lon = longitude
     else:
-        subject = f"¡Ayúdanos a encontrar a {pet.name}! - Mascota perdida cerca de ti"
-        # Enlace a Google Maps con la última ubicación del alert
-        if alert:
-            maps_link = f"https://www.google.com/maps?q={alert.owner_latitude},{alert.owner_longitude}"
-        else:
-            # Fallback: usar última ubicación conocida
-            maps_link = "#"
+        lat = None
+        lon = None
     
-    # Construcción del mensaje HTML
+    # Enlace a Google Maps
+    if lat and lon:
+        maps_link = f"https://www.google.com/maps?q={lat},{lon}"
+        location_text = f'<a href="{maps_link}" style="color: #87a8d0; text-decoration: none;">Ver en Google Maps</a>'
+    else:
+        maps_link = "#"
+        location_text = "Ubicación no disponible"
+    
     html_message = f"""
     <html>
       <body style="font-family: Arial, sans-serif; color: #333; margin: 0; padding: 0;">
         <div style="max-width: 600px; margin: 20px auto; border: 1px solid #e0e0e0; border-radius: 10px; overflow: hidden;">
-          <!-- Encabezado -->
           <div style="background: linear-gradient(135deg, #87a8d0, #f4b084); padding: 20px; text-align: center;">
             <h1 style="color: #ffffff; margin: 0; font-size: 28px;">¡Mascota Perdida!</h1>
-            <p style="color: #ffffff; font-size: 16px; margin: 5px 0;">CollarMascotaQR necesita tu ayuda</p>
+            <p style="color: #ffffff; font-size: 16px; margin: 5px 0;">EncuéntraME necesita tu ayuda</p>
           </div>
-          <!-- Contenido -->
           <div style="padding: 20px; background: #ffffff;">
-            <h2 style="color: #4a3c31; font-size: 22px; margin-bottom: 15px;">{'¡' + pet.name + ' ha sido visto cerca de ti!' if is_scan_notification else '¡' + pet.name + ' se ha perdido!'}</h2>
+            <h2 style="color: #4a3c31; font-size: 22px; margin-bottom: 15px;">¡{pet.name} se ha perdido!</h2>
             <p style="font-size: 16px; line-height: 1.5; color: #666;">
               Hola,<br>
-              {'Alguien acaba de escanear el QR de <strong>' + pet.name + '</strong>, una mascota perdida, cerca de tu ubicación. Esta es la ubicación exacta donde fue escaneado el código QR.' if is_scan_notification else 'Una mascota llamada <strong>' + pet.name + '</strong> se ha perdido cerca de tu área. Te pedimos que estés atento/a y nos ayudes a reunirla con su dueño.'}
+              Una mascota llamada <strong>{pet.name}</strong> se ha perdido cerca de tu área. Te pedimos que estés atento/a y nos ayudes a reunirla con su dueño.
             </p>
             <table style="width: 100%; margin: 20px 0; border-collapse: collapse;">
               <tr style="background: #f5f1e9;">
@@ -729,63 +746,40 @@ def send_lost_pet_email(pet, email, alert=None, scan_latitude=None, scan_longitu
                 <td style="padding: 10px; color: #333;">{pet.breed or 'No especificada'}</td>
               </tr>
               <tr style="background: #f5f1e9;">
-                <td style="padding: 10px; font-weight: bold; color: #4a3c31;">{'Ubicación del escaneo:' if is_scan_notification else 'Última ubicación:'}</td>
-                <td style="padding: 10px; color: #333;">
-                  <a href="{maps_link}" style="color: #87a8d0; text-decoration: none;">Ver en Google Maps</a>
-                </td>
+                <td style="padding: 10px; font-weight: bold; color: #4a3c31;">Última ubicación:</td>
+                <td style="padding: 10px; color: #333;">{location_text}</td>
               </tr>
               <tr>
                 <td style="padding: 10px; font-weight: bold; color: #4a3c31;">Contacto:</td>
                 <td style="padding: 10px; color: #333;">{pet.phone or 'No disponible'}</td>
               </tr>
             </table>
-            <!-- Foto de la mascota -->
-            {f'<img src="{pet.photo}" alt="Foto de {pet.name}" style="max-width: 100%; height: auto; border-radius: 5px; margin: 10px 0;" />' if pet.photo else '<p style="color: #777;">No hay foto disponible</p>'}
-            <!-- Botones -->
             <div style="text-align: center; margin: 20px 0;">
-              <a href="{maps_link}" style="background: #87a8d0; color: #fff; padding: 10px 20px; text-decoration: none; border-radius: 5px; display: inline-block; margin: 5px;">Ver mapa</a>
+              {f'<a href="{maps_link}" style="background: #87a8d0; color: #fff; padding: 10px 20px; text-decoration: none; border-radius: 5px; display: inline-block; margin: 5px;">Ver mapa</a>' if lat and lon else ''}
               <a href="tel:{pet.phone}" style="background: #f4b084; color: #fff; padding: 10px 20px; text-decoration: none; border-radius: 5px; display: inline-block; margin: 5px;">Llamar al dueño</a>
             </div>
             <p style="font-size: 14px; color: #666; line-height: 1.5;">
-              {'Si ves a ' + pet.name + ', por favor contacta al dueño directamente. ¡Tu ayuda puede hacer la diferencia!' if is_scan_notification else 'Si ves a ' + pet.name + ', por favor escanea su QR o contacta al dueño directamente. ¡Tu ayuda puede hacer la diferencia!'}
+              Si ves a {pet.name}, por favor escanea su QR o contacta al dueño directamente. ¡Tu ayuda puede hacer la diferencia!
             </p>
           </div>
-          <!-- Pie de página -->
           <div style="background: #f5f1e9; padding: 15px; text-align: center; font-size: 12px; color: #777;">
-            <p style="margin: 0;">© 2025 CollarMascotaQR - Juntos encontramos a {pet.name}</p>
-            <p style="margin: 5px 0;">
-              <a href="https://www.instagram.com/collarmascotaqr" style="color: #f4b084; text-decoration: none;">Síguenos en Instagram</a>
-            </p>
+            <p style="margin: 0;">© 2026 EncuéntraME - Juntos encontramos a {pet.name}</p>
           </div>
         </div>
       </body>
     </html>
     """
 
-    # Mensaje plano como respaldo
-    if is_scan_notification:
-        plain_message = f"""
-        ¡{pet.name} ha sido visto cerca de ti!
-        Alguien acaba de escanear el QR de {pet.name}, una mascota perdida, cerca de tu ubicación.
-        Nombre: {pet.name}
-        Raza: {pet.breed or 'No especificada'}
-        Ubicación del escaneo: {maps_link}
-        Contacto: {pet.phone or 'No disponible'}
-        Si la ves, contacta al dueño directamente.
-        Gracias por tu ayuda,
-        EncuentraME
-        """
-    else:
-        plain_message = f"""
-        ¡Mascota perdida cerca de ti!
-        Nombre: {pet.name}
-        Raza: {pet.breed or 'No especificada'}
-        Última ubicación: {maps_link}
-        Contacto: {pet.phone or 'No disponible'}
-        Si la ves, escanea su QR o contacta al dueño.
-        Gracias por tu ayuda,
-        EncuentraME
-        """
+    plain_message = f"""
+    ¡Mascota perdida cerca de ti!
+    Nombre: {pet.name}
+    Raza: {pet.breed or 'No especificada'}
+    Última ubicación: {maps_link if lat and lon else 'No disponible'}
+    Contacto: {pet.phone or 'No disponible'}
+    Si la ves, escanea su QR o contacta al dueño.
+    Gracias por tu ayuda,
+    EncuéntraME
+    """
 
     try:
         send_mail(
@@ -879,10 +873,17 @@ def send_community_scan_notification(pet, latitude, longitude, radius_km=50):
         }
     }
     
+    # CAMBIO AQUÍ: Pasar latitude y longitude a send_lost_pet_email
     for user in users_within_radius:
         try:
             if user.email:
-                send_lost_pet_email(pet, user.email, alert=None, scan_latitude=latitude, scan_longitude=longitude)
+                send_lost_pet_email(
+                    pet, 
+                    user.email, 
+                    alert=None,  # ← No hay LostPetAlert
+                    latitude=latitude,  # ← Pasar coordenadas manualmente
+                    longitude=longitude  # ← Pasar coordenadas manualmente
+                )
         except Exception as e:
             print(f"Error sending email to {user.email}: {str(e)}")
     
