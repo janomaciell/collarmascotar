@@ -158,57 +158,35 @@ def get_pet_by_uuid(request, uuid):
 @csrf_exempt
 def record_scan(request, uuid):
     """
-    Endpoint para notificar al dueño cuando alguien escanea el QR
-    OPTIMIZADO: Envía emails en background para evitar timeout
+    Endpoint para registrar escaneo.
+    El email se envía desde el frontend con EmailJS.
     """
     logger = logging.getLogger('api')
     
     try:
-        # Log del request
-        if settings.DEBUG:
-            print(f"[SCAN] Request recibido para UUID: {uuid}")
-            print(f"[SCAN] Content-Type: {request.content_type}")
-            print(f"[SCAN] Request data: {request.data}")
-        else:
-            logger.info(f"[SCAN] Request recibido para UUID: {uuid}")
+        logger.info(f"[SCAN] Request recibido para UUID: {uuid}")
         
-        # Obtener mascota
         pet = get_object_or_404(Pet, qr_uuid=uuid)
         
-        # Obtener ubicación del request
         latitude = request.data.get('latitude')
         longitude = request.data.get('longitude')
         
-        if settings.DEBUG:
-            print(f"[SCAN] Latitude: {latitude}, Longitude: {longitude}")
-        
         if not latitude or not longitude:
-            error_msg = f"[SCAN ERROR] Faltan coordenadas"
-            if settings.DEBUG:
-                print(error_msg)
-            else:
-                logger.warning(error_msg)
             return Response(
                 {"error": "Se requiere latitude y longitude"},
                 status=status.HTTP_400_BAD_REQUEST
             )
         
-        # Convertir a float
         try:
             latitude = float(latitude)
             longitude = float(longitude)
         except (ValueError, TypeError) as e:
-            error_msg = f"[SCAN ERROR] Error convirtiendo coordenadas: {str(e)}"
-            if settings.DEBUG:
-                print(error_msg)
-            else:
-                logger.error(error_msg)
             return Response(
                 {"error": f"Coordenadas inválidas: {str(e)}"},
                 status=status.HTTP_400_BAD_REQUEST
             )
 
-        # Crear el scan INMEDIATAMENTE
+        # Crear el scan
         scan = Scan.objects.create(
             pet=pet,
             latitude=latitude,
@@ -216,155 +194,28 @@ def record_scan(request, uuid):
         )
 
         google_maps_link = f"https://www.google.com/maps?q={latitude},{longitude}"
-        scan_time = timezone.now().strftime('%Y-%m-%d %H:%M:%S')
-        pet_name = pet.name
         
-        # ====================================================================
-        # FUNCIÓN PARA ENVIAR EMAIL EN BACKGROUND (NO BLOQUEA LA RESPUESTA)
-        # ====================================================================
-        def send_email_in_background():
-            """Envía el email en un thread separado"""
-            try:
-                # Log de inicio ANTES de intentar enviar
-                logger.info(f"[EMAIL THREAD] Iniciando envío de email a {pet.owner.email}")
-                logger.info(f"[EMAIL THREAD] Configuración SMTP:")
-                logger.info(f"  - EMAIL_HOST: {settings.EMAIL_HOST}")
-                logger.info(f"  - EMAIL_PORT: {settings.EMAIL_PORT}")
-                logger.info(f"  - EMAIL_USE_TLS: {settings.EMAIL_USE_TLS}")
-                logger.info(f"  - EMAIL_HOST_USER: {settings.EMAIL_HOST_USER}")
-                logger.info(f"  - FROM_EMAIL: {settings.DEFAULT_FROM_EMAIL}")
-                
-                subject = f"¡Alguien escaneó el QR de {pet_name}!"
-                
-                html_message = f"""
-                <html>
-                <body style="font-family: 'Helvetica Neue', Arial, sans-serif; background-color: #f9f9f9; margin: 0; padding: 0;">
-                    <div style="max-width: 600px; margin: 20px auto; background: #ffffff; border-radius: 10px; box-shadow: 0 2px 6px rgba(0,0,0,0.1); overflow: hidden;">
-                    
-                    <div style="background-color: #05408F; padding: 20px; text-align: center;">
-                        <h1 style="margin: 0; color: #ffffff; font-size: 22px;">¡Alguien escaneó el QR de {pet_name}!</h1>
-                    </div>
-                    
-                    <div style="padding: 25px; color: #333;">
-                        <h2 style="color: #4CAF50; margin-top: 0;">🐾 ¡Tu mascota {pet_name} ha sido encontrada!</h2>
-                        <p>Hola,</p>
-                        <p>Acaban de escanear el QR de tu mascota. Aquí están los detalles:</p>
-                        
-                        <table style="width: 100%; border-collapse: collapse; margin: 15px 0;">
-                        <tr>
-                            <td style="padding: 8px; font-weight: bold;">🐶 Mascota:</td>
-                            <td style="padding: 8px;">{pet_name}</td>
-                        </tr>
-                        <tr style="background-color: #f4f4f4;">
-                            <td style="padding: 8px; font-weight: bold;">📅 Fecha y hora:</td>
-                            <td style="padding: 8px;">{scan_time}</td>
-                        </tr>
-                        <tr>
-                            <td style="padding: 8px; font-weight: bold;">📍 Ubicación exacta:</td>
-                            <td style="padding: 8px;">
-                            <a href="{google_maps_link}" style="color: #05408F; font-weight: bold; text-decoration: none;">Ver en Google Maps</a>
-                            </td>
-                        </tr>
-                        </table>
-                        
-                        <p style="margin-top: 20px;">🔎 Para más información, revisa el historial de escaneos en tu cuenta.</p>
-                    </div>
-                    
-                    <div style="background-color: #f0f0f0; padding: 15px; text-align: center; font-size: 12px; color: #777;">
-                        <p>Este es un mensaje automático de <strong>Encuéntrame</strong>. Por favor, no respondas directamente.</p>
-                    </div>
-                    </div>
-                </body>
-                </html>
-                """
-
-                plain_message = f"¡Tu mascota {pet_name} ha sido encontrada!\nFecha y hora: {scan_time}\nUbicación exacta: {google_maps_link}\nRevisa el historial de escaneos en tu cuenta."
-
-                logger.info(f"[EMAIL THREAD] Llamando a send_mail()...")
-                
-                send_mail(
-                    subject=subject,
-                    message=plain_message,
-                    from_email=settings.DEFAULT_FROM_EMAIL,
-                    recipient_list=[pet.owner.email],
-                    html_message=html_message,
-                    fail_silently=False,
-                )
-                
-                logger.info(f"✓ [EMAIL THREAD] Email enviado exitosamente a {pet.owner.email}")
-                    
-            except Exception as e:
-                error_details = str(e)
-                error_traceback = traceback.format_exc()
-                logger.error(f"⚠️ [EMAIL THREAD] ERROR al enviar email: {error_details}")
-                logger.error(f"⚠️ [EMAIL THREAD] Traceback completo:\n{error_traceback}")
-                # No hacer raise aquí - dejar que el thread termine normalmente
+        logger.info(f"[SCAN] Scan registrado exitosamente - ID: {scan.id}")
         
-        # ====================================================================
-        # FUNCIÓN PARA ENVIAR NOTIFICACIÓN COMUNITARIA EN BACKGROUND
-        # ====================================================================
-        def send_community_in_background():
-            """Envía notificación comunitaria en un thread separado"""
-            try:
-                recipients = send_community_scan_notification(pet, latitude, longitude)
-                if settings.DEBUG:
-                    print(f"✓ [BACKGROUND] Community notifications sent to {recipients} users")
-                else:
-                    logger.info(f"Community notifications sent to {recipients} users")
-            except Exception as e:
-                error_msg = f"Error sending community notification: {str(e)}"
-                if settings.DEBUG:
-                    print(f"⚠️ [BACKGROUND] {error_msg}")
-                else:
-                    logger.error(error_msg)
-        
-        # ====================================================================
-        # INICIAR THREADS EN BACKGROUND
-        # ====================================================================
-        # Thread para enviar email
-        email_thread = threading.Thread(target=send_email_in_background, daemon=True)
-        email_thread.start()
-        
-        # Thread para notificación comunitaria (si la mascota está perdida)
-        if pet.is_lost:
-            community_thread = threading.Thread(target=send_community_in_background, daemon=True)
-            community_thread.start()
-
-        # ====================================================================
-        # RESPONDER INMEDIATAMENTE (NO ESPERAR A LOS THREADS)
-        # ====================================================================
-        if settings.DEBUG:
-            print(f"✓ [SCAN] Scan registrado y threads iniciados. Respondiendo al cliente...")
-        
+        # Responder inmediatamente
         return Response({
-            "message": "Escaneo registrado y notificación en proceso",
+            "message": "Escaneo registrado exitosamente",
             "scan_id": scan.id,
             "location": {
                 "latitude": latitude,
                 "longitude": longitude,
                 "maps_link": google_maps_link
+            },
+            "pet": {
+                "name": pet.name,
+                "owner_email": pet.owner.email
             }
         }, status=status.HTTP_201_CREATED)
         
-    except json.JSONDecodeError as e:
-        error_msg = f"[SCAN ERROR] JSON decode error: {str(e)}"
-        if settings.DEBUG:
-            print(error_msg)
-        else:
-            logger.error(error_msg)
-        return Response(
-            {'error': f'JSON inválido: {str(e)}'},
-            status=status.HTTP_400_BAD_REQUEST
-        )
     except Exception as e:
         error_msg = f"[SCAN ERROR] Error general: {str(e)}"
-        error_traceback = traceback.format_exc()
-        if settings.DEBUG:
-            print(error_msg)
-            print(f"[SCAN ERROR] Traceback: {error_traceback}")
-        else:
-            logger.error(error_msg)
-            logger.error(f"Traceback: {error_traceback}")
+        logger.error(error_msg)
+        logger.error(f"Traceback: {traceback.format_exc()}")
         return Response(
             {'error': str(e)},
             status=status.HTTP_500_INTERNAL_SERVER_ERROR

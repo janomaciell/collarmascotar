@@ -1,9 +1,13 @@
 import React, { useEffect, useState, useRef } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { getPetByUuid, notifyOwner, sendCommunityNotification, checkQRStatus } from '../../services/api';
+import emailjs from '@emailjs/browser';
 import './PetPage.css';
 import mascotaImage from '../../img/personaje2.png';
 import { FaExclamationTriangle, FaPhone, FaWhatsapp, FaEnvelope ,FaMapMarkerAlt, FaInfo, FaCheck} from 'react-icons/fa';
+
+// Inicializar EmailJS con tu Public Key
+emailjs.init(import.meta.env.VITE_EMAILJS_PUBLIC_KEY_NOTIFY);
 
 const BASE_URL = import.meta.env.VITE_BASE_URL;
 const isDevelopment = import.meta.env.DEV || import.meta.env.MODE === 'development';
@@ -58,6 +62,37 @@ const PetPage = () => {
     fetchPetData();
   }, [uuid, navigate]);
 
+  const sendEmailNotification = async (petData, location) => {
+    try {
+      const templateParams = {
+        to_email: petData.email || 'janomaciel1@gmail.com', // Email del dueño
+        pet_name: petData.name,
+        scan_time: new Date().toLocaleString('es-AR', {
+          dateStyle: 'full',
+          timeStyle: 'short',
+          timeZone: 'America/Argentina/Buenos_Aires'
+        }),
+        maps_link: `https://www.google.com/maps?q=${location.latitude},${location.longitude}`,
+        latitude: location.latitude.toFixed(6),
+        longitude: location.longitude.toFixed(6),
+      };
+
+      console.log('[EmailJS] Enviando email con params:', templateParams);
+
+      const response = await emailjs.send(
+        import.meta.env.VITE_EMAILJS_SERVICE_ID_NOTIFY,
+        import.meta.env.VITE_EMAILJS_TEMPLATE_ID_NOTIFY,
+        templateParams
+      );
+
+      console.log('[EmailJS] Email enviado exitosamente:', response);
+      return true;
+    } catch (error) {
+      console.error('[EmailJS] Error enviando email:', error);
+      return false;
+    }
+  };
+
   const attemptLocationRequest = (attemptNumber = 1) => {
     if (isDevelopment) {
       console.log(`[PetPage] Intento ${attemptNumber} de obtener ubicación`);
@@ -101,7 +136,7 @@ const PetPage = () => {
         }
         
         try {
-          // Enviar notificación al dueño
+          // 1. Registrar scan en el backend
           if (isDevelopment) {
             console.log('[PetPage] Llamando a notifyOwner...');
           }
@@ -112,7 +147,20 @@ const PetPage = () => {
             console.log('[PetPage] Respuesta de notifyOwner:', response);
           }
           
-          // Si la mascota está perdida, enviar notificación comunitaria
+          // 2. Enviar email desde el frontend con EmailJS
+          if (isDevelopment) {
+            console.log('[PetPage] Enviando email con EmailJS...');
+          }
+          
+          const emailSent = await sendEmailNotification(pet, location);
+          
+          if (emailSent) {
+            console.log('✓ Email enviado exitosamente al dueño via EmailJS');
+          } else {
+            console.warn('⚠️ No se pudo enviar el email via EmailJS');
+          }
+          
+          // 3. Si la mascota está perdida, enviar notificación comunitaria
           if (pet?.is_lost) {
             if (isDevelopment) {
               console.log('[PetPage] Enviando notificación a comunidad...');
@@ -123,7 +171,6 @@ const PetPage = () => {
                 console.log('[PetPage] Respuesta de comunidad:', communityResponse);
               }
             } catch (communityError) {
-              // No fallar si la notificación comunitaria falla
               console.warn('[PetPage] Error en notificación comunitaria (no crítico):', communityError);
             }
           }
@@ -136,35 +183,13 @@ const PetPage = () => {
             clearTimeout(retryTimeoutRef.current);
           }
           
-          // Mostrar mensaje de éxito más específico
-          console.log('✓ Ubicación compartida exitosamente. El dueño ha sido notificado por email.');
-          
         } catch (err) {
-          console.error('[PetPage] Error completo:', err);
+          console.error('[PetPage] Error:', err);
           
-          // Logging detallado del error
-          if (err.response) {
-            console.error('[PetPage] Error response:', err.response);
-            console.error('[PetPage] Error data:', err.response?.data);
-            console.error('[PetPage] Error status:', err.response?.status);
-          } else if (err.request) {
-            console.error('[PetPage] Error request (sin respuesta):', err.request);
-            console.error('[PetPage] Posible error CORS o de red');
-          } else {
-            console.error('[PetPage] Error:', err.message);
-          }
+          let errorMessage = 'No se pudo procesar la ubicación. ';
           
-          // Mensaje de error más útil para el usuario
-          let errorMessage = 'No se pudo enviar la notificación de ubicación. ';
-          
-          if (err.message && err.message.includes('CORS')) {
-            errorMessage += 'Error de conexión con el servidor.';
-          } else if (err.message && err.message.includes('Network Error')) {
+          if (err.message && err.message.includes('Network Error')) {
             errorMessage += 'Verifica tu conexión a internet.';
-          } else if (err.response?.status === 500) {
-            errorMessage += 'Error del servidor. Intenta nuevamente.';
-          } else if (err.response?.status === 400) {
-            errorMessage += 'Datos de ubicación inválidos.';
           } else {
             errorMessage += 'Intenta nuevamente.';
           }
@@ -187,15 +212,14 @@ const PetPage = () => {
         
         setLocationAttempts(attemptNumber);
         
-        // Mensajes de error específicos según el código
         let errorMsg = '';
         switch (err.code) {
           case 1: // PERMISSION_DENIED
-            errorMsg = 'Permiso de ubicación denegado. Por favor, habilita los permisos de ubicación en tu navegador.';
+            errorMsg = 'Permiso de ubicación denegado. Por favor, habilita los permisos de ubicación.';
             setShowHelpButton(true);
             break;
           case 2: // POSITION_UNAVAILABLE
-            errorMsg = 'Ubicación no disponible. Verifica que tu GPS esté activado.';
+            errorMsg = 'Ubicación no disponible.';
             if (attemptNumber < 3) {
               errorMsg += ` Reintentando... (${attemptNumber}/3)`;
               retryTimeoutRef.current = setTimeout(() => {
@@ -212,7 +236,7 @@ const PetPage = () => {
                 attemptLocationRequest(attemptNumber + 1);
               }, 2000);
             } else {
-              errorMsg = 'No se pudo obtener tu ubicación después de varios intentos. Por favor, comparte tu ubicación manualmente.';
+              errorMsg = 'No se pudo obtener tu ubicación. Por favor, comparte manualmente.';
               setShowHelpButton(true);
             }
             break;
@@ -270,36 +294,8 @@ const PetPage = () => {
     setShowHelpButton(false);
     setLocationError('');
     
-    if (navigator.geolocation) {
-      navigator.geolocation.getCurrentPosition(
-        async (position) => {
-          const location = {
-            latitude: position.coords.latitude,
-            longitude: position.coords.longitude,
-          };
-          try {
-            await notifyOwner(uuid, location);
-            if (pet?.is_lost) {
-              await sendCommunityNotification(uuid, location, 50);
-            }
-            setLocationError('');
-            setLocationShared(true);
-            setShowHelpButton(false);
-          } catch {
-            setLocationError('No se pudieron enviar las notificaciones de ubicación.');
-            setShowHelpButton(true);
-          }
-        },
-        () => {
-          setLocationError('No se pudo obtener la ubicación para enviar notificaciones.');
-          setShowHelpButton(true);
-        },
-        { enableHighAccuracy: true, timeout: 5000 }
-      );
-    } else {
-      setLocationError('Geolocalización no soportada por el navegador.');
-      setShowHelpButton(true);
-    }
+    // Usar attemptLocationRequest para mantener consistencia
+    attemptLocationRequest(1);
   };
 
   // Función para enviar WhatsApp
