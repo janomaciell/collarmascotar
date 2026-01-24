@@ -1,4 +1,4 @@
-# admin.py - VERSIÓN CORREGIDA
+# admin.py - VERSIÓN FINAL CORREGIDA
 
 import zipfile
 from django.contrib import admin
@@ -63,10 +63,6 @@ class PreGeneratedQRAdmin(admin.ModelAdmin):
         Exportar QRs SELECCIONADOS en PNG
         CORREGIDO: Ahora usa el queryset seleccionado en lugar de todos los impresos
         """
-        # CAMBIO IMPORTANTE: Usar queryset (los seleccionados) en lugar de todos
-        # Antes: printed_qrs = PreGeneratedQR.objects.filter(is_assigned=False, is_printed=True)
-        # Ahora: usar el queryset que viene como parámetro
-        
         selected_qrs = queryset.filter(is_printed=True)
         
         if not selected_qrs.exists():
@@ -159,8 +155,8 @@ class PreGeneratedQRAdmin(admin.ModelAdmin):
                 img.save(svg_buffer)
                 svg_content = svg_buffer.getvalue()
                 
-                # Agregar al ZIP con UUID para identificación
-                zip_file.writestr(f"qr_{qr_obj.qr_uuid}.svg", svg_content)
+                # Agregar al ZIP con enumeración secuencial (qr_1.svg, qr_2.svg, etc.)
+                zip_file.writestr(f"qr_{index}.svg", svg_content)
         
         buffer.seek(0)
         response = HttpResponse(buffer, content_type='application/zip')
