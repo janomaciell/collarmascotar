@@ -92,7 +92,7 @@ class PreGeneratedQRAdmin(admin.ModelAdmin):
             for index, qr_obj in enumerate(printed_qrs, start=1):
                 # Construir la URL completa del QR
                 base_url = getattr(settings, 'SITE_URL', 'https://encuentrameqr.com')
-                qr_url = f"{base_url}/pet/register/{qr_obj.qr_uuid}/"
+                qr_url = f"{base_url}/register-pet/{qr_obj.qr_uuid}"
                 
                 # Crear QR code vectorizado usando la fábrica SVG path
                 factory = qrcode.image.svg.SvgPathImage
