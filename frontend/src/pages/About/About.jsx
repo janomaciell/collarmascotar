@@ -166,7 +166,6 @@ const About = () => {
       {/* CTA Final */}
       <section className="about-cta">
         <div className="cta-content">
-          <img src={mascotaImage} alt="Mascota EncuentraME" className="cta-mascota" />
           <h2>No esperes a vivir lo que yo viví</h2>
           <p>
             La angustia de perder a tu mascota es algo que nadie debería pasar. 

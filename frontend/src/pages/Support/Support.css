@@ -56,7 +56,7 @@
 }
 
 .hero-title {
-  font-family: 'Jackerton', serif;
+  font-family: 'Poppins', sans-serif;
   font-size: clamp(2.5rem, 6vw, 4rem);
   font-weight: 900;
   margin-bottom: 0.5rem;

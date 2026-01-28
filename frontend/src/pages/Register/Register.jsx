@@ -86,7 +86,6 @@ const Register = () => {
       <section className="register-hero">
         <div className="pattern-bg"></div>
         <div className="hero-content">
-          <img src={mascotaImage} alt="Mascota EncuentraME" className="hero-mascota" />
           <h1 className="hero-title">ÚNETE A ENCUÉNTRAME</h1>
           <p className="hero-subtitle">Crea tu cuenta y protege a tu mejor amigo</p>
         </div>
