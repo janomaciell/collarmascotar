@@ -862,6 +862,210 @@ body {
   line-height: 1.6;
 }
 
+/* ==================== MODAL DE PERMISOS ==================== */
+
+/* Overlay del modal */
+.permission-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.7);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 10000;
+  padding: 1rem;
+  animation: fadeIn 0.3s ease-out;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+/* Contenedor del modal */
+.permission-modal {
+  background: var(--blanco-principal);
+  border-radius: 24px;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+  max-width: 500px;
+  width: 100%;
+  padding: 2.5rem;
+  position: relative;
+  animation: slideUp 0.3s ease-out;
+  max-height: 90vh;
+  overflow-y: auto;
+}
+
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Botón cerrar */
+.modal-close {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  background: transparent;
+  border: none;
+  font-size: 1.5rem;
+  color: var(--gris-texto);
+  cursor: pointer;
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  transition: all 0.3s ease;
+}
+
+.modal-close:hover {
+  background: var(--gris-suave);
+  color: var(--rojo-secundario);
+  transform: rotate(90deg);
+}
+
+/* Icono del modal */
+.modal-icon {
+  font-size: 4rem;
+  color: var(--azul-principal);
+  text-align: center;
+  margin-bottom: 1.5rem;
+  animation: bounce 1s ease-in-out infinite;
+}
+
+/* Título del modal */
+.permission-modal h2 {
+  font-size: 1.8rem;
+  font-weight: 800;
+  color: var(--negro-principal);
+  text-align: center;
+  margin-bottom: 1rem;
+}
+
+/* Descripción */
+.permission-modal p {
+  font-size: 1.1rem;
+  color: var(--gris-texto);
+  text-align: center;
+  line-height: 1.6;
+  margin-bottom: 2rem;
+}
+
+/* Pasos */
+.modal-steps {
+  background: var(--gris-claro);
+  border-radius: 16px;
+  padding: 1.5rem;
+  margin-bottom: 2rem;
+  border-left: 4px solid var(--azul-principal);
+}
+
+.modal-steps h3 {
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: var(--azul-principal);
+  margin-bottom: 1rem;
+}
+
+.modal-steps ol {
+  margin: 0;
+  padding-left: 1.5rem;
+}
+
+.modal-steps li {
+  font-size: 1rem;
+  color: var(--negro-principal);
+  line-height: 1.8;
+  margin-bottom: 0.5rem;
+}
+
+.modal-steps strong {
+  color: var(--azul-principal);
+  font-weight: 700;
+}
+
+/* Botones del modal */
+.modal-actions {
+  display: flex;
+  gap: 1rem;
+  flex-direction: column;
+}
+
+.modal-btn {
+  padding: 1rem 2rem;
+  border: none;
+  border-radius: 50px;
+  font-weight: 700;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.modal-btn.primary {
+  background: var(--azul-principal);
+  color: var(--blanco-principal);
+  box-shadow: 0 4px 16px rgba(5, 64, 143, 0.3);
+}
+
+.modal-btn.primary:hover {
+  background: #0859c9;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(5, 64, 143, 0.4);
+}
+
+.modal-btn.secondary {
+  background: var(--blanco-principal);
+  color: var(--azul-principal);
+  border: 3px solid var(--azul-principal);
+  box-shadow: 0 4px 16px rgba(5, 64, 143, 0.15);
+}
+
+.modal-btn.secondary:hover {
+  background: var(--azul-principal);
+  color: var(--blanco-principal);
+  transform: translateY(-2px);
+}
+
+/* Botón de ayuda en mensaje de error */
+.location-help-btn {
+  display: block;
+  margin: 1rem auto 0;
+  padding: 0.7rem 1.5rem;
+  background: var(--blanco-principal);
+  color: var(--rojo-secundario);
+  border: 2px solid var(--rojo-secundario);
+  border-radius: 50px;
+  font-weight: 700;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.location-help-btn:hover {
+  background: var(--rojo-secundario);
+  color: var(--blanco-principal);
+  transform: translateY(-2px);
+}
+
+
+/* ==================== RESPONSIVIDAD ==================== */
 /* ==================== RESPONSIVIDAD ==================== */
 @media (max-width: 1024px) {
   .header-content {
@@ -1041,6 +1245,100 @@ body {
   .info-card {
     padding: 1rem;
   }
+  /* ==================== RESPONSIVE MODAL ==================== */
+
+@media (max-width: 600px) {
+  .permission-modal {
+    padding: 2rem 1.5rem;
+    border-radius: 20px;
+  }
+
+  .modal-icon {
+    font-size: 3rem;
+  }
+
+  .permission-modal h2 {
+    font-size: 1.5rem;
+  }
+
+  .permission-modal p {
+    font-size: 1rem;
+  }
+
+  .modal-steps {
+    padding: 1.2rem;
+  }
+
+  .modal-steps h3 {
+    font-size: 1.1rem;
+  }
+
+  .modal-steps li {
+    font-size: 0.95rem;
+  }
+
+  .modal-btn {
+    padding: 0.9rem 1.5rem;
+    font-size: 0.95rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .permission-modal-overlay {
+    padding: 0.5rem;
+  }
+
+  .permission-modal {
+    padding: 1.5rem 1rem;
+    max-height: 95vh;
+  }
+
+  .modal-icon {
+    font-size: 2.5rem;
+    margin-bottom: 1rem;
+  }
+
+  .permission-modal h2 {
+    font-size: 1.3rem;
+    margin-bottom: 0.8rem;
+  }
+
+  .permission-modal p {
+    font-size: 0.95rem;
+    margin-bottom: 1.5rem;
+  }
+
+  .modal-steps {
+    padding: 1rem;
+  }
+
+  .modal-steps h3 {
+    font-size: 1rem;
+  }
+
+  .modal-steps ol {
+    padding-left: 1.2rem;
+  }
+
+  .modal-steps li {
+    font-size: 0.9rem;
+    line-height: 1.6;
+  }
+
+  .modal-actions {
+    gap: 0.8rem;
+  }
+
+  .modal-btn {
+    padding: 0.8rem 1.2rem;
+    font-size: 0.9rem;
+  }
+
+  .location-help-btn {
+    padding: 0.6rem 1.2rem;
+    font-size: 0.85rem;
+  }
+}
 
   /* ✅ RESPONSIVE: Help Banner para móviles grandes */
   .help-banner {

@@ -4,9 +4,9 @@ import { getPetByUuid, notifyOwner, sendCommunityNotification, checkQRStatus } f
 import emailjs from '@emailjs/browser';
 import './PetPage.css';
 import mascotaImage from '../../img/personaje2.png';
-import { FaExclamationTriangle, FaPhone, FaWhatsapp, FaEnvelope ,FaMapMarkerAlt, FaInfo, FaCheck} from 'react-icons/fa';
+import { FaExclamationTriangle, FaPhone, FaWhatsapp, FaEnvelope, FaMapMarkerAlt, FaInfo, FaCheck, FaTimes } from 'react-icons/fa';
 
-// Inicializar EmailJS con tu Public Key
+// Inicializar EmailJS
 emailjs.init(import.meta.env.VITE_EMAILJS_PUBLIC_KEY_NOTIFY);
 
 const BASE_URL = import.meta.env.VITE_BASE_URL;
@@ -29,17 +29,15 @@ const PetPage = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState('');
   const [locationError, setLocationError] = useState('');
-  const [locationRequested, setLocationRequested] = useState(false);
   const [locationShared, setLocationShared] = useState(false);
   const [activeTab, setActiveTab] = useState('basic');
-  const [locationAttempts, setLocationAttempts] = useState(0);
-  const [showHelpButton, setShowHelpButton] = useState(false);
-  const [permissionPromptCount, setPermissionPromptCount] = useState(0); // Contador de veces que se pidió permiso
-  const [alertButtonDisabled, setAlertButtonDisabled] = useState(false); // Deshabilitar botón de alerta
-  const [alertCooldown, setAlertCooldown] = useState(0); // Tiempo restante de cooldown
-  const locationSentRef = useRef(false); // Para evitar múltiples envíos
-  const retryTimeoutRef = useRef(null); // Para limpiar timeouts
-  const cooldownIntervalRef = useRef(null); // Para el intervalo de cooldown
+  const [showPermissionModal, setShowPermissionModal] = useState(false);
+  const [permissionState, setPermissionState] = useState('prompt');
+  const [alertButtonDisabled, setAlertButtonDisabled] = useState(false);
+  const [alertCooldown, setAlertCooldown] = useState(0);
+  const locationSentRef = useRef(false);
+  const retryTimeoutRef = useRef(null);
+  const cooldownIntervalRef = useRef(null);
 
   // Referencias para scroll
   const basicRef = useRef(null);
@@ -66,19 +64,35 @@ const PetPage = () => {
     fetchPetData();
   }, [uuid, navigate]);
 
-  // Limpiar intervalo de cooldown al desmontar
   useEffect(() => {
     return () => {
-      if (cooldownIntervalRef.current) {
-        clearInterval(cooldownIntervalRef.current);
-      }
+      if (cooldownIntervalRef.current) clearInterval(cooldownIntervalRef.current);
+      if (retryTimeoutRef.current) clearTimeout(retryTimeoutRef.current);
     };
   }, []);
+
+  // ✅ Verificar permisos usando Permissions API
+  const checkGeolocationPermission = async () => {
+    if (!navigator.permissions) return 'prompt';
+
+    try {
+      const result = await navigator.permissions.query({ name: 'geolocation' });
+      setPermissionState(result.state);
+      
+      result.addEventListener('change', () => {
+        setPermissionState(result.state);
+      });
+
+      return result.state;
+    } catch (error) {
+      return 'prompt';
+    }
+  };
 
   const sendEmailNotification = async (petData, location) => {
     try {
       const templateParams = {
-        to_email: petData.email || 'janomaciel1@gmail.com', // Email del dueño
+        to_email: petData.email || 'janomaciel1@gmail.com',
         pet_name: petData.name,
         scan_time: new Date().toLocaleString('es-AR', {
           dateStyle: 'full',
@@ -90,248 +104,110 @@ const PetPage = () => {
         longitude: location.longitude.toFixed(6),
       };
 
-      console.log('[EmailJS] Enviando email con params:', templateParams);
-
-      const response = await emailjs.send(
+      await emailjs.send(
         import.meta.env.VITE_EMAILJS_SERVICE_ID_NOTIFY,
         import.meta.env.VITE_EMAILJS_TEMPLATE_ID_NOTIFY,
         templateParams
       );
-
-      console.log('[EmailJS] Email enviado exitosamente:', response);
       return true;
     } catch (error) {
-      console.error('[EmailJS] Error enviando email:', error);
+      console.error('[EmailJS] Error:', error);
       return false;
     }
   };
 
-  const attemptLocationRequest = (attemptNumber = 1, isManualRequest = false) => {
-    if (isDevelopment) {
-      console.log(`[PetPage] Intento ${attemptNumber} de obtener ubicación`);
-    }
-    
+  // ✅ Solicitud de ubicación mejorada
+  const attemptLocationRequest = async () => {
     if (!navigator.geolocation) {
-      console.error('[PetPage] Geolocalización no soportada por el navegador');
-      setLocationError('Tu navegador no soporta geolocalización. Por favor, comparte tu ubicación manualmente.');
-      setShowHelpButton(true);
+      setLocationError('Tu navegador no soporta geolocalización.');
+      setShowPermissionModal(true);
       return;
     }
-  
-    setLocationRequested(true);
+
+    // Verificar permisos antes de solicitar
+    const permState = await checkGeolocationPermission();
     
+    if (permState === 'denied') {
+      setLocationError('Los permisos de ubicación están bloqueados.');
+      setShowPermissionModal(true);
+      return;
+    }
+
     const geoOptions = {
       enableHighAccuracy: true,
       timeout: 15000,
       maximumAge: 30000
     };
-    
-    if (isDevelopment) {
-      console.log('[PetPage] Solicitando ubicación con opciones:', geoOptions);
-    }
-    
+
     navigator.geolocation.getCurrentPosition(
       async (position) => {
-        if (isDevelopment) {
-          console.log('[PetPage] Ubicación obtenida exitosamente:', position.coords);
-        }
-        
         const location = {
           latitude: position.coords.latitude,
           longitude: position.coords.longitude
         };
-        
-        if (isDevelopment) {
-          console.log('[PetPage] Objeto location a enviar:', location);
-          console.log('[PetPage] Precisión de ubicación:', position.coords.accuracy, 'metros');
-        }
-        
+
         try {
-          // 1. Registrar scan en el backend
-          if (isDevelopment) {
-            console.log('[PetPage] Llamando a notifyOwner...');
-          }
-          
-          const response = await notifyOwner(uuid, location);
-          
-          if (isDevelopment) {
-            console.log('[PetPage] Respuesta de notifyOwner:', response);
-          }
-          
-          // 2. Enviar email desde el frontend con EmailJS
-          if (isDevelopment) {
-            console.log('[PetPage] Enviando email con EmailJS...');
-          }
-          
-          const emailSent = await sendEmailNotification(pet, location);
-          
-          if (emailSent) {
-            console.log('✓ Email enviado exitosamente al dueño via EmailJS');
-          } else {
-            console.warn('⚠️ No se pudo enviar el email via EmailJS');
-          }
-          
-          // 3. Si la mascota está perdida, enviar notificación comunitaria
+          await notifyOwner(uuid, location);
+          await sendEmailNotification(pet, location);
+
           if (pet?.is_lost) {
-            if (isDevelopment) {
-              console.log('[PetPage] Enviando notificación a comunidad...');
-            }
             try {
-              const communityResponse = await sendCommunityNotification(uuid, location, 50);
-              if (isDevelopment) {
-                console.log('[PetPage] Respuesta de comunidad:', communityResponse);
-              }
-            } catch (communityError) {
-              console.warn('[PetPage] Error en notificación comunitaria (no crítico):', communityError);
+              await sendCommunityNotification(uuid, location, 50);
+            } catch (err) {
+              console.warn('Error notificación comunitaria:', err);
             }
           }
-          
+
           setLocationError('');
           setLocationShared(true);
-          setShowHelpButton(false);
-          
-          if (retryTimeoutRef.current) {
-            clearTimeout(retryTimeoutRef.current);
-          }
-          
+          setShowPermissionModal(false);
         } catch (err) {
-          console.error('[PetPage] Error:', err);
-          
-          let errorMessage = 'No se pudo procesar la ubicación. ';
-          
-          if (err.message && err.message.includes('Network Error')) {
-            errorMessage += 'Verifica tu conexión a internet.';
-          } else {
-            errorMessage += 'Intenta nuevamente.';
-          }
-          
-          setLocationError(errorMessage);
-          setShowHelpButton(true);
+          console.error('Error procesando ubicación:', err);
+          setLocationError('No se pudo procesar la ubicación.');
         }
       },
-      (err) => {
-        console.error(`[PetPage] Error obteniendo ubicación (intento ${attemptNumber}):`, err);
-        if (isDevelopment) {
-          console.error('[PetPage] Tipo de error:', {
-            code: err.code,
-            message: err.message,
-            PERMISSION_DENIED: err.code === 1,
-            POSITION_UNAVAILABLE: err.code === 2,
-            TIMEOUT: err.code === 3
-          });
+      async (err) => {
+        console.error('Error geolocalización:', err);
+
+        if (err.code === 1) { // PERMISSION_DENIED
+          setLocationError('Permiso de ubicación denegado.');
+          setShowPermissionModal(true);
+          await checkGeolocationPermission();
+        } else if (err.code === 2) {
+          setLocationError('No se pudo determinar tu ubicación.');
+        } else if (err.code === 3) {
+          setLocationError('Tiempo de espera agotado.');
+        } else {
+          setLocationError('Error desconocido.');
         }
-        
-        setLocationAttempts(attemptNumber);
-        
-        let errorMsg = '';
-        switch (err.code) {
-          case 1: // PERMISSION_DENIED
-            // ✅ Incrementar contador de prompts de permiso
-            const newPromptCount = permissionPromptCount + 1;
-            setPermissionPromptCount(newPromptCount);
-            
-            if (newPromptCount < 3 && !isManualRequest) {
-              // Reintentar automáticamente hasta 3 veces
-              errorMsg = `Permiso de ubicación denegado. Reintentando... (${newPromptCount}/3)`;
-              retryTimeoutRef.current = setTimeout(() => {
-                attemptLocationRequest(attemptNumber + 1, false);
-              }, 2000);
-            } else {
-              errorMsg = 'Permiso de ubicación denegado. Por favor, habilita los permisos de ubicación en la configuración de tu navegador.';
-              setShowHelpButton(true);
-            }
-            break;
-          case 2: // POSITION_UNAVAILABLE
-            errorMsg = 'Ubicación no disponible.';
-            if (attemptNumber < 3) {
-              errorMsg += ` Reintentando... (${attemptNumber}/3)`;
-              retryTimeoutRef.current = setTimeout(() => {
-                attemptLocationRequest(attemptNumber + 1, isManualRequest);
-              }, 3000);
-            } else {
-              setShowHelpButton(true);
-            }
-            break;
-          case 3: // TIMEOUT
-            if (attemptNumber < 3) {
-              errorMsg = `Tiempo de espera agotado. Reintentando... (${attemptNumber}/3)`;
-              retryTimeoutRef.current = setTimeout(() => {
-                attemptLocationRequest(attemptNumber + 1, isManualRequest);
-              }, 2000);
-            } else {
-              errorMsg = 'No se pudo obtener tu ubicación. Por favor, comparte manualmente.';
-              setShowHelpButton(true);
-            }
-            break;
-          default:
-            errorMsg = 'Error desconocido al obtener ubicación.';
-            setShowHelpButton(true);
-        }
-        
-        setLocationError(errorMsg);
       },
       geoOptions
     );
   };
 
-  // Efecto para enviar ubicación automáticamente al cargar la página
+  // Solicitar ubicación al cargar (con delay)
   useEffect(() => {
-    if (isDevelopment) {
-      console.log('[PetPage] useEffect ejecutado - Estado:', {
-        pet: !!pet,
-        isLoading,
-        locationSentRef: locationSentRef.current,
-        locationShared
-      });
-    }
-    
-    if (!pet || isLoading || locationSentRef.current || locationShared) {
-      if (isDevelopment) {
-        console.log('[PetPage] Condiciones no cumplidas, saliendo del useEffect');
-      }
-      return;
-    }
+    if (!pet || isLoading || locationSentRef.current || locationShared) return;
 
-    if (isDevelopment) {
-      console.log('[PetPage] Iniciando solicitud de ubicación automática');
-    }
-    
     locationSentRef.current = true;
-    attemptLocationRequest(1, false); // false = solicitud automática
-
-    return () => {
-      if (retryTimeoutRef.current) {
-        clearTimeout(retryTimeoutRef.current);
-      }
-    };
-  }, [pet, isLoading, uuid, locationShared]);
+    setTimeout(() => attemptLocationRequest(), 1000);
+  }, [pet, isLoading, locationShared]);
 
   const requestLocation = () => {
-    setLocationAttempts(0);
-    setShowHelpButton(false);
     setLocationError('');
-    setPermissionPromptCount(0); // Reiniciar contador
-    attemptLocationRequest(1, true); // true = solicitud manual
+    setShowPermissionModal(false);
+    attemptLocationRequest();
   };
 
-  // ✅ NUEVA FUNCIÓN: Activar alerta con límite de tiempo (cooldown)
   const activateAlert = () => {
-    if (alertButtonDisabled) {
-      return; // No hacer nada si el botón está deshabilitado
-    }
-
-    // Solicitar ubicación
+    if (alertButtonDisabled) return;
     requestLocation();
-
-    // Deshabilitar botón por 5 minutos (300 segundos)
     setAlertButtonDisabled(true);
     setAlertCooldown(300);
 
-    // Iniciar countdown
     cooldownIntervalRef.current = setInterval(() => {
       setAlertCooldown((prev) => {
         if (prev <= 1) {
-          // Tiempo terminado, rehabilitar botón
           clearInterval(cooldownIntervalRef.current);
           setAlertButtonDisabled(false);
           return 0;
@@ -341,7 +217,6 @@ const PetPage = () => {
     }, 1000);
   };
 
-  // Formatear tiempo de cooldown (mm:ss)
   const formatCooldown = (seconds) => {
     const mins = Math.floor(seconds / 60);
     const secs = seconds % 60;
@@ -350,53 +225,34 @@ const PetPage = () => {
 
   const handleWhatsApp = () => {
     if (!pet.phone) return;
-    
     const phoneNumber = pet.phone.replace(/[^\d+]/g, '');
     const message = pet.is_lost 
       ? `Hola, encontré a ${pet.name}. Escaneé su collar EncuéntraME y quiero ayudar a que regrese a casa.`
       : `Hola, escaneé el collar EncuéntraME de ${pet.name}.`;
-    
-    const whatsappUrl = `https://wa.me/${phoneNumber}?text=${encodeURIComponent(message)}`;
-    window.open(whatsappUrl, '_blank');
+    window.open(`https://wa.me/${phoneNumber}?text=${encodeURIComponent(message)}`, '_blank');
   };
 
   const handleTabClick = (tab) => {
     setActiveTab(tab);
-    let ref;
-    if (tab === 'basic') ref = basicRef;
-    if (tab === 'health') ref = healthRef;
-    if (tab === 'owner') ref = ownerRef;
-    if (ref && ref.current) {
-      ref.current.scrollIntoView({ behavior: 'smooth', block: 'start' });
-    }
+    const refs = { basic: basicRef, health: healthRef, owner: ownerRef };
+    refs[tab]?.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
   };
 
-  const CorsDebugInfo = () => {
-    if (!isDevelopment) return null;
-    
-    return (
-      <div style={{
-        position: 'fixed',
-        bottom: '10px',
-        right: '10px',
-        background: 'rgba(0,0,0,0.8)',
-        color: 'white',
-        padding: '10px',
-        borderRadius: '5px',
-        fontSize: '12px',
-        maxWidth: '300px',
-        zIndex: 9999
-      }}>
-        <strong>Debug Info:</strong><br/>
-        API URL: {BASE_URL}<br/>
-        UUID: {uuid}<br/>
-        Pet Loaded: {pet ? 'Yes' : 'No'}<br/>
-        Location Shared: {locationShared ? 'Yes' : 'No'}<br/>
-        Location Error: {locationError || 'None'}<br/>
-        Permission Prompts: {permissionPromptCount}<br/>
-        Alert Cooldown: {alertCooldown}s
-      </div>
-    );
+  const openBrowserSettings = () => {
+    const ua = navigator.userAgent.toLowerCase();
+    let msg = 'Ve a la configuración de tu navegador y habilita los permisos de ubicación.';
+
+    if (ua.includes('chrome') && !ua.includes('edg')) {
+      msg = 'Chrome: Haz clic en 🔒 en la barra de direcciones → Configuración del sitio → Ubicación → Permitir';
+    } else if (ua.includes('firefox')) {
+      msg = 'Firefox: Haz clic en ⓘ en la barra de direcciones → Permisos → Ubicación → Permitir';
+    } else if (ua.includes('safari')) {
+      msg = 'Safari: Preferencias → Sitios web → Ubicación → Permitir';
+    } else if (ua.includes('edg')) {
+      msg = 'Edge: Haz clic en 🔒 → Permisos → Ubicación → Permitir';
+    }
+
+    alert(msg);
   };
 
   if (isLoading) {
@@ -432,6 +288,42 @@ const PetPage = () => {
 
   return (
     <div className="pet-page-wrapper">
+      {/* Modal de permisos */}
+      {showPermissionModal && (
+        <div className="permission-modal-overlay" onClick={() => setShowPermissionModal(false)}>
+          <div className="permission-modal" onClick={(e) => e.stopPropagation()}>
+            <button className="modal-close" onClick={() => setShowPermissionModal(false)}>
+              <FaTimes />
+            </button>
+            <div className="modal-icon">
+              <FaMapMarkerAlt />
+            </div>
+            <h2>Permisos de Ubicación Bloqueados</h2>
+            <p>
+              Para ayudar a {pet.name} a volver a casa, necesitamos tu ubicación. 
+              Los permisos están bloqueados en tu navegador.
+            </p>
+            <div className="modal-steps">
+              <h3>Cómo habilitarlos:</h3>
+              <ol>
+                <li>Haz clic en el ícono de <strong>candado 🔒</strong> en la barra de direcciones</li>
+                <li>Busca <strong>"Ubicación"</strong> o <strong>"Permisos"</strong></li>
+                <li>Cambia a <strong>"Permitir"</strong></li>
+                <li>Recarga la página</li>
+              </ol>
+            </div>
+            <div className="modal-actions">
+              <button className="modal-btn primary" onClick={openBrowserSettings}>
+                Ver instrucciones
+              </button>
+              <button className="modal-btn secondary" onClick={requestLocation}>
+                Intentar de nuevo
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
       <header className={`pet-header ${pet.is_lost ? 'lost-header' : 'normal-header'}`}>
         <div className="pattern-bg"></div>
         <div className="header-content">
@@ -446,25 +338,18 @@ const PetPage = () => {
       </header>
 
       <main className="pet-content">
-        {showHelpButton && !locationShared && (
-          <div className="help-banner">
-            <div className="help-banner-content">
-              <div className="help-banner-icon"><FaMapMarkerAlt /></div>
-              <div className="help-banner-text">
-                <strong>¡Ayuda a encontrar a {pet.name}!</strong>
-                <p>Comparte tu ubicación para notificar al dueño y ayudar a que {pet.name} regrese a casa.</p>
-              </div>
-              <button className="help-banner-btn" onClick={requestLocation}>
-                Compartir ubicación
-              </button>
-            </div>
-          </div>
-        )}
-
-        {locationError && (
-          <div className={`location-status ${showHelpButton ? 'location-status-error' : 'location-status-info'}`}>
-            <strong>{showHelpButton ? <FaExclamationTriangle /> : <FaInfo /> }</strong>
+        {locationError && !showPermissionModal && (
+          <div className="location-status location-status-error">
+            <strong><FaExclamationTriangle /></strong>
             {locationError}
+            {permissionState === 'denied' && (
+              <button 
+                className="location-help-btn"
+                onClick={() => setShowPermissionModal(true)}
+              >
+                ¿Cómo habilitar permisos?
+              </button>
+            )}
           </div>
         )}
 
@@ -481,15 +366,12 @@ const PetPage = () => {
               <strong>¡Mascota perdida!</strong>
               <div>Si encontraste a {pet.name}, sigue los pasos para ayudarlo a volver a casa.</div>
             </div>
-            {/* ✅ BOTÓN CON COOLDOWN */}
             <button 
               className={`alert-btn ${alertButtonDisabled ? 'disabled' : ''}`}
               onClick={activateAlert}
               disabled={alertButtonDisabled}
             >
-              {alertButtonDisabled 
-                ? `Espera ${formatCooldown(alertCooldown)}` 
-                : 'Activar alerta'}
+              {alertButtonDisabled ? `Espera ${formatCooldown(alertCooldown)}` : 'Activar alerta'}
             </button>
           </div>
         )}
@@ -501,134 +383,89 @@ const PetPage = () => {
                 src={petPhotoUrl} 
                 alt={`Foto de ${pet.name}`} 
                 className="pet-photo-petpage"
-                onError={(e) => {
-                  console.error('Error cargando imagen:', petPhotoUrl);
-                  e.target.style.display = 'none';
-                }}
+                onError={(e) => e.target.style.display = 'none'}
               />
             )}
             {pet.is_lost && <div className="lost-badge">Perdido</div>}
           </div>
           <div className="pet-basic-info">
-            <h2 className="pet-name-petpage" style={{ fontSize: '2.8rem', marginBottom: '0.7rem' }}>{pet.name}</h2>
-            <div className="pet-details" style={{
-              fontSize: '1.3rem',
-              fontWeight: '700',
-              color: '#05408F',
-              marginBottom: '1.2rem',
-              letterSpacing: '0.5px'
-            }}>
-              {pet.breed} &nbsp;|&nbsp; {pet.gender === 'M' ? 'Macho' : 'Hembra'} &nbsp;|&nbsp; {pet.age} años
+            <h2 className="pet-name-petpage">{pet.name}</h2>
+            <div className="pet-details">
+              {pet.breed} | {pet.gender === 'M' ? 'Macho' : 'Hembra'} | {pet.age} años
             </div>
             <PetIntro name={pet.name} isLost={pet.is_lost} />
           </div>
-          <div className="pet-actions" style={{ justifyContent: 'center', gap: '2rem' }}>
-            <a href={`tel:${pet.phone}`} className="action-btn call-btn"><FaPhone /> Llamar dueño</a>
+          <div className="pet-actions">
+            <a href={`tel:${pet.phone}`} className="action-btn call-btn"><FaPhone /> Llamar</a>
             <button onClick={handleWhatsApp} className="action-btn whatsapp-btn"><FaWhatsapp /> WhatsApp</button>
-            <a href={`mailto:${pet.email}`} className="action-btn message-btn"><FaEnvelope /> Mensaje dueño</a>
+            <a href={`mailto:${pet.email}`} className="action-btn message-btn"><FaEnvelope /> Email</a>
           </div>
         </section>
 
         <div className="pet-tabs">
-          <button
-            className={`pet-tab ${activeTab === 'basic' ? 'active' : ''}`}
-            onClick={() => handleTabClick('basic')}
-          >
-            Información básica
-          </button>
-          <button
-            className={`pet-tab ${activeTab === 'health' ? 'active' : ''}`}
-            onClick={() => handleTabClick('health')}
-          >
-            Salud
-          </button>
-          <button
-            className={`pet-tab ${activeTab === 'owner' ? 'active' : ''}`}
-            onClick={() => handleTabClick('owner')}
-          >
-            Dueño y veterinario
-          </button>
+          {['basic', 'health', 'owner'].map(tab => (
+            <button
+              key={tab}
+              className={`pet-tab ${activeTab === tab ? 'active' : ''}`}
+              onClick={() => handleTabClick(tab)}
+            >
+              {tab === 'basic' ? 'Información básica' : tab === 'health' ? 'Salud' : 'Dueño y vet'}
+            </button>
+          ))}
         </div>
 
         <section className="pet-section" ref={basicRef}>
           <div className="pet-section-title">Información básica</div>
           <div className="pet-info-grid">
-            <div className="info-card">
-              <div className="info-label">Raza</div>
-              <div className="info-value">{pet.breed}</div>
-            </div>
-            <div className="info-card">
-              <div className="info-label">Género</div>
-              <div className="info-value">{pet.gender === 'M' ? 'Macho' : 'Hembra'}</div>
-            </div>
-            <div className="info-card">
-              <div className="info-label">Edad</div>
-              <div className="info-value">{pet.age} años</div>
-            </div>
-            <div className="info-card">
-              <div className="info-label">Peso</div>
-              <div className="info-value">{pet.weight || '-'}</div>
-            </div>
-            <div className="info-card">
-              <div className="info-label">Color</div>
-              <div className="info-value">{pet.color || '-'}</div>
-            </div>
-            <div className="info-card">
-              <div className="info-label">ID de microchip</div>
-              <div className="info-value">{pet.microchip || '-'}</div>
-            </div>
+            {[
+              { label: 'Raza', value: pet.breed },
+              { label: 'Género', value: pet.gender === 'M' ? 'Macho' : 'Hembra' },
+              { label: 'Edad', value: `${pet.age} años` },
+              { label: 'Peso', value: pet.weight || '-' },
+              { label: 'Color', value: pet.color || '-' },
+              { label: 'Microchip', value: pet.microchip || '-' }
+            ].map((item, i) => (
+              <div key={i} className="info-card">
+                <div className="info-label">{item.label}</div>
+                <div className="info-value">{item.value}</div>
+              </div>
+            ))}
           </div>
         </section>
 
         <section className="pet-section" ref={healthRef}>
           <div className="pet-section-title">Salud</div>
           <div className="pet-info-grid">
-            <div className="info-card">
-              <div className="info-label">Estado de vacunación</div>
-              <div className="info-value">{pet.vaccines || 'Al día'}</div>
-            </div>
-            <div className="info-card">
-              <div className="info-label">Última visita al veterinario</div>
-              <div className="info-value">{pet.last_vet_visit || '-'}</div>
-            </div>
-            <div className="info-card">
-              <div className="info-label">Alergias</div>
-              <div className="info-value">{pet.allergies || 'Ninguna'}</div>
-            </div>
-            <div className="info-card">
-              <div className="info-label">Medicamentos</div>
-              <div className="info-value">{pet.medications || 'Ninguno'}</div>
-            </div>
+            {[
+              { label: 'Vacunación', value: pet.vaccines || 'Al día' },
+              { label: 'Última visita vet', value: pet.last_vet_visit || '-' },
+              { label: 'Alergias', value: pet.allergies || 'Ninguna' },
+              { label: 'Medicamentos', value: pet.medications || 'Ninguno' }
+            ].map((item, i) => (
+              <div key={i} className="info-card">
+                <div className="info-label">{item.label}</div>
+                <div className="info-value">{item.value}</div>
+              </div>
+            ))}
           </div>
         </section>
 
         <section className="pet-section" ref={ownerRef}>
           <div className="pet-section-title">Dueño y veterinario</div>
           <div className="pet-info-grid">
-            <div className="info-card">
-              <div className="info-label">Nombre del dueño</div>
-              <div className="info-value">{pet.owner || '-'}</div>
-            </div>
-            <div className="info-card">
-              <div className="info-label">Número de contacto</div>
-              <div className="info-value">{pet.phone || '-'}</div>
-            </div>
-            <div className="info-card">
-              <div className="info-label">Dirección</div>
-              <div className="info-value">{pet.address || '-'}</div>
-            </div>
-            <div className="info-card">
-              <div className="info-label">Nombre del veterinario</div>
-              <div className="info-value">{pet.vet_name || '-'}</div>
-            </div>
-            <div className="info-card">
-              <div className="info-label">Nombre de la clínica</div>
-              <div className="info-value">{pet.vet_clinic || '-'}</div>
-            </div>
-            <div className="info-card">
-              <div className="info-label">Contacto del veterinario</div>
-              <div className="info-value">{pet.vet_phone || '-'}</div>
-            </div>
+            {[
+              { label: 'Dueño', value: pet.owner || '-' },
+              { label: 'Teléfono', value: pet.phone || '-' },
+              { label: 'Dirección', value: pet.address || '-' },
+              { label: 'Veterinario', value: pet.vet_name || '-' },
+              { label: 'Clínica', value: pet.vet_clinic || '-' },
+              { label: 'Tel. veterinario', value: pet.vet_phone || '-' }
+            ].map((item, i) => (
+              <div key={i} className="info-card">
+                <div className="info-label">{item.label}</div>
+                <div className="info-value">{item.value}</div>
+              </div>
+            ))}
           </div>
         </section>
 
@@ -637,8 +474,6 @@ const PetPage = () => {
           <div className="pet-notes">{pet.notes || 'No hay notas especiales.'}</div>
         </section>
       </main>
-
-      <CorsDebugInfo />
     </div>
   );
 };
