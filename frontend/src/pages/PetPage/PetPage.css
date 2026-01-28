@@ -7,7 +7,7 @@
   --blanco-principal: #FFFFFF;
   --rosa-secundario: #FF6FA5;
   --rojo-secundario: #FF3131;
-  --verde-secundario: #7ED957;
+  --naranja-secundario: #e9832e;
   --gris-suave: #F5F5F5;
   --gris-claro: #F8FAFC;
   --gris-texto: #64748b;
@@ -110,7 +110,7 @@ body {
   font-family: 'Jackerton', serif;
   font-size: clamp(2.2rem, 4vw, 3.5rem);
   font-weight: 900;
-  color: var(--blanco-principal);
+  color: #ffffff;
   margin: 0 0 0.3rem 0;
   text-transform: uppercase;
   letter-spacing: -1px;
@@ -459,7 +459,7 @@ body {
   background: var(--gris-suave);
   padding: 1.5rem 2rem;
   border-radius: 20px;
-  border-left: 4px solid var(--verde-secundario);
+  border-left: 4px solid var(--naranja-secundario);
 }
 
 .intro-text {
@@ -480,7 +480,7 @@ body {
 }
 
 .action-btn {
-  background: var(--verde-secundario);
+  background: var(--naranja-secundario);
   color: var(--blanco-principal);
   border: none;
   border-radius: 50px;
@@ -582,7 +582,7 @@ body {
 }
 
 .pet-tab.active {
-  background: var(--verde-secundario);
+  background: var(--naranja-secundario);
   color: var(--blanco-principal);
   box-shadow: 0 6px 20px rgba(126,217,87,0.18);
 }
@@ -613,7 +613,7 @@ body {
   content: '';
   width: 5px;
   height: 30px;
-  background: linear-gradient(180deg, var(--verde-secundario) 0%, var(--azul-principal) 100%);
+  background: linear-gradient(180deg, var(--naranja-secundario) 0%, var(--azul-principal) 100%);
   border-radius: 10px;
 }
 
@@ -642,7 +642,7 @@ body {
   left: 0;
   width: 4px;
   height: 100%;
-  background: var(--verde-secundario);
+  background: var(--naranja-secundario);
   opacity: 0;
   transition: opacity 0.3s ease;
 }
@@ -694,7 +694,7 @@ body {
   margin: 0 auto 3rem auto;
   max-width: 1000px;
   text-align: center;
-  border: 3px solid var(--verde-secundario);
+  border: 3px solid var(--naranja-secundario);
 }
 
 .share-title {
@@ -715,7 +715,7 @@ body {
 }
 
 .share-btn {
-  background: var(--verde-secundario);
+  background: var(--naranja-secundario);
   color: var(--blanco-principal);
   border: none;
   border-radius: 50px;

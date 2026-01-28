@@ -69,7 +69,7 @@
 }
 
 .buy-button:hover {
-  background: var(--verde-secundario, #7ED957);
+  background: #e9832e;
   transform: translateY(-2px);
 }
 

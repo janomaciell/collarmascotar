@@ -5,7 +5,7 @@
   --blanco-principal: #FFFFFF;
   --rosa-secundario: #FF6FA5;
   --rojo-secundario: #FF3131;
-  --verde-secundario: #7ED957;
+  --naranja-secundario: # #e9832e;
   --gris-suave: #F5F5F5;
   --gris-texto: #666666;
 }
@@ -60,7 +60,7 @@
   font-weight: 900;
   text-transform: uppercase;
   margin: 0;
-  color: var(--verde-secundario);
+  color: var(--naranja-secundario);
 }
 
 .brand-slogan {
@@ -132,7 +132,7 @@
   font-family: 'Poppins', sans-serif;
   font-size: 1.2rem;
   font-weight: 800;
-  color: var(--verde-secundario);
+  color: var(--naranja-secundario);
   margin-bottom: 1.5rem;
   text-transform: uppercase;
   letter-spacing: 0.5px;
