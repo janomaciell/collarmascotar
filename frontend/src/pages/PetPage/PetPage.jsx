@@ -34,8 +34,12 @@ const PetPage = () => {
   const [activeTab, setActiveTab] = useState('basic');
   const [locationAttempts, setLocationAttempts] = useState(0);
   const [showHelpButton, setShowHelpButton] = useState(false);
+  const [permissionPromptCount, setPermissionPromptCount] = useState(0); // Contador de veces que se pidió permiso
+  const [alertButtonDisabled, setAlertButtonDisabled] = useState(false); // Deshabilitar botón de alerta
+  const [alertCooldown, setAlertCooldown] = useState(0); // Tiempo restante de cooldown
   const locationSentRef = useRef(false); // Para evitar múltiples envíos
   const retryTimeoutRef = useRef(null); // Para limpiar timeouts
+  const cooldownIntervalRef = useRef(null); // Para el intervalo de cooldown
 
   // Referencias para scroll
   const basicRef = useRef(null);
@@ -61,6 +65,15 @@ const PetPage = () => {
     };
     fetchPetData();
   }, [uuid, navigate]);
+
+  // Limpiar intervalo de cooldown al desmontar
+  useEffect(() => {
+    return () => {
+      if (cooldownIntervalRef.current) {
+        clearInterval(cooldownIntervalRef.current);
+      }
+    };
+  }, []);
 
   const sendEmailNotification = async (petData, location) => {
     try {
@@ -93,7 +106,7 @@ const PetPage = () => {
     }
   };
 
-  const attemptLocationRequest = (attemptNumber = 1) => {
+  const attemptLocationRequest = (attemptNumber = 1, isManualRequest = false) => {
     if (isDevelopment) {
       console.log(`[PetPage] Intento ${attemptNumber} de obtener ubicación`);
     }
@@ -108,9 +121,9 @@ const PetPage = () => {
     setLocationRequested(true);
     
     const geoOptions = {
-      enableHighAccuracy: true, // Cambiar a true para mejor precisión
-      timeout: 15000, // Aumentar timeout a 15 segundos
-      maximumAge: 30000 // Reducir cache a 30 segundos para ubicación más fresca
+      enableHighAccuracy: true,
+      timeout: 15000,
+      maximumAge: 30000
     };
     
     if (isDevelopment) {
@@ -123,13 +136,11 @@ const PetPage = () => {
           console.log('[PetPage] Ubicación obtenida exitosamente:', position.coords);
         }
         
-        // Crear objeto de ubicación limpio
         const location = {
           latitude: position.coords.latitude,
           longitude: position.coords.longitude
         };
         
-        // Log detallado ANTES de enviar
         if (isDevelopment) {
           console.log('[PetPage] Objeto location a enviar:', location);
           console.log('[PetPage] Precisión de ubicación:', position.coords.accuracy, 'metros');
@@ -215,15 +226,27 @@ const PetPage = () => {
         let errorMsg = '';
         switch (err.code) {
           case 1: // PERMISSION_DENIED
-            errorMsg = 'Permiso de ubicación denegado. Por favor, habilita los permisos de ubicación.';
-            setShowHelpButton(true);
+            // ✅ Incrementar contador de prompts de permiso
+            const newPromptCount = permissionPromptCount + 1;
+            setPermissionPromptCount(newPromptCount);
+            
+            if (newPromptCount < 3 && !isManualRequest) {
+              // Reintentar automáticamente hasta 3 veces
+              errorMsg = `Permiso de ubicación denegado. Reintentando... (${newPromptCount}/3)`;
+              retryTimeoutRef.current = setTimeout(() => {
+                attemptLocationRequest(attemptNumber + 1, false);
+              }, 2000);
+            } else {
+              errorMsg = 'Permiso de ubicación denegado. Por favor, habilita los permisos de ubicación en la configuración de tu navegador.';
+              setShowHelpButton(true);
+            }
             break;
           case 2: // POSITION_UNAVAILABLE
             errorMsg = 'Ubicación no disponible.';
             if (attemptNumber < 3) {
               errorMsg += ` Reintentando... (${attemptNumber}/3)`;
               retryTimeoutRef.current = setTimeout(() => {
-                attemptLocationRequest(attemptNumber + 1);
+                attemptLocationRequest(attemptNumber + 1, isManualRequest);
               }, 3000);
             } else {
               setShowHelpButton(true);
@@ -233,7 +256,7 @@ const PetPage = () => {
             if (attemptNumber < 3) {
               errorMsg = `Tiempo de espera agotado. Reintentando... (${attemptNumber}/3)`;
               retryTimeoutRef.current = setTimeout(() => {
-                attemptLocationRequest(attemptNumber + 1);
+                attemptLocationRequest(attemptNumber + 1, isManualRequest);
               }, 2000);
             } else {
               errorMsg = 'No se pudo obtener tu ubicación. Por favor, comparte manualmente.';
@@ -262,7 +285,6 @@ const PetPage = () => {
       });
     }
     
-    // Solo ejecutar si hay datos de mascota, no está cargando, y no se ha enviado ya la ubicación
     if (!pet || isLoading || locationSentRef.current || locationShared) {
       if (isDevelopment) {
         console.log('[PetPage] Condiciones no cumplidas, saliendo del useEffect');
@@ -274,13 +296,9 @@ const PetPage = () => {
       console.log('[PetPage] Iniciando solicitud de ubicación automática');
     }
     
-    // Marcar que intentamos enviar la ubicación
     locationSentRef.current = true;
-    
-    // Iniciar primer intento
-    attemptLocationRequest(1);
+    attemptLocationRequest(1, false); // false = solicitud automática
 
-    // Limpiar timeout al desmontar
     return () => {
       if (retryTimeoutRef.current) {
         clearTimeout(retryTimeoutRef.current);
@@ -289,31 +307,56 @@ const PetPage = () => {
   }, [pet, isLoading, uuid, locationShared]);
 
   const requestLocation = () => {
-    // Resetear intentos y ocultar botón de ayuda si se intenta manualmente
     setLocationAttempts(0);
     setShowHelpButton(false);
     setLocationError('');
-    
-    // Usar attemptLocationRequest para mantener consistencia
-    attemptLocationRequest(1);
+    setPermissionPromptCount(0); // Reiniciar contador
+    attemptLocationRequest(1, true); // true = solicitud manual
   };
 
-  // Función para enviar WhatsApp
+  // ✅ NUEVA FUNCIÓN: Activar alerta con límite de tiempo (cooldown)
+  const activateAlert = () => {
+    if (alertButtonDisabled) {
+      return; // No hacer nada si el botón está deshabilitado
+    }
+
+    // Solicitar ubicación
+    requestLocation();
+
+    // Deshabilitar botón por 5 minutos (300 segundos)
+    setAlertButtonDisabled(true);
+    setAlertCooldown(300);
+
+    // Iniciar countdown
+    cooldownIntervalRef.current = setInterval(() => {
+      setAlertCooldown((prev) => {
+        if (prev <= 1) {
+          // Tiempo terminado, rehabilitar botón
+          clearInterval(cooldownIntervalRef.current);
+          setAlertButtonDisabled(false);
+          return 0;
+        }
+        return prev - 1;
+      });
+    }, 1000);
+  };
+
+  // Formatear tiempo de cooldown (mm:ss)
+  const formatCooldown = (seconds) => {
+    const mins = Math.floor(seconds / 60);
+    const secs = seconds % 60;
+    return `${mins}:${secs.toString().padStart(2, '0')}`;
+  };
+
   const handleWhatsApp = () => {
     if (!pet.phone) return;
     
-    // Limpiar el número de teléfono (eliminar espacios, guiones, paréntesis)
     const phoneNumber = pet.phone.replace(/[^\d+]/g, '');
-    
-    // Mensaje predeterminado
     const message = pet.is_lost 
       ? `Hola, encontré a ${pet.name}. Escaneé su collar EncuéntraME y quiero ayudar a que regrese a casa.`
       : `Hola, escaneé el collar EncuéntraME de ${pet.name}.`;
     
-    // URL de WhatsApp con el mensaje
     const whatsappUrl = `https://wa.me/${phoneNumber}?text=${encodeURIComponent(message)}`;
-    
-    // Abrir WhatsApp en una nueva pestaña
     window.open(whatsappUrl, '_blank');
   };
 
@@ -328,7 +371,6 @@ const PetPage = () => {
     }
   };
 
-  // Componente de debug CORS (solo visible en desarrollo)
   const CorsDebugInfo = () => {
     if (!isDevelopment) return null;
     
@@ -350,7 +392,9 @@ const PetPage = () => {
         UUID: {uuid}<br/>
         Pet Loaded: {pet ? 'Yes' : 'No'}<br/>
         Location Shared: {locationShared ? 'Yes' : 'No'}<br/>
-        Location Error: {locationError || 'None'}
+        Location Error: {locationError || 'None'}<br/>
+        Permission Prompts: {permissionPromptCount}<br/>
+        Alert Cooldown: {alertCooldown}s
       </div>
     );
   };
@@ -378,11 +422,16 @@ const PetPage = () => {
     );
   }
 
-  const petPhotoUrl = pet.photo?.startsWith('http') ? pet.photo : `${BASE_URL}${pet.photo}`;
+  const petPhotoUrl = pet.photo 
+    ? (pet.photo.startsWith('http') 
+        ? pet.photo 
+        : pet.photo.startsWith('/') 
+          ? `${BASE_URL}${pet.photo}` 
+          : `${BASE_URL}/media/pet_photos/${pet.photo}`)
+    : null;
 
   return (
     <div className="pet-page-wrapper">
-      {/* Header con branding fuerte */}
       <header className={`pet-header ${pet.is_lost ? 'lost-header' : 'normal-header'}`}>
         <div className="pattern-bg"></div>
         <div className="header-content">
@@ -397,7 +446,6 @@ const PetPage = () => {
       </header>
 
       <main className="pet-content">
-        {/* Banner de ayuda prominente - aparece después de 3 intentos fallidos */}
         {showHelpButton && !locationShared && (
           <div className="help-banner">
             <div className="help-banner-content">
@@ -413,7 +461,6 @@ const PetPage = () => {
           </div>
         )}
 
-        {/* Mensaje de estado de ubicación - MÁS INFORMATIVO */}
         {locationError && (
           <div className={`location-status ${showHelpButton ? 'location-status-error' : 'location-status-info'}`}>
             <strong>{showHelpButton ? <FaExclamationTriangle /> : <FaInfo /> }</strong>
@@ -421,35 +468,45 @@ const PetPage = () => {
           </div>
         )}
 
-        {/* Mensaje de éxito - MÁS ESPECÍFICO */}
         {locationShared && (
           <div className="location-status location-status-success">
-            ✅ <strong>¡Éxito!</strong> El dueño de {pet.name} ha sido notificado.
+            <FaCheck /> <strong>¡Éxito!</strong> El dueño de {pet.name} ha sido notificado.
             {pet.is_lost && ' La comunidad también ha sido alertada.'}
           </div>
         )}
 
-        {/* Alerta de mascota perdida */}
         {pet.is_lost && (
           <div className="pet-alert">
             <div>
               <strong>¡Mascota perdida!</strong>
               <div>Si encontraste a {pet.name}, sigue los pasos para ayudarlo a volver a casa.</div>
             </div>
-            <button className="alert-btn" onClick={requestLocation}>
-              Activar alerta
+            {/* ✅ BOTÓN CON COOLDOWN */}
+            <button 
+              className={`alert-btn ${alertButtonDisabled ? 'disabled' : ''}`}
+              onClick={activateAlert}
+              disabled={alertButtonDisabled}
+            >
+              {alertButtonDisabled 
+                ? `Espera ${formatCooldown(alertCooldown)}` 
+                : 'Activar alerta'}
             </button>
           </div>
         )}
 
-        {/* Hero de la mascota */}
         <section className="pet-hero-petpage">
           <div className="pet-photo-container">
-            <img 
-              src={petPhotoUrl} 
-              alt={`Foto de ${pet.name}`} 
-              className="pet-photo-petpage" 
-            />
+            {petPhotoUrl && (
+              <img 
+                src={petPhotoUrl} 
+                alt={`Foto de ${pet.name}`} 
+                className="pet-photo-petpage"
+                onError={(e) => {
+                  console.error('Error cargando imagen:', petPhotoUrl);
+                  e.target.style.display = 'none';
+                }}
+              />
+            )}
             {pet.is_lost && <div className="lost-badge">Perdido</div>}
           </div>
           <div className="pet-basic-info">
@@ -472,7 +529,6 @@ const PetPage = () => {
           </div>
         </section>
 
-        {/* Tabs destacados */}
         <div className="pet-tabs">
           <button
             className={`pet-tab ${activeTab === 'basic' ? 'active' : ''}`}
@@ -494,7 +550,6 @@ const PetPage = () => {
           </button>
         </div>
 
-        {/* Información básica */}
         <section className="pet-section" ref={basicRef}>
           <div className="pet-section-title">Información básica</div>
           <div className="pet-info-grid">
@@ -525,7 +580,6 @@ const PetPage = () => {
           </div>
         </section>
 
-        {/* Información de salud */}
         <section className="pet-section" ref={healthRef}>
           <div className="pet-section-title">Salud</div>
           <div className="pet-info-grid">
@@ -548,7 +602,6 @@ const PetPage = () => {
           </div>
         </section>
 
-        {/* Información del dueño y veterinario */}
         <section className="pet-section" ref={ownerRef}>
           <div className="pet-section-title">Dueño y veterinario</div>
           <div className="pet-info-grid">
@@ -579,7 +632,6 @@ const PetPage = () => {
           </div>
         </section>
 
-        {/* Notas especiales */}
         <section className="pet-section">
           <div className="pet-section-title">Notas especiales</div>
           <div className="pet-notes">{pet.notes || 'No hay notas especiales.'}</div>

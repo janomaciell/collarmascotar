@@ -60,6 +60,8 @@ class ScanSerializer(serializers.ModelSerializer):
         fields = ['id', 'timestamp', 'latitude', 'longitude']
 
 class PetSerializer(serializers.ModelSerializer):
+    photo = serializers.SerializerMethodField()
+    
     class Meta:
         model = Pet
         fields = [
@@ -96,6 +98,18 @@ class PetSerializer(serializers.ModelSerializer):
             'vet_address'
         ]
         read_only_fields = ['id', 'qr_code', 'qr_uuid', 'created_at']
+    
+    def get_photo(self, obj):
+        """
+        Devuelve la URL completa de la foto
+        """
+        if obj.photo:
+            request = self.context.get('request')
+            if request:
+                return request.build_absolute_uri(obj.photo.url)
+            return obj.photo.url
+        return None
+    
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         # Log de los campos requeridos
@@ -112,6 +126,8 @@ class PetSerializer(serializers.ModelSerializer):
 
 class PetPublicSerializer(serializers.ModelSerializer):
     """Serializer para datos públicos que verá quien escanee el QR"""
+    photo = serializers.SerializerMethodField()
+    
     class Meta:
         model = Pet
         fields = [
@@ -132,6 +148,17 @@ class PetPublicSerializer(serializers.ModelSerializer):
             'vet_name',
             'vet_phone'
         ]
+    
+    def get_photo(self, obj):
+        """
+        Devuelve la URL completa de la foto
+        """
+        if obj.photo:
+            request = self.context.get('request')
+            if request:
+                return request.build_absolute_uri(obj.photo.url)
+            return obj.photo.url
+        return None
 
 class UserLocationSerializer(serializers.ModelSerializer):
     class Meta:

@@ -189,17 +189,41 @@ body {
   white-space: nowrap;
 }
 
-.pet-alert .alert-btn:hover {
+.pet-alert .alert-btn:hover:not(.disabled) {
   background: #d92828;
   transform: translateY(-2px);
   box-shadow: 0 6px 20px rgba(255, 49, 49, 0.4);
 }
 
-.pet-alert .alert-btn:active {
+.pet-alert .alert-btn:active:not(.disabled) {
   transform: translateY(0);
 }
 
-/* ==================== BANNER DE AYUDA ==================== */
+.pet-alert .alert-btn.disabled {
+  background: linear-gradient(135deg, #ccc, #999);
+  cursor: not-allowed;
+  opacity: 0.7;
+  box-shadow: none;
+  animation: pulse-cooldown 2s ease-in-out infinite;
+}
+
+.pet-alert .alert-btn.disabled:hover {
+  background: linear-gradient(135deg, #ccc, #999);
+  transform: none;
+  box-shadow: none;
+}
+
+/* Animación de pulso para countdown */
+@keyframes pulse-cooldown {
+  0%, 100% {
+    opacity: 0.6;
+  }
+  50% {
+    opacity: 0.8;
+  }
+}
+
+/* ==================== BANNER DE AYUDA (RESPONSIVE) ==================== */
 .help-banner {
   background: linear-gradient(135deg, #FFE066 0%, #FFD700 100%);
   border-radius: 20px;
@@ -370,7 +394,7 @@ body {
   margin-bottom: 2rem;
 }
 
-.pet-phot-petpage {
+.pet-photo-petpage {
   width: 260px;
   height: 260px;
   border-radius: 50%;
@@ -380,7 +404,6 @@ body {
   background: var(--gris-suave);
   transition: transform 0.3s ease;
 }
-
 
 .lost-badge {
   position: absolute;
@@ -715,6 +738,7 @@ body {
 .share-btn:active {
   transform: translateY(0);
 }
+
 .whatsapp-btn {
   color: white;
   border: none;
@@ -796,6 +820,7 @@ body {
   border-top: 5px solid var(--azul-principal);
   border-radius: 50%;
   margin-bottom: 1.5rem;
+  animation: spin 1s linear infinite;
 }
 
 @keyframes spin {
@@ -896,7 +921,7 @@ body {
 
 @media (max-width: 768px) {
   .pet-content {
-    padding: 0 1.5rem 2rem;
+    padding: 0 1rem 2rem;
   }
 
   .pet-section,
@@ -904,6 +929,33 @@ body {
   .pet-alert {
     padding: 1.5rem;
     margin-bottom: 1.5rem;
+  }
+
+  /*  Help Banner para tablets */
+  .help-banner {
+    padding: 1.5rem;
+    margin: 1.5rem 1rem;
+  }
+
+  .help-banner-content {
+    gap: 1.5rem;
+  }
+
+  .help-banner-icon {
+    font-size: 2.5rem;
+  }
+
+  .help-banner-text strong {
+    font-size: 1.2rem;
+  }
+
+  .help-banner-text p {
+    font-size: 1rem;
+  }
+
+  .help-banner-btn {
+    padding: 1rem 2rem;
+    font-size: 1rem;
   }
 
   .pet-tabs {
@@ -971,23 +1023,55 @@ body {
     width: 80px;
   }
   .pet-photo-petpage {
-    width: 300px;
-    height: 300px;
+    width: 180px;
+    height: 180px;
     border-width: 5px;
   }
   .pet-name-petpage {
-    font-size: 1.3rem;
+    font-size: 2rem;
   }
   .pet-details {
     font-size: 1rem;
-    padding: 0.7rem 0.5rem;
+    padding: 0.7rem 1rem;
   }
   .pet-section-title {
-    font-size: 1rem;
+    font-size: 1.1rem;
     margin-bottom: 1rem;
   }
   .info-card {
     padding: 1rem;
+  }
+
+  /* ✅ RESPONSIVE: Help Banner para móviles grandes */
+  .help-banner {
+    padding: 1.2rem;
+    margin: 1.2rem 0.8rem;
+    border-width: 3px;
+  }
+
+  .help-banner-content {
+    flex-direction: column;
+    gap: 1rem;
+    text-align: center;
+  }
+
+  .help-banner-icon {
+    font-size: 2.5rem;
+  }
+
+  .help-banner-text strong {
+    font-size: 1.1rem;
+  }
+
+  .help-banner-text p {
+    font-size: 0.95rem;
+  }
+
+  .help-banner-btn {
+    padding: 1rem 2rem;
+    font-size: 1rem;
+    width: 100%;
+    white-space: normal;
   }
 }
 
@@ -1028,17 +1112,18 @@ body {
   }
 
   .pet-photo-petpage {
-    width: 300px;
-    height: 300px;
+    width: 160px;
+    height: 160px;
     border-width: 5px;
   }
 
   .pet-name-petpage {
-    font-size: 2rem;
+    font-size: 1.8rem;
   }
 
   .pet-details {
-    font-size: 1rem;
+    font-size: 0.9rem;
+    padding: 0.8rem 1rem;
   }
 
   .intro-text {
@@ -1079,6 +1164,54 @@ body {
   .info-value {
     font-size: 1.05rem;
   }
+
+  /* ✅ RESPONSIVE: Help Banner para móviles pequeños */
+  .help-banner {
+    padding: 1rem;
+    margin: 1rem 0.5rem;
+    border-width: 2px;
+    border-radius: 16px;
+  }
+
+  .help-banner-content {
+    flex-direction: column;
+    gap: 1rem;
+    text-align: center;
+  }
+
+  .help-banner-icon {
+    font-size: 2rem;
+  }
+
+  .help-banner-text strong {
+    font-size: 1rem;
+    margin-bottom: 0.3rem;
+  }
+
+  .help-banner-text p {
+    font-size: 0.9rem;
+    line-height: 1.5;
+  }
+
+  .help-banner-btn {
+    padding: 0.9rem 1.5rem;
+    font-size: 0.95rem;
+    width: 100%;
+    white-space: normal;
+    letter-spacing: 0.3px;
+  }
+
+  /* ✅ Ajustar mensajes de estado de ubicación */
+  .location-status {
+    padding: 0.8rem 1rem;
+    margin: 1rem 0.5rem;
+    font-size: 0.9rem;
+  }
+
+  /*  Ajustar pet-content padding */
+  .pet-content {
+    padding: 0 0.5rem 1.5rem;
+  }
 }
 
 /* ==================== ACCESSIBILITY ==================== */
@@ -1104,7 +1237,10 @@ a:focus-visible {
   .pet-footer,
   .pet-actions,
   .share-section,
-  .pet-tabs {
+  .pet-tabs,
+  .help-banner,
+  .location-status,
+  .pet-alert {
     display: none;
   }
 
