@@ -431,7 +431,7 @@ body {
 }
 
 .pet-name-petpage {
-  font-family: 'Jackerton', serif;
+  font-family:'Poppins', sans-serif;
   font-size: clamp(2.5rem, 5vw, 4rem);
   font-weight: 900;
   color: var(--azul-principal);
@@ -833,6 +833,38 @@ body {
   color: var(--gris-texto);
   font-weight: 600;
 }
+
+/* ==================== FIX: FUENTES DEL MODAL ==================== */
+
+/* Forzar Poppins en el modal completo */
+.permission-modal,
+.permission-modal * {
+  font-family: 'Poppins', -apple-system, BlinkMacSystemFont, sans-serif !important;
+}
+
+/* Headings específicos del modal */
+.permission-modal h1,
+.permission-modal h2,
+.permission-modal h3,
+.permission-modal h4,
+.permission-modal h5,
+.permission-modal h6 {
+  font-family: 'Poppins', -apple-system, BlinkMacSystemFont, sans-serif !important;
+  font-weight: 800;
+}
+
+/* Pasos numerados */
+.modal-steps h3 {
+  font-family: 'Poppins', -apple-system, BlinkMacSystemFont, sans-serif !important;
+  font-weight: 700;
+}
+
+/* Botones del modal */
+.modal-btn {
+  font-family: 'Poppins', -apple-system, BlinkMacSystemFont, sans-serif !important;
+}
+
+/* ==================== FIN FIX ==================== */
 
 .error-container {
   background: var(--blanco-principal);

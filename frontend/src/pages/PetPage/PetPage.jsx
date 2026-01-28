@@ -298,7 +298,9 @@ const PetPage = () => {
             <div className="modal-icon">
               <FaMapMarkerAlt />
             </div>
-            <h2>Permisos de Ubicación Bloqueados</h2>
+            <h2 style={{ fontFamily: 'Poppins, sans-serif' }}>
+              Permisos de Ubicación Bloqueados
+            </h2>
             <p>
               Para ayudar a {pet.name} a volver a casa, necesitamos tu ubicación. 
               Los permisos están bloqueados en tu navegador.
@@ -329,7 +331,7 @@ const PetPage = () => {
         <div className="header-content">
           <div className="brand-section">
             <div className="brand-info">
-              <h1 className="brand-name">ENCUÉNTRAME</h1>
+              <h1 className="brand-name">ENCUENTRAME</h1>
               <p className="brand-tagline">Mascotas seguras, familias tranquilas</p>
             </div>
           </div>
