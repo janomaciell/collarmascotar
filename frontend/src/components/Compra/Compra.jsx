@@ -1,61 +1,38 @@
-import React, { useState, useEffect } from 'react';
-import { getPets } from '../../services/api';
+import React, { useState } from 'react';
 import './Compra.css';
 import { FaTag, FaDog, FaCrown, FaCheck, FaWhatsapp, FaArrowRight } from 'react-icons/fa';
 
 const Compra = () => {
-  const [pets, setPets] = useState([]);
-  const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState('');
   const [successMessage, setSuccessMessage] = useState('');
-  const [selectedPetId, setSelectedPetId] = useState(null);
   const [userPhone, setUserPhone] = useState('');
   const [selectedOption, setSelectedOption] = useState(null);
   const [additionalInfo, setAdditionalInfo] = useState('');
-  const [lostPet, setLostPet] = useState(null);
-
-  const mascotaImage = new URL('../../img/personaje2.png', import.meta.url).href;
-
-  useEffect(() => {
-    fetchPets();
-  }, []);
-
-  const fetchPets = async () => {
-    try {
-      setIsLoading(true);
-      const data = await getPets();
-      setPets(data);
-      setError('');
-
-    } catch (error) {
-      console.error(error);
-    } finally {
-      setIsLoading(false);
-    }
-  };
+  const [quantity, setQuantity] = useState(1);
+  const [cityOrZone, setCityOrZone] = useState('');
 
   const purchaseOptions = [
-    { 
-      id: 'chapita', 
-      name: 'Chapita QR', 
-      price: 25000,
-      oldPrice: 30000,
+    {
+      id: 'chapita',
+      name: 'Chapita QR',
+      price: 30000,
+      oldPrice: 35000,
       available: true,
       description: 'Placa resistente con código QR único',
       icon: FaTag
     },
-    { 
-      id: 'collar-simple', 
-      name: 'Collar Básico', 
+    {
+      id: 'collar-simple',
+      name: 'Collar Básico',
       price: 25000,
       oldPrice: 30000,
       available: false,
       description: 'Collar + chapita QR incluida',
       icon: FaDog
     },
-    { 
-      id: 'collar-premium', 
-      name: 'Collar Premium', 
+    {
+      id: 'collar-premium',
+      name: 'Collar Premium',
       price: 25000,
       oldPrice: 30000,
       available: false,
@@ -76,62 +53,44 @@ const Compra = () => {
     return phoneRegex.test(userPhone);
   };
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = (e) => {
     e.preventDefault();
 
     if (!selectedOption || !validatePhone()) {
-      setError('Por favor completa todos los campos requeridos.');
+      setError('Por favor elegí un producto y completá tu WhatsApp.');
       return;
     }
+    setError('');
 
-    // Solo requiere seleccionar mascota si hay mascotas disponibles
-    if (lostPet === true && pets.length > 0 && !selectedPetId) {
-      setError('Por favor selecciona una mascota.');
-      return;
-    }
+    const option = purchaseOptions.find((opt) => opt.id === selectedOption);
+    const parts = [
+      `¡Hola! Quiero comprar ${quantity > 1 ? quantity + ' ' : ''}*${option.name}*`,
+      `Mi WhatsApp: +54 9 ${userPhone}`,
+      cityOrZone.trim() ? `Zona/ciudad: ${cityOrZone.trim()}` : '',
+      additionalInfo.trim() ? `Detalles: ${additionalInfo.trim()}` : '',
+      '¡Espero tu respuesta para coordinar!'
+    ].filter(Boolean);
 
-    try {
-      const selectedPet = selectedPetId ? pets.find((pet) => pet.id === selectedPetId) : null;
-      const option = purchaseOptions.find((opt) => opt.id === selectedOption);
-      const message = encodeURIComponent(
-        `¡Hola! Quiero comprar un *${option.name}*${selectedPet ? ` para mi mascota *${selectedPet.name}*` : ''}.\n` +
-        (selectedPet ? `Raza: ${selectedPet.breed || 'No especificada'}\n` : '') +
-        (selectedPet ? `Edad: ${selectedPet.age} años\n` : '') +
-        `Detalles: ${additionalInfo || 'Sin detalles adicionales'}\n` +
-        `¡Espero tu respuesta para coordinar!`
-      );
+    const message = encodeURIComponent(parts.join('\n'));
 
-      const formattedPhone = userPhone;
-      
-      setTimeout(() => {
-        const whatsappUrl = `https://wa.me/54${formattedPhone}?text=${message}`;
-        const newWindow = window.open(whatsappUrl, '_blank', 'noopener,noreferrer');
-        
-        if (newWindow) {
-          newWindow.opener = null;
-        }
-        
-        setSuccessMessage('¡Redirigiéndote a WhatsApp para coordinar tu pedido!');
-        
-        setTimeout(() => {
-          setSelectedPetId(null);
-          setSelectedOption(null);
-          setUserPhone('');
-          setAdditionalInfo('');
-          setSuccessMessage('');
-          setLostPet(null);
-        }, 3000);
-      }, 100);
+    const BUSINESS_WHATSAPP = '5492267405599';
+    const whatsappUrl = `https://wa.me/${BUSINESS_WHATSAPP}?text=${message}`;
+    const newWindow = window.open(whatsappUrl, '_blank', 'noopener,noreferrer');
+    if (newWindow) newWindow.opener = null;
 
-    } catch (err) {
-      console.error('Error al procesar la solicitud:', err);
-      setError('Hubo un error al procesar tu solicitud. Por favor intenta de nuevo.');
-    }
+    setSuccessMessage('¡Redirigiéndote a WhatsApp para coordinar tu pedido!');
+    setTimeout(() => {
+      setSelectedOption(null);
+      setUserPhone('');
+      setAdditionalInfo('');
+      setCityOrZone('');
+      setQuantity(1);
+      setSuccessMessage('');
+    }, 3000);
   };
 
   return (
     <div className="compra-wrapper">
-      {/* Hero de Compra */}
       <section className="compra-hero">
         <div className="hero-content">
           <h1 className="hero-title">¡PROTEGE A TU MEJOR AMIGO!</h1>
@@ -143,166 +102,144 @@ const Compra = () => {
       </section>
 
       <div className="compra-container">
-        {isLoading ? (
-          <div className="loading-container">
-            <div className="loading-spinner"></div>
-            <p>Cargando tus mascotas...</p>
-          </div>
-        ) : (
-          <form onSubmit={handleSubmit} className="compra-form">
-            
-            {/* Pregunta inicial */}
-            <div className="form-section">
-              <div className="section-header">
-                <h2>¿Perdiste a tu mascota?</h2>
-                <p>Ayúdanos a personalizar tu pedido</p>
-              </div>
-              
-              <div className="choice-buttons">
-                <button
-                  type="button"
-                  className={`choice-btn ${lostPet === true ? 'selected' : ''}`}
-                  onClick={() => setLostPet(true)}
-                >
-                  <span className="choice-icon"></span>
-                  <span>Sí, la perdí</span>
-                </button>
-                <button
-                  type="button"
-                  className={`choice-btn ${lostPet === false ? 'selected' : ''}`}
-                  onClick={() => setLostPet(false)}
-                >
-                  <span className="choice-icon"></span>
-                  <span>No, es prevención</span>
-                </button>
-              </div>
+        <form onSubmit={handleSubmit} className="compra-form">
+          {error && (
+            <div className="message error-message">
+              <span>{error}</span>
+            </div>
+          )}
+
+          {/* Opciones de producto */}
+          <div className="form-section">
+            <div className="section-header">
+              <h2>Elige tu producto</h2>
+              <p>Todas las opciones incluyen código QR único</p>
             </div>
 
-            {/* Selección de mascota */}
-            {lostPet === true && (
-              <div className="form-section">
-                <div className="section-header">
-                  <h2>¿Cuál de tus mascotas?</h2>
+            <div className="products-grid">
+              {purchaseOptions.map((option) => (
+                <div
+                  key={option.id}
+                  className={`product-card ${selectedOption === option.id ? 'selected' : ''} ${!option.available ? 'unavailable' : ''}`}
+                  onClick={() => option.available && setSelectedOption(option.id)}
+                >
+                  <div className="product-icon">{React.createElement(option.icon)}</div>
+                  <h3>{option.name}</h3>
+                  <p className="product-description">{option.description}</p>
+                  <div className="product-price">
+                    {option.available ? (
+                      <>
+                        {option.oldPrice && (
+                          <span className="old-price">${option.oldPrice.toLocaleString('es-AR')}</span>
+                        )}
+                        <span className="price-amount">${option.price.toLocaleString('es-AR')}</span>
+                        {option.oldPrice && <span className="launch-badge">Lanzamiento</span>}
+                      </>
+                    ) : (
+                      <span className="coming-soon">Próximamente</span>
+                    )}
+                  </div>
+                  {option.available && <div className="selection-indicator"><FaCheck /></div>}
                 </div>
-                
-                {pets.length === 0 ? (
-                  <div className="no-pets-message">
-                    <p>No tienes mascotas registradas aún.</p>
-                    <p>¡No te preocupes! Puedes continuar con tu pedido.</p>
-                  </div>
-                ) : (
-                  <div className="pets-grid">
-                    {pets.map((pet) => (
-                      <div
-                        key={pet.id}
-                        className={`pet-card ${selectedPetId === pet.id ? 'selected' : ''}`}
-                        onClick={() => setSelectedPetId(pet.id)}
-                      >
-                        <img src={pet.photo} alt={pet.name} className="pet-photo" />
-                        <div className="pet-info">
-                          <h3>{pet.name}</h3>
-                          <p>{pet.breed || 'Sin raza'} • {pet.age} años</p>
-                        </div>
-                        <div className="selection-indicator">✓</div>
-                      </div>
-                    ))}
-                  </div>
-                )}
-              </div>
-            )}
+              ))}
+            </div>
+          </div>
 
-            {/* Opciones de producto */}
-            <div className="form-section">
-              <div className="section-header">
-                <h2>Elige tu producto</h2>
-                <p>Todas las opciones incluyen código QR único</p>
-              </div>
-              
-              <div className="products-grid">
-                {purchaseOptions.map((option) => (
-                  <div
-                    key={option.id}
-                    className={`product-card ${selectedOption === option.id ? 'selected' : ''} ${!option.available ? 'unavailable' : ''}`}
-                    onClick={() => option.available && setSelectedOption(option.id)}
-                  >
-                    <div className="product-icon">{React.createElement(option.icon)}</div>
-                    <h3>{option.name}</h3>
-                    <p className="product-description">{option.description}</p>
-                    <div className="product-price">
-                      {option.available ? (
-                        <>
-                          {option.oldPrice && (
-                            <span className="old-price">${option.oldPrice.toLocaleString('es-AR')}</span>
-                          )}
-                          <span className="price-amount">${option.price.toLocaleString('es-AR')}</span>
-                          {option.oldPrice && <span className="launch-badge">Lanzamiento</span>}
-                        </>
-                      ) : (
-                        <span className="coming-soon">Próximamente</span>
-                      )}
-                    </div>
-                    {option.available && <div className="selection-indicator"><FaCheck /></div>}
-                  </div>
-                ))}
-              </div>
+          {/* Cantidad */}
+          <div className="form-section">
+            <div className="section-header">
+              <h2>Cantidad</h2>
+              <p>¿Cuántas unidades necesitás?</p>
+            </div>
+            <div className="quantity-row">
+              <button
+                type="button"
+                className="quantity-btn"
+                onClick={() => setQuantity((q) => Math.max(1, q - 1))}
+                aria-label="Menos"
+              >
+                −
+              </button>
+              <span className="quantity-value">{quantity}</span>
+              <button
+                type="button"
+                className="quantity-btn"
+                onClick={() => setQuantity((q) => q + 1)}
+                aria-label="Más"
+              >
+                +
+              </button>
+            </div>
+          </div>
+
+          {/* Zona/ciudad (opcional) */}
+          <div className="form-section">
+            <div className="section-header">
+              <h2>Zona o ciudad</h2>
+              <p>(Opcional) Para coordinar envío o entrega</p>
+            </div>
+            <input
+              type="text"
+              value={cityOrZone}
+              onChange={(e) => setCityOrZone(e.target.value)}
+              placeholder="Ej: CABA, La Plata, Córdoba..."
+              className="city-input"
+            />
+          </div>
+
+          {/* WhatsApp */}
+          <div className="form-section">
+            <div className="section-header">
+              <h2>Tu WhatsApp</h2>
+              <p>Te contactamos para coordinar la entrega</p>
             </div>
 
-            {/* WhatsApp */}
-            <div className="form-section">
-              <div className="section-header">
-                <h2>Tu WhatsApp</h2>
-                <p>Te contactaremos para coordinar la entrega</p>
-              </div>
-              
-              <div className="phone-input-container">
-                <div className="phone-prefix">+54 9</div>
-                <input
-                  type="tel"
-                  value={userPhone}
-                  onChange={handlePhoneChange}
-                  placeholder="1123456789"
-                  className="phone-input"
-                  required
-                />
-              </div>
-              <small className="input-help">Sin 15, solo área + número (ej: 1123456789)</small>
-            </div>
-
-            {/* Detalles adicionales */}
-            <div className="form-section">
-              <div className="section-header">
-                <h2>Detalles especiales</h2>
-                <p>(Opcional) Cuéntanos algo más</p>
-              </div>
-              
-              <textarea
-                value={additionalInfo}
-                onChange={(e) => setAdditionalInfo(e.target.value)}
-                placeholder="Ej: Quiero grabado especial, color específico, entrega urgente..."
-                className="details-input"
+            <div className="phone-input-container">
+              <div className="phone-prefix">+54 9</div>
+              <input
+                type="tel"
+                value={userPhone}
+                onChange={handlePhoneChange}
+                placeholder="1123456789"
+                className="phone-input"
+                required
               />
             </div>
+            <small className="input-help">Sin 15, solo área + número (ej: 1123456789)</small>
+          </div>
 
-            
-            {successMessage && (
-              <div className="message success-message">
-                <span className="message-icon"><FaCheck /></span>
-                {successMessage}
-              </div>
-            )}
+          {/* Detalles adicionales */}
+          <div className="form-section">
+            <div className="section-header">
+              <h2>Comentarios</h2>
+              <p>(Opcional) Cualquier cosa que quieras aclarar</p>
+            </div>
 
-            {/* Botón de envío */}
-            <button
-              type="submit"
-              className="submit-btn"
-              disabled={!selectedOption || !validatePhone()}
-            >
-              <span className="btn-icon"><FaWhatsapp /></span>
-              <span>Enviar por WhatsApp</span>
-              <span className="btn-arrow"><FaArrowRight /></span>
-            </button>
-          </form>
-        )}
+            <textarea
+              value={additionalInfo}
+              onChange={(e) => setAdditionalInfo(e.target.value)}
+              placeholder="Ej: entrega urgente, alguna preferencia..."
+              className="details-input"
+            />
+          </div>
+
+          {successMessage && (
+            <div className="message success-message">
+              <span className="message-icon"><FaCheck /></span>
+              {successMessage}
+            </div>
+          )}
+
+          <button
+            type="submit"
+            className="submit-btn"
+            disabled={!selectedOption || !validatePhone()}
+          >
+            <span className="btn-icon"><FaWhatsapp /></span>
+            <span>Enviar por WhatsApp</span>
+            <span className="btn-arrow"><FaArrowRight /></span>
+          </button>
+        </form>
       </div>
     </div>
   );

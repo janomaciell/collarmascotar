@@ -181,13 +181,50 @@
   color: var(--blanco-principal);
 }
 
-/* Scan History */
+/* Modal de historial */
+.history-modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  padding: 1rem;
+  animation: historyOverlayIn 0.2s ease-out;
+}
+
+@keyframes historyOverlayIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.history-modal-content {
+  width: 100%;
+  max-width: 640px;
+  max-height: 90vh;
+  overflow-y: auto;
+  animation: historyModalIn 0.25s ease-out;
+}
+
+@keyframes historyModalIn {
+  from {
+    opacity: 0;
+    transform: scale(0.95) translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+/* Scan History (dentro del modal) */
 .scan-history-container {
   background: var(--blanco-principal);
   border-radius: 20px;
   padding: 2rem;
-  margin-top: 2rem;
   box-shadow: 0 8px 30px rgba(0,0,0,0.1);
+  margin-top: 0;
 }
 
 .history-header {
@@ -486,6 +523,15 @@
     justify-content: center;
   }
   
+  .history-modal-content {
+    max-height: 85vh;
+  }
+
+  .history-header h3 {
+    font-size: 1.2rem;
+    word-break: break-word;
+  }
+
   .history-header {
     flex-direction: column;
     gap: 1rem;

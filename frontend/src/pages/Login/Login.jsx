@@ -64,7 +64,7 @@ const Login = () => {
         <div className="pattern-bg"></div>
         <div className="hero-content">
           <h1 className="hero-title">¡BIENVENIDO DE VUELTA!</h1>
-          <p className="hero-subtitle">Accede a tu cuenta EncuéntraME</p>
+          <p className="hero-subtitle">Accede a tu cuenta Encuentrame</p>
         </div>
       </section>
 

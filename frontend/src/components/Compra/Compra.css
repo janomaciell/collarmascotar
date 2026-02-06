@@ -125,76 +125,6 @@
   font-size: 0.95rem;
 }
 
-/* Botones de elección */
-.choice-buttons {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 1rem;
-}
-
-.choice-btn {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 0.8rem;
-  padding: 2rem 1rem;
-  border: 3px solid var(--gris-suave);
-  border-radius: 15px;
-  background: var(--blanco-principal);
-  cursor: pointer;
-  transition: all 0.3s ease;
-  font-size: 1rem;
-  font-weight: 700;
-  color: var(--negro-principal);
-}
-
-.choice-btn:hover {
-  border-color: var(--azul-principal);
-  transform: translateY(-3px);
-  box-shadow: 0 8px 25px rgba(5, 64, 143, 0.15);
-}
-
-.choice-btn.selected {
-  border-color: var(--verde-secundario);
-  background: linear-gradient(135deg, var(--blanco-principal) 0%, #f8fff8 100%);
-  color: var(--negro-principal);
-}
-
-.choice-icon {
-  font-size: 2.5rem;
-}
-
-/* Grid de mascotas */
-.pets-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 1rem; }
-
-.pet-card { display: flex; align-items: center; gap: 1rem; padding: 1.25rem; border: 2px solid var(--gris-suave); border-radius: 16px; cursor: pointer; transition: all 0.3s ease; position: relative; background: var(--blanco-principal); }
-
-.pet-card:hover {
-  border-color: var(--azul-principal);
-  transform: translateY(-2px);
-  box-shadow: 0 6px 20px rgba(5, 64, 143, 0.1);
-}
-
-.pet-card.selected {
-  border-color: var(--verde-secundario);
-  background: linear-gradient(135deg, var(--blanco-principal) 0%, #f8fff8 100%);
-}
-
-.pet-photo { width: 64px; height: 64px; border-radius: 50%; object-fit: cover; border: 3px solid var(--gris-suave); }
-
-.pet-info h3 {
-  font-size: 1.2rem;
-  font-weight: 800;
-  color: var(--negro-principal);
-  margin-bottom: 0.3rem;
-  text-transform: uppercase;
-}
-
-.pet-info p {
-  color: var(--gris-texto);
-  font-size: 0.9rem;
-}
-
 .selection-indicator {
   position: absolute;
   top: 10px;
@@ -214,10 +144,81 @@
   transition: all 0.3s ease;
 }
 
-.pet-card.selected .selection-indicator,
 .product-card.selected .selection-indicator {
   opacity: 1;
   transform: scale(1);
+}
+
+/* Cantidad */
+.quantity-row {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1.25rem;
+}
+
+.quantity-btn {
+  width: 48px;
+  height: 48px;
+  border: 2px solid var(--azul-principal);
+  background: var(--blanco-principal);
+  color: var(--azul-principal);
+  border-radius: 12px;
+  font-size: 1.5rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  line-height: 1;
+}
+
+.quantity-btn:hover {
+  background: var(--azul-principal);
+  color: var(--blanco-principal);
+}
+
+.quantity-value {
+  font-size: 1.5rem;
+  font-weight: 800;
+  color: var(--negro-principal);
+  min-width: 2.5rem;
+  text-align: center;
+  line-height: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Zona/ciudad */
+.city-input {
+  width: 100%;
+  padding: 1rem 1.2rem;
+  border: 2px solid var(--gris-suave);
+  border-radius: 12px;
+  font-size: 1rem;
+  font-family: inherit;
+  background: var(--blanco-principal);
+  color: var(--negro-principal);
+  transition: border-color 0.3s ease;
+}
+
+.city-input:focus {
+  outline: none;
+  border-color: var(--azul-principal);
+}
+
+.city-input::placeholder {
+  color: #9ca3af;
+}
+
+.city-input:-webkit-autofill,
+.city-input:-webkit-autofill:hover,
+.city-input:-webkit-autofill:focus {
+  -webkit-text-fill-color: var(--negro-principal);
+  -webkit-box-shadow: 0 0 0 1000px var(--blanco-principal) inset;
 }
 
 /* Grid de productos */
@@ -308,6 +309,13 @@
   outline: none;
 }
 
+.phone-input:-webkit-autofill,
+.phone-input:-webkit-autofill:hover,
+.phone-input:-webkit-autofill:focus {
+  -webkit-text-fill-color: var(--negro-principal);
+  -webkit-box-shadow: 0 0 0 1000px var(--blanco-principal) inset;
+}
+
 .input-help {
   display: block;
   margin-top: 0.8rem;
@@ -319,7 +327,8 @@
 .details-input {
   width: 100%;
   min-height: 120px;
-  background-color: var(--blanco-principal);
+  background: var(--blanco-principal);
+  color: var(--negro-principal);
   padding: 1rem;
   border: 2px solid var(--gris-suave);
   border-radius: 12px;
@@ -327,7 +336,6 @@
   font-family: inherit;
   resize: vertical;
   transition: border-color 0.3s ease;
-  color: var(--negro-principal);
 }
 
 .details-input:focus {
@@ -430,19 +438,6 @@
     padding: 2rem 1.5rem;
   }
   
-  .choice-buttons {
-    grid-template-columns: 1fr;
-    gap: 1rem;
-  }
-  
-  .choice-btn {
-    padding: 1.5rem;
-  }
-  
-  .choice-icon {
-    font-size: 2rem;
-  }
-  
   .products-grid {
     grid-template-columns: 1fr;
   }
@@ -469,20 +464,6 @@
   
   .section-header h2 {
     font-size: 1.5rem;
-  }
-  
-  .choice-btn {
-    padding: 1.2rem 0.8rem;
-    font-size: 0.9rem;
-  }
-  
-  .pet-card {
-    padding: 1rem;
-  }
-  
-  .pet-photo {
-    width: 50px;
-    height: 50px;
   }
   
   .product-card {

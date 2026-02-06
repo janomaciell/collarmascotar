@@ -73,7 +73,7 @@ const HowItWorks = () => {
         <div className="hiw-container hiw-final-cta-inner">
           <div className="hiw-final-text">
             <h2 className="final-subtitle">Protegé a tu mascota hoy</h2>
-            <p className="final-text">Miles de familias ya confían en EncuéntraME.</p>
+            <p className="final-text">Miles de familias ya confían en Encuentrame.</p>
           </div>
           <div className="hiw-final-actions">
             <Link to="/compra" className="btn-cta-final">Comprar collar</Link>

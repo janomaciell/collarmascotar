@@ -74,53 +74,43 @@ const LostPoster = () => {
         )
       );
 
-      // Detectar si estamos en móvil y forzar dimensiones A4 completas para el PDF
-      const isMobile = window.innerWidth <= 830;
+      // Dimensiones A4 fijas en píxeles (96 DPI) para que el póster llene toda la hoja sin bordes
+      const a4PxWidth = 794;
+      const a4PxHeight = 1123;
       const posterElement = posterRef.current;
-      
-      // Guardar estilos originales
+
+      // Guardar y forzar estilos para que el póster ocupe exactamente A4 sin bordes
       const originalStyles = {
         width: posterElement.style.width,
         height: posterElement.style.height,
         maxWidth: posterElement.style.maxWidth,
+        margin: posterElement.style.margin,
+        borderRadius: posterElement.style.borderRadius,
         aspectRatio: posterElement.style.aspectRatio,
       };
 
-      // Forzar dimensiones A4 completas antes de capturar (especialmente en móvil)
-      if (isMobile) {
-        // 794px = ancho A4 a 96 DPI, 1123px = alto A4 a 96 DPI
-        posterElement.style.width = '794px';
-        posterElement.style.height = '1123px';
-        posterElement.style.maxWidth = '794px';
-        posterElement.style.aspectRatio = 'none';
-        
-        // Esperar un frame para que los estilos se apliquen
-        await new Promise(resolve => requestAnimationFrame(resolve));
-      }
+      posterElement.style.width = `${a4PxWidth}px`;
+      posterElement.style.height = `${a4PxHeight}px`;
+      posterElement.style.maxWidth = `${a4PxWidth}px`;
+      posterElement.style.margin = '0';
+      posterElement.style.borderRadius = '0';
+      posterElement.style.aspectRatio = 'none';
 
-      // Dimensiones A4 en píxeles a 300 DPI
-      const a4Width = 2480;
-      const a4Height = 3508;
+      await new Promise((resolve) => requestAnimationFrame(resolve));
 
+      // Capturar sin width/height para que el canvas coincida con el elemento (sin márgenes blancos)
       const canvas = await html2canvas(posterRef.current, {
         scale: 3,
         useCORS: true,
         allowTaint: true,
         logging: false,
         backgroundColor: '#ffffff',
-        width: a4Width / 3,
-        height: a4Height / 3,
-        windowWidth: 794,
-        windowHeight: 1123,
+        windowWidth: a4PxWidth,
+        windowHeight: a4PxHeight,
       });
-      
+
       // Restaurar estilos originales
-      if (isMobile) {
-        posterElement.style.width = originalStyles.width;
-        posterElement.style.height = originalStyles.height;
-        posterElement.style.maxWidth = originalStyles.maxWidth;
-        posterElement.style.aspectRatio = originalStyles.aspectRatio;
-      }
+      Object.assign(posterElement.style, originalStyles);
       
       const imgData = canvas.toDataURL('image/png', 1.0);
       setPosterUrl(imgData);
@@ -283,7 +273,7 @@ const LostPoster = () => {
 
           {/* Pie de Página con Marca */}
           <div className="poster-footer">
-            <p className="footer-text">Póster generado con <strong>EncuentraME</strong> - Collares QR para mascotas</p>
+            <p className="footer-text">Póster generado con <strong>Encuentrame</strong> - Collares QR para mascotas</p>
           </div>
           </div>
         </div>

@@ -579,7 +579,7 @@ def send_lost_pet_email(pet, email, alert=None, latitude=None, longitude=None):
         <div style="max-width: 600px; margin: 20px auto; border: 1px solid #e0e0e0; border-radius: 10px; overflow: hidden;">
           <div style="background: linear-gradient(135deg, #87a8d0, #f4b084); padding: 20px; text-align: center;">
             <h1 style="color: #ffffff; margin: 0; font-size: 28px;">¡Mascota Perdida!</h1>
-            <p style="color: #ffffff; font-size: 16px; margin: 5px 0;">EncuéntraME necesita tu ayuda</p>
+            <p style="color: #ffffff; font-size: 16px; margin: 5px 0;">Encuentrame necesita tu ayuda</p>
           </div>
           <div style="padding: 20px; background: #ffffff;">
             <h2 style="color: #4a3c31; font-size: 22px; margin-bottom: 15px;">¡{pet.name} se ha perdido!</h2>
@@ -614,7 +614,7 @@ def send_lost_pet_email(pet, email, alert=None, latitude=None, longitude=None):
             </p>
           </div>
           <div style="background: #f5f1e9; padding: 15px; text-align: center; font-size: 12px; color: #777;">
-            <p style="margin: 0;">© 2026 EncuéntraME - Juntos encontramos a {pet.name}</p>
+            <p style="margin: 0;">© 2026 Encuentrame QR - Juntos encontramos a {pet.name}</p>
           </div>
         </div>
       </body>
@@ -629,7 +629,7 @@ def send_lost_pet_email(pet, email, alert=None, latitude=None, longitude=None):
     Contacto: {pet.phone or 'No disponible'}
     Si la ves, escanea su QR o contacta al dueño.
     Gracias por tu ayuda,
-    EncuéntraME
+    Encuentrame QR
     """
 
     try:
@@ -832,7 +832,7 @@ def send_support_email(request):
           <!-- Encabezado -->
           <div style="background: linear-gradient(135deg, #87a8d0, #f4b084); padding: 20px; text-align: center;">
             <h1 style="color: #ffffff; margin: 0; font-size: 28px;">Solicitud de Soporte</h1>
-            <p style="color: #ffffff; font-size: 16px; margin: 5px 0;">CollarMascotaQR</p>
+            <p style="color: #ffffff; font-size: 16px; margin: 5px 0;">Encuentrame QR</p>
           </div>
           <!-- Contenido -->
           <div style="padding: 20px; background: #ffffff;">
@@ -1184,11 +1184,11 @@ def request_password_reset(request):
         reset_url = f"{settings.FRONTEND_URL}/reset-password/{uid}/{token}/"
         
         # Enviar email
-        subject = 'Recuperación de contraseña - Encuéntrame'
+        subject = 'Recuperación de contraseña - Encuentrame'
         message = f"""
         Hola {user.username},
         
-        Has solicitado recuperar tu contraseña en EncuéntraME.
+        Has solicitado recuperar tu contraseña en Encuentrame.
         
         Para restablecer tu contraseña, haz clic en el siguiente enlace:
         {reset_url}
@@ -1198,7 +1198,7 @@ def request_password_reset(request):
         Este enlace expirará en 24 horas.
         
         Saludos,
-        El equipo de EncuéntraME
+        El equipo de Encuentrame
         """
         
         try:

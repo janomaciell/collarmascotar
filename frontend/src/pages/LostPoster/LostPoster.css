@@ -69,18 +69,25 @@ h1, h2, h3, h4, h5, h6 {
   box-shadow: none;
 }
 
-/* Contenedor del póster */
+/* Contenedor del póster (padding solo visual; la captura usa solo .lost-poster) */
 .lost-poster-container {
   max-width: 794px;
   margin: 0 auto;
   padding: 2rem;
 }
 
-/* ESTRUCTURA PRINCIPAL DEL PÓSTER - ALTURA FIJA A4 */
+.lost-poster-scale {
+  display: inline-block;
+  line-height: 0;
+}
+
+/* ESTRUCTURA PRINCIPAL DEL PÓSTER - ALTURA FIJA A4 (proporción exacta para PDF sin bordes) */
 .lost-poster {
   background: var(--blanco-principal);
   width: 210mm;
   height: 297mm;
+  max-width: 794px;
+  max-height: 1123px;
   margin: 0 auto;
   box-shadow: 0 20px 40px var(--sombra-fuerte);
   border-radius: 10px;
@@ -88,6 +95,7 @@ h1, h2, h3, h4, h5, h6 {
   display: flex;
   flex-direction: column;
   overflow: hidden;
+  box-sizing: border-box;
 }
 
 .poster-sans, .poster-sans * {
@@ -144,7 +152,7 @@ h1, h2, h3, h4, h5, h6 {
 
 .poster-title {
   background-color: var(--azul-principal);
-  padding: 0.6rem;
+  padding: 3rem 1.2rem;
   text-align: center;
   flex-shrink: 0;
 }
@@ -210,13 +218,13 @@ h1, h2, h3, h4, h5, h6 {
 /* NOMBRE DE LA MASCOTA - ALTURA FIJA */
 .pet-name-container {
   background-color: var(--azul-principal);
-  padding: 0.7rem;
+  padding: 2rem;
   text-align: center;
   flex-shrink: 0;
 }
 
 .pet-name {
-  font-family: 'Jackerton', 'Jackerton Regular', 'Jackerton-Regular', serif;
+  font-family: 'Poppins', sans-serif;
   font-weight: 700;
   font-size: 1.5rem;
   color: var(--blanco-principal);
@@ -244,20 +252,32 @@ h1, h2, h3, h4, h5, h6 {
   flex: 1;
   display: flex;
   align-items: flex-start;
-  gap: 0.5rem;
+  gap: 0.75rem;
   background-color: rgba(255, 255, 255, 0.9);
-  padding: 0.6rem;
+  padding: 0.75rem 1rem;
   border-radius: 8px;
+  min-width: 0;
+  min-height: 3.5rem;
 }
 
 .detail-icon {
   font-size: 1.3rem;
   flex-shrink: 0;
+  width: 1.5rem;
+  min-width: 1.5rem;
+  text-align: center;
+  line-height: 1.4;
 }
 
 .detail-text {
   flex: 1;
   min-width: 0;
+  overflow: visible;
+  word-wrap: break-word;
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  line-height: 1.5;
 }
 
 .detail-text strong {
@@ -266,15 +286,20 @@ h1, h2, h3, h4, h5, h6 {
   font-weight: 700;
   font-size: 0.85rem;
   color: var(--azul-principal);
-  margin-bottom: 0.2rem;
+  margin: 0;
+  padding: 0;
+  line-height: 1.5;
 }
 
 .detail-text p {
+  display: block;
   margin: 0;
+  padding: 0;
   font-family: 'Poppins', sans-serif;
   font-size: 0.9rem;
   color: var(--negro-principal);
   word-wrap: break-word;
+  line-height: 1.5;
 }
 
 /* MENSAJE MOTIVACIONAL */
@@ -314,7 +339,7 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 .contact-section h3 {
-  font-family: 'Jackerton', 'Jackerton Regular', 'Jackerton-Regular', serif;
+  font-family: 'Poppins', sans-serif;
   font-weight: 700;
   font-size: 1.3rem;
   color: var(--blanco-principal);

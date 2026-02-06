@@ -49,7 +49,7 @@ const ResetPassword = () => {
       <div className="reset-card">
         <h1>Restablecer contraseña</h1>
         <p className="reset-description">
-          Ingresa una nueva contraseña para tu cuenta de EncuéntraME. 
+          Ingresa una nueva contraseña para tu cuenta de Encuentrame. 
         </p>
 
         {!success ? (

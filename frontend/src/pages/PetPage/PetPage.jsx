@@ -16,8 +16,8 @@ const PetIntro = ({ name, isLost }) => (
   <div className="pet-intro">
     <p className="intro-text">
       {isLost
-        ? `¡Hola! Soy ${name} y me he perdido. Gracias por escanear mi collar EncuéntraME y ayudarme a volver con mi familia.`
-        : `¡Hola! Soy ${name}. Gracias por escanear mi collar EncuéntraME. Mi familia y yo estamos muy agradecidos.`}
+        ? `¡Hola! Soy ${name} y me he perdido. Gracias por escanear mi collar Encuentrame y ayudarme a volver con mi familia.`
+        : `¡Hola! Soy ${name}. Gracias por escanear mi collar Encuentrame. Mi familia y yo estamos muy agradecidos.`}
     </p>
   </div>
 );
@@ -227,8 +227,8 @@ const PetPage = () => {
     if (!pet.phone) return;
     const phoneNumber = pet.phone.replace(/[^\d+]/g, '');
     const message = pet.is_lost 
-      ? `Hola, encontré a ${pet.name}. Escaneé su collar EncuéntraME y quiero ayudar a que regrese a casa.`
-      : `Hola, escaneé el collar EncuéntraME de ${pet.name}.`;
+      ? `Hola, encontré a ${pet.name}. Escaneé su collar Encuentrame y quiero ayudar a que regrese a casa.`
+      : `Hola, escaneé el collar Encuentrame de ${pet.name}.`;
     window.open(`https://wa.me/${phoneNumber}?text=${encodeURIComponent(message)}`, '_blank');
   };
 

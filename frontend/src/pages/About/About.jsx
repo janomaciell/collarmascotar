@@ -29,12 +29,12 @@ const About = () => {
             <div className="card-content">
               <div className="founder-intro">
                 <h3>Jano Maciel</h3>
-                <p className="founder-title">Fundador de EncuéntraME</p>
+                <p className="founder-title">Fundador de Encuentrame</p>
               </div>
               
               <p>
                 Soy programador, emprendedor y, sobre todo, amante de los animales. 
-                La idea de EncuéntraME nació de una experiencia personal que me marcó profundamente: 
+                La idea de Encuentrame nació de una experiencia personal que me marcó profundamente: 
                 <strong> la angustia de perder a mi mascota</strong>.
               </p>
               
@@ -46,7 +46,7 @@ const About = () => {
               
               <div className="highlight-box">
                 <p>
-                  <strong>Así nació EncuéntraME:</strong> un collar con código QR que conecta a tu mascota contigo 
+                  <strong>Así nació Encuentrame:</strong> un collar con código QR que conecta a tu mascota contigo 
                   en segundos y activa una red de ayuda comunitaria.
                 </p>
               </div>
@@ -69,7 +69,7 @@ const About = () => {
               
               <p>
                 Queremos que la tecnología sea una aliada en la protección de quienes más amamos. 
-                EncuéntraME busca reducir la cantidad de mascotas perdidas, generar reencuentros rápidos 
+                Encuentrame busca reducir la cantidad de mascotas perdidas, generar reencuentros rápidos 
                 y transmitir tranquilidad a las familias.
               </p>
               
@@ -128,7 +128,7 @@ const About = () => {
         {/* Beneficios */}
         <section className="benefits-section">
           <div className="benefits-header">
-            <h2>¿Por qué elegir EncuéntraME?</h2>
+            <h2>¿Por qué elegir Encuentrame?</h2>
             <p>La solución más completa para proteger a tu mascota</p>
           </div>
           

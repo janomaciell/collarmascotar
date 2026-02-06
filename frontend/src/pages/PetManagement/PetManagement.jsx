@@ -6,7 +6,7 @@ import HeatMapComponent from '../../components/HeatMapComponent/HeatMapComponent
 import './PetManagement.css';
 import { API_URL } from '../../services/api';
 import { useNavigate } from 'react-router-dom';
-import { FaLightbulb, FaSearch, FaEdit, FaMapMarkerAlt, FaExclamationTriangle, FaCheck } from 'react-icons/fa';
+import { FaLightbulb, FaSearch, FaEdit, FaMapMarkerAlt, FaExclamationTriangle, FaCheck, FaTimes } from 'react-icons/fa';
 
 const calculateDistance = (lat1, lon1, lat2, lon2) => {
   const R = 6371;
@@ -206,6 +206,30 @@ const PetManagement = () => {
     fetchPets();
     checkLocationPermission();
   }, []);
+
+  useEffect(() => {
+    if (selectedPetId) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = '';
+    }
+    return () => {
+      document.body.style.overflow = '';
+    };
+  }, [selectedPetId]);
+
+  useEffect(() => {
+    if (!selectedPetId) return;
+    const handleEscape = (e) => {
+      if (e.key === 'Escape') {
+        setSelectedPetId(null);
+        setScanHistory([]);
+        setError('');
+      }
+    };
+    window.addEventListener('keydown', handleEscape);
+    return () => window.removeEventListener('keydown', handleEscape);
+  }, [selectedPetId]);
 
   const checkLocationPermission = async () => {
     if (navigator.permissions) {
@@ -524,25 +548,46 @@ const PetManagement = () => {
             />
 
             {selectedPetId && (
-              <div className="scan-history-container">
-                <div className="history-header">
-                  <h3>Historial de escaneos</h3>
-                  <button
-                    onClick={() => {
-                      setSelectedPetId(null);
-                      setScanHistory([]);
-                      setError('');
-                    }}
-                    className="close-history-btn"
-                  >
-                    Cerrar
-                  </button>
+              <div
+                className="history-modal-overlay"
+                onClick={() => {
+                  setSelectedPetId(null);
+                  setScanHistory([]);
+                  setError('');
+                }}
+                role="dialog"
+                aria-modal="true"
+                aria-labelledby="history-modal-title"
+              >
+                <div
+                  className="history-modal-content"
+                  onClick={(e) => e.stopPropagation()}
+                >
+                  <div className="scan-history-container">
+                    <div className="history-header">
+                      <h3 id="history-modal-title">
+                        Historial de escaneos — {pets.find((p) => p.id === selectedPetId)?.name || 'Mascota'}
+                      </h3>
+                      <button
+                        onClick={() => {
+                          setSelectedPetId(null);
+                          setScanHistory([]);
+                          setError('');
+                        }}
+                        className="close-history-btn"
+                        type="button"
+                        aria-label="Cerrar historial"
+                      >
+                        <FaTimes /> Cerrar
+                      </button>
+                    </div>
+                    <ScanHistoryDetail
+                      scanHistory={scanHistory}
+                      userLocation={userLocation}
+                      pet={pets.find((p) => p.id === selectedPetId) || {}}
+                    />
+                  </div>
                 </div>
-                <ScanHistoryDetail
-                  scanHistory={scanHistory}
-                  userLocation={userLocation}
-                  pet={pets.find((p) => p.id === selectedPetId) || {}}
-                />
               </div>
             )}
           </>

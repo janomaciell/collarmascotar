@@ -124,8 +124,8 @@ const QRRegistrationPage = () => {
   return (
     <div className="qr-registration-container">
       <header className="qr-registration-header">
-        <img src={logo} alt="Logo EncuéntraME" className="qr-logo" />
-        <h1 className="qr-title">ENCUÉNTRAME</h1>
+        <img src={logo} alt="Logo Encuentrame" className="qr-logo" />
+        <h1 className="qr-title">ENCUENTRAME</h1>
         <h2 className="qr-subtitle">Registro de Mascota</h2>
         <div className="qr-steps">
           <span className="qr-step">1. Datos de tu mascota</span>

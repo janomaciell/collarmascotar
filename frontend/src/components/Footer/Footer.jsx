@@ -17,7 +17,7 @@ const Footer = () => {
           {/* Sección de marca */}
           <div className="footer-brand">
             <div className="brand-header">
-              <img src={logoUrl} alt="ENCUÉNTRAME Logo" className="footer-logo" />
+              <img src={logoUrl} alt="ENCUENTRAME Logo" className="footer-logo" />
               <h3 className="brand-name">ENCUENTRAME</h3>
             </div>
             <p className="brand-slogan">Mascotas seguras, familias tranquilas</p>
@@ -80,7 +80,7 @@ const Footer = () => {
       <div className="footer-bottom">
         <div className="footer-bottom-container">
           <p className="copyright">
-            © {new Date().getFullYear()} EncuéntraME. Todos los derechos reservados.
+            © {new Date().getFullYear()} Encuentrame. Todos los derechos reservados.
           </p>
           <div className="footer-bottom-links">
             <Link to="/privacy">Privacidad</Link>

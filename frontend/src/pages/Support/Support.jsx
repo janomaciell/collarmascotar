@@ -192,7 +192,7 @@ const Support = () => {
                   className="social-btn facebook"
                 >
                   <span className="social-btn-icon"><FaFacebook /></span>
-                  <span>EncuéntraME</span>
+                  <span>Encuentrame</span>
                 </a>
               </div>
             </div>
