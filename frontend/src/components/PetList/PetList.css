@@ -108,8 +108,7 @@
   flex-wrap: wrap;
   margin-top: 1rem;
   padding: 1.5rem;
-  background: #f5f1e9; /* Beige pastel para fondo de acciones */
-  border-top: 1px solid #d9c6a5; /* Separador marrón pastel claro */
+
 }
 
 .view-poster-btn {

@@ -62,7 +62,7 @@ class ScanSerializer(serializers.ModelSerializer):
 class PetSerializer(serializers.ModelSerializer):
     photo = serializers.ImageField(required=False, allow_null=True)
     owner_name = serializers.SerializerMethodField()
-    owner_email = serializers.SerializerMethodField()
+    owner_email = serializers.SerializerMethodField(method_name='get_owner_email')
 
     class Meta:
         model = Pet
@@ -125,10 +125,13 @@ class PetSerializer(serializers.ModelSerializer):
         return full
 
     def get_owner_email(self, obj):
-        """Email del dueño (cuenta de usuario) para notificaciones cuando el pet no tiene email de contacto."""
+        """Email del dueño (cuenta de usuario) para notificaciones."""
         if not obj.owner_id:
             return ''
-        return getattr(obj.owner, 'email', '') or ''
+        user = getattr(obj, 'owner', None)
+        if not user:
+            return ''
+        return (getattr(user, 'email', None) or '').strip()
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)

@@ -107,7 +107,7 @@ body {
 }
 
 .brand-name {
-  font-family: 'Jackerton', serif;
+  font-family: 'Poppins', sans-serif;
   font-size: clamp(2.2rem, 4vw, 3.5rem);
   font-weight: 900;
   color: #ffffff;
@@ -518,32 +518,82 @@ body {
   color: var(--blanco-principal);
 }
 
-.action-btn.call-btn {
-  color: #fff;
+/* Botones Llamar / WhatsApp / Email: colores sólidos siempre visibles */
+.pet-actions .action-btn.call-btn,
+.pet-actions a.action-btn.call-btn {
+  background: linear-gradient(135deg, #25D366 0%, #20ba5a 100%) !important;
+  color: #FFFFFF !important;
   font-size: 1.15rem;
   font-weight: 700;
   padding: 1.2rem 2.5rem;
   border-radius: 50px;
-  box-shadow: 0 6px 20px rgba(126,217,87,0.18);
+  box-shadow: 0 6px 20px rgba(37, 211, 102, 0.35) !important;
   border: none;
-  margin-right: 1rem;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  transition: all 0.3s ease;
 }
 
-.action-btn.message-btn {
-  color: #fff;
+.pet-actions .action-btn.call-btn:hover,
+.pet-actions a.action-btn.call-btn:hover {
+  background: linear-gradient(135deg, #20ba5a 0%, #1da851 100%) !important;
+  color: #FFFFFF !important;
+  transform: translateY(-3px) scale(1.03);
+  box-shadow: 0 8px 25px rgba(37, 211, 102, 0.45) !important;
+}
+
+.pet-actions .action-btn.whatsapp-btn,
+.pet-actions button.action-btn.whatsapp-btn {
+  background: linear-gradient(135deg, #25D366 0%, #20ba5a 100%) !important;
+  color: #FFFFFF !important;
   font-size: 1.15rem;
   font-weight: 700;
   padding: 1.2rem 2.5rem;
   border-radius: 50px;
-  box-shadow: 0 6px 20px rgba(255,111,165,0.18);
+  box-shadow: 0 6px 20px rgba(37, 211, 102, 0.35) !important;
   border: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  transition: all 0.3s ease;
 }
 
-.action-btn.call-btn:hover,
-.action-btn.message-btn:hover {
-  background: var(--azul-principal);
-  color: var(--blanco-principal);
-  transform: translateY(-2px) scale(1.03);
+.pet-actions .action-btn.whatsapp-btn:hover,
+.pet-actions button.action-btn.whatsapp-btn:hover {
+  background: linear-gradient(135deg, #20ba5a 0%, #1da851 100%) !important;
+  color: #FFFFFF !important;
+  transform: translateY(-3px) scale(1.03);
+  box-shadow: 0 8px 25px rgba(37, 211, 102, 0.45) !important;
+}
+
+.pet-actions .action-btn.message-btn,
+.pet-actions a.action-btn.message-btn {
+  background: linear-gradient(135deg, #FF6FA5 0%, #ff5a96 100%) !important;
+  color: #FFFFFF !important;
+  font-size: 1.15rem;
+  font-weight: 700;
+  padding: 1.2rem 2.5rem;
+  border-radius: 50px;
+  box-shadow: 0 6px 20px rgba(255, 111, 165, 0.35) !important;
+  border: none;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  transition: all 0.3s ease;
+}
+
+.pet-actions .action-btn.message-btn:hover,
+.pet-actions a.action-btn.message-btn:hover {
+  background: linear-gradient(135deg, #ff5a96 0%, #ff4585 100%) !important;
+  color: #FFFFFF !important;
+  transform: translateY(-3px) scale(1.03);
+  box-shadow: 0 8px 25px rgba(255, 111, 165, 0.45) !important;
 }
 
 /* ==================== TABS ==================== */
@@ -561,6 +611,7 @@ body {
 }
 
 .pet-tab {
+  font-family: 'Poppins', sans-serif;
   flex: 1;
   padding: 1.2rem 1rem;
   text-align: center;
@@ -568,23 +619,25 @@ body {
   color: var(--azul-principal);
   cursor: pointer;
   border: none;
-  background: transparent;
+  background: #E8EEF5;
   font-size: 1.15rem;
   letter-spacing: 0.5px;
   border-radius: 16px;
   transition: background 0.2s, color 0.2s, box-shadow 0.2s;
-  box-shadow: 0 2px 8px rgba(5,64,143,0.04);
 }
 
 .pet-tab:hover {
-  background: var(--gris-suave);
-  color: var(--azul-principal);
+  background: #d0dceb;
+  box-shadow: 0 4px 12px rgba(5,64,143,0.12);
 }
 
 .pet-tab.active {
-  background: var(--naranja-secundario);
-  color: var(--blanco-principal);
-  box-shadow: 0 6px 20px rgba(126,217,87,0.18);
+  background: linear-gradient(135deg, var(--naranja-secundario) 0%, #d9731f 100%);
+  box-shadow: 0 6px 20px rgba(233, 131, 46, 0.35);
+}
+
+.pet-tab.active:hover {
+  box-shadow: 0 8px 24px rgba(233, 131, 46, 0.4);
 }
 
 /* ==================== SECCIONES DE INFORMACIÓN ==================== */
@@ -698,6 +751,7 @@ body {
 }
 
 .share-title {
+  font-family: 'Poppins', sans-serif;
   font-size: 1.8rem;
   font-weight: 800;
   margin-bottom: 1rem;
@@ -739,15 +793,18 @@ body {
   transform: translateY(0);
 }
 
-.whatsapp-btn {
-  color: white;
+.pet-actions .whatsapp-btn {
+  background: linear-gradient(135deg, #25D366 0%, #20ba5a 100%) !important;
+  color: #FFFFFF !important;
   border: none;
-  transition: transform 0.2s, box-shadow 0.2s;
+  transition: all 0.3s ease;
 }
 
-.whatsapp-btn:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 6px 20px rgba(37, 211, 102, 0.4);
+.pet-actions .whatsapp-btn:hover {
+  background: linear-gradient(135deg, #20ba5a 0%, #1da851 100%) !important;
+  color: #FFFFFF !important;
+  transform: translateY(-3px) scale(1.03);
+  box-shadow: 0 8px 25px rgba(37, 211, 102, 0.45);
 }
 
 /* ==================== FOOTER ==================== */
@@ -882,6 +939,7 @@ body {
 }
 
 .error-container h2 {
+  font-family: 'Poppins', sans-serif;
   font-size: 1.8rem;
   color: var(--rojo-secundario);
   margin-bottom: 1rem;
@@ -1559,6 +1617,120 @@ button:focus-visible,
 a:focus-visible {
   outline: 3px solid var(--azul-principal);
   outline-offset: 3px;
+}
+
+/* ==================== TIPS (mascota perdida) ==================== */
+.petpage-tips {
+  background: #F8FAFC;
+  border-radius: 24px;
+  border: 2px solid var(--naranja-secundario);
+  padding: 2rem 1.5rem;
+  margin: 2rem 1rem;
+  max-width: 1000px;
+  margin-left: auto;
+  margin-right: auto;
+  box-shadow: 0 8px 32px rgba(233, 131, 46, 0.15);
+}
+
+.petpage-tips-header {
+  text-align: center;
+  margin-bottom: 1.5rem;
+}
+
+.petpage-tips-header h3 {
+  font-family: 'Poppins', sans-serif;
+  font-size: 1.5rem;
+  font-weight: 800;
+  color: var(--negro-principal);
+  margin: 0 0 0.5rem 0;
+}
+
+.petpage-tips-subtitle {
+  font-family: 'Poppins', sans-serif;
+  font-size: 1rem;
+  color: var(--gris-texto);
+  margin: 0;
+}
+
+.petpage-tips-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 1.25rem;
+  margin-bottom: 1.5rem;
+}
+
+.petpage-tip-card {
+  background: var(--blanco-principal);
+  border-radius: 16px;
+  padding: 1.25rem;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.06);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  border: 2px solid transparent;
+}
+
+.petpage-tip-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 8px 24px rgba(233, 131, 46, 0.15);
+  border-color: var(--naranja-secundario);
+}
+
+.petpage-tip-icon {
+  font-size: 2rem;
+  display: block;
+  margin-bottom: 0.75rem;
+}
+
+.petpage-tip-content h4 {
+  font-family: 'Poppins', sans-serif;
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: var(--azul-principal);
+  margin-bottom: 0.4rem;
+}
+
+.petpage-tip-content p {
+  font-size: 0.95rem;
+  color: var(--gris-texto);
+  line-height: 1.5;
+  margin: 0;
+}
+
+.petpage-tips-footer {
+  background: var(--blanco-principal);
+  border-radius: 16px;
+  padding: 1rem 1.5rem;
+  text-align: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.75rem;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06);
+}
+
+.petpage-tips-footer-icon {
+  font-size: 1.5rem;
+}
+
+.petpage-tips-footer p {
+  font-family: 'Poppins', sans-serif;
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--negro-principal);
+  margin: 0;
+}
+
+@media (max-width: 768px) {
+  .petpage-tips {
+    padding: 1.5rem 1rem;
+    margin: 1.5rem 0.75rem;
+  }
+  .petpage-tips-header h3 {
+    font-size: 1.3rem;
+  }
+  .petpage-tips-grid {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
 }
 
 /* ==================== PRINT STYLES ==================== */

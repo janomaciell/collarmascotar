@@ -20,11 +20,20 @@
   opacity: 0.15;
 }
 
+.pet-form .form-section h3 {
+  font-family: 'Poppins', sans-serif;
+  font-size: 1.35rem;
+  font-weight: 800;
+  color: #05408F;
+  margin-bottom: 1.25rem;
+}
+
 .form-group {
   margin-bottom: 1.75rem;
 }
 
 .form-group label {
+  font-family: 'Poppins', sans-serif;
   display: block;
   margin-bottom: 0.5rem;
   color: #05408F;
@@ -63,6 +72,7 @@
 }
 
 .error-message {
+  font-family: 'Poppins', sans-serif;
   color: #FF3131;
   font-size: 0.95rem;
   margin-top: 0.3rem;
@@ -82,6 +92,7 @@
 }
 
 .remove-photo-button {
+  font-family: 'Poppins', sans-serif;
   background: #FF3131;
   color: #fff;
   border: none;
@@ -99,6 +110,7 @@
 }
 
 .submit-button {
+  font-family: 'Poppins', sans-serif;
   background: #05408F;
   color: #fff;
   border: none;
@@ -211,6 +223,7 @@
 }
 
 .toggle-switch-text {
+  font-family: 'Poppins', sans-serif;
   font-weight: 600;
   color: #05408F;
   min-width: 24px;

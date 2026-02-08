@@ -415,6 +415,63 @@ const PetPage = () => {
           </div>
         </section>
 
+        {pet.is_lost && (
+          <div className="petpage-tips">
+            <div className="petpage-tips-header">
+              <h3>Consejos si encontraste a {pet.name}</h3>
+              <p className="petpage-tips-subtitle">Sigue estos pasos para ayudarlo mientras contactas al dueño</p>
+            </div>
+            <div className="petpage-tips-grid">
+              <div className="petpage-tip-card">
+                <span className="petpage-tip-icon">💧</span>
+                <div className="petpage-tip-content">
+                  <h4>Ofrécele agua</h4>
+                  <p>Dale agua fresca en un lugar tranquilo. Evita que beba demasiado rápido; mejor pequeños sorbos para que se hidrate sin riesgo.</p>
+                </div>
+              </div>
+              <div className="petpage-tip-card">
+                <span className="petpage-tip-icon">🏠</span>
+                <div className="petpage-tip-content">
+                  <h4>Mantén la calma</h4>
+                  <p>Acércate despacio, sin gritar ni hacer movimientos bruscos. Habla en tono bajo y deja que te huela antes de tocarlo.</p>
+                </div>
+              </div>
+              <div className="petpage-tip-card">
+                <span className="petpage-tip-icon">📞</span>
+                <div className="petpage-tip-content">
+                  <h4>Llama al dueño</h4>
+                  <p>Usa los botones de arriba para llamar, escribir por WhatsApp o enviar un email. El dueño podrá indicarte cómo proceder.</p>
+                </div>
+              </div>
+              <div className="petpage-tip-card">
+                <span className="petpage-tip-icon">🌡️</span>
+                <div className="petpage-tip-content">
+                  <h4>Protégelo del clima</h4>
+                  <p>Si hace frío, calor o llueve, busca un lugar con sombra o resguardo. Evita que esté expuesto al sol o a la intemperie.</p>
+                </div>
+              </div>
+              <div className="petpage-tip-card">
+                <span className="petpage-tip-icon">🍖</span>
+                <div className="petpage-tip-content">
+                  <h4>Comida con precaución</h4>
+                  <p>Si tiene hambre, ofrece solo alimentos seguros: pollo hervido sin condimentos, arroz o croquetas. Nada de chocolate, cebolla ni huesos.</p>
+                </div>
+              </div>
+              <div className="petpage-tip-card">
+                <span className="petpage-tip-icon">⚕️</span>
+                <div className="petpage-tip-content">
+                  <h4>Revisa si está herido</h4>
+                  <p>Observa si cojea, sangra o tiene heridas visibles. Si parece lastimado, coméntalo al dueño al contactar.</p>
+                </div>
+              </div>
+            </div>
+            <div className="petpage-tips-footer">
+              <span className="petpage-tips-footer-icon">❤️</span>
+              <p>¡Gracias por ayudar a reunir a {pet.name} con su familia!</p>
+            </div>
+          </div>
+        )}
+
         <div className="pet-tabs">
           {['basic', 'health', 'owner'].map(tab => (
             <button
