@@ -62,6 +62,7 @@ class ScanSerializer(serializers.ModelSerializer):
 class PetSerializer(serializers.ModelSerializer):
     photo = serializers.ImageField(required=False, allow_null=True)
     owner_name = serializers.SerializerMethodField()
+    owner_email = serializers.SerializerMethodField()
 
     class Meta:
         model = Pet
@@ -82,6 +83,7 @@ class PetSerializer(serializers.ModelSerializer):
             'last_location',
             'photo',
             'owner_name',
+            'owner_email',
             # Campos de salud
             'allergies',
             'medical_conditions',
@@ -121,6 +123,12 @@ class PetSerializer(serializers.ModelSerializer):
         last = (getattr(user, 'last_name', '') or '').strip()
         full = f'{first} {last}'.strip()
         return full
+
+    def get_owner_email(self, obj):
+        """Email del dueño (cuenta de usuario) para notificaciones cuando el pet no tiene email de contacto."""
+        if not obj.owner_id:
+            return ''
+        return getattr(obj.owner, 'email', '') or ''
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)

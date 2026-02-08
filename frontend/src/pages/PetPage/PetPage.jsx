@@ -91,8 +91,13 @@ const PetPage = () => {
 
   const sendEmailNotification = async (petData, location) => {
     try {
+      const toEmail = (petData.email && petData.email.trim()) || petData.owner_email || '';
+      if (!toEmail) {
+        console.warn('[EmailJS] No hay email del dueño ni de contacto; no se envía notificación.');
+        return false;
+      }
       const templateParams = {
-        to_email: petData.email || 'janomaciel1@gmail.com',
+        to_email: toEmail,
         pet_name: petData.name,
         scan_time: new Date().toLocaleString('es-AR', {
           dateStyle: 'full',
