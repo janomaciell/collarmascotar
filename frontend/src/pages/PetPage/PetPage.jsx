@@ -91,11 +91,15 @@ const PetPage = () => {
 
   const sendEmailNotification = async (petData, location) => {
     try {
-      const toEmail = (petData.email && petData.email.trim()) || petData.owner_email || '';
+      const toEmail = petData.owner_email || (petData.email && petData.email.trim()) || '';
+      
       if (!toEmail) {
         console.warn('[EmailJS] No hay email del dueño ni de contacto; no se envía notificación.');
         return false;
       }
+
+      console.log('[EmailJS] Enviando notificación a:', toEmail);
+      
       const templateParams = {
         to_email: toEmail,
         pet_name: petData.name,
@@ -114,6 +118,8 @@ const PetPage = () => {
         import.meta.env.VITE_EMAILJS_TEMPLATE_ID_NOTIFY,
         templateParams
       );
+      
+      console.log('[EmailJS] Notificación enviada exitosamente a:', toEmail);
       return true;
     } catch (error) {
       console.error('[EmailJS] Error:', error);

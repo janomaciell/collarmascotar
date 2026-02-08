@@ -57,7 +57,15 @@ const Support = () => {
 
     } catch (err) {
       console.error('Error al enviar email:', err);
-      setError('Error al enviar el mensaje. Por favor, intenta nuevamente.');
+      
+      // Manejar errores específicos de EmailJS
+      if (err.status === 412 || (err.text && err.text.includes('Invalid grant'))) {
+        setError('Error de configuración del servicio de correo. Por favor, contacta al administrador del sistema.');
+      } else if (err.status === 400) {
+        setError('Error en los datos del formulario. Por favor, verifica que todos los campos estén completos.');
+      } else {
+        setError('Error al enviar el mensaje. Por favor, intenta nuevamente más tarde.');
+      }
     } finally {
       setIsSubmitting(false);
     }
