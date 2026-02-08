@@ -22,8 +22,8 @@ const EditProfileModal = ({ onClose }) => {
         if (!response.ok) throw new Error('Error al cargar datos del usuario');
         const data = await response.json();
         setUserData({
-          first_name: data.first_name,
-          last_name: data.last_name,
+          first_name: data.first_name ?? '',
+          last_name: data.last_name ?? '',
         });
       } catch (err) {
         setError('Error al cargar los datos. Intenta de nuevo.');

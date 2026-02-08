@@ -1,23 +1,18 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { getPetByUuid, generateLostPoster } from '../../services/api';
+import { getPetByUuid, generateLostPoster, API_URL } from '../../services/api';
 import './LostPoster.css';
 import html2canvas from 'html2canvas';
 import jsPDF from 'jspdf';
 import { FaPaw, FaCalendarAlt, FaHome, FaBirthdayCake, FaPhone, FaEnvelope } from 'react-icons/fa';
-const BASE_URL = import.meta.env.VITE_BASE_URL;
 
 const logoUrl = new URL('../../img/logo.png', import.meta.url).href;
 
-const fallbackPhotos = [
-  'https://images.unsplash.com/photo-1548199973-03cce0bbc87b?auto=format&fit=crop&w=800&q=80',
-  'https://images.unsplash.com/photo-1518364538800-6bae3c2ea5fd?auto=format&fit=crop&w=800&q=80',
-  'https://images.unsplash.com/photo-1507146426996-ef05306b995a?auto=format&fit=crop&w=800&q=80',
-];
-
-const getRandomFallbackPhoto = () => {
-  const index = Math.floor(Math.random() * fallbackPhotos.length);
-  return fallbackPhotos[index];
+/** URL de la foto de la mascota: la API puede devolver URL absoluta o ruta relativa. */
+const getPetPhotoUrl = (photo) => {
+  if (!photo) return null;
+  if (typeof photo === 'string' && photo.startsWith('http')) return photo;
+  return `${API_URL.replace(/\/api\/?$/, '')}${photo.startsWith('/') ? '' : '/'}${photo}`;
 };
 
 const LostPoster = () => {
@@ -47,11 +42,10 @@ const LostPoster = () => {
     fetchPet();
   }, [petId]);
 
-  const handleImageError = (imgElement) => {
-    console.warn('Error loading photo, switching to fallback image');
-    if (!imgElement) return;
-    imgElement.onerror = null;
-    imgElement.src = getRandomFallbackPhoto();
+  const [photoLoadFailed, setPhotoLoadFailed] = useState(false);
+  const handleImageError = () => {
+    console.warn('Error loading pet photo');
+    setPhotoLoadFailed(true);
   };
 
   const generatePosterImage = async () => {
@@ -188,20 +182,19 @@ const LostPoster = () => {
             </div>
           </div>
 
-          {/* Foto de la Mascota */}
+          {/* Foto de la Mascota: siempre la foto del perfil que subió el dueño */}
           <div className="pet-photo-container-poster">
-            {pet.photo || true ? (
+            {getPetPhotoUrl(pet.photo) && !photoLoadFailed ? (
               <img
-                src={pet.photo ? `${BASE_URL}${pet.photo}` : getRandomFallbackPhoto()}
+                src={getPetPhotoUrl(pet.photo)}
                 alt={`Foto de ${pet.name}`}
                 className="pet-photo-lost-poster"
                 crossOrigin="anonymous"
-                onError={(event) => handleImageError(event.currentTarget)}
+                onError={handleImageError}
               />
             ) : (
               <div className="no-photo-placeholder">
                 <span className="no-photo-icon"><FaPaw /></span>
-                <p>Sin foto</p>
               </div>
             )}
           </div>
@@ -234,7 +227,7 @@ const LostPoster = () => {
                 <span className="detail-icon"><FaHome /></span>
                 <div className="detail-text">
                   <strong>Dueño:</strong>
-                  <p>{pet.owner || 'No especificado'}</p>
+                  <p>{pet.owner_name?.trim() || 'No especificado'}</p>
                 </div>
               </div>
               <div className="detail-item">

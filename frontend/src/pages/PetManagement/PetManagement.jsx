@@ -480,11 +480,7 @@ const PetManagement = () => {
       <section className="pet-hero">
         <div className="pattern-bg"></div>
         <div className="hero-content">
-          <img
-            src={mascotaImage}
-            alt="Mascota EncuentraME"
-            className="hero-mascota"
-          />
+
           <h1 className="hero-title">MIS MASCOTAS</h1>
           <p className="hero-subtitle">Gestiona y protege a tus mejores amigos</p>
         </div>

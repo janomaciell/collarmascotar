@@ -60,26 +60,28 @@ class ScanSerializer(serializers.ModelSerializer):
         fields = ['id', 'timestamp', 'latitude', 'longitude']
 
 class PetSerializer(serializers.ModelSerializer):
-    photo = serializers.SerializerMethodField()
-    
+    photo = serializers.ImageField(required=False, allow_null=True)
+    owner_name = serializers.SerializerMethodField()
+
     class Meta:
         model = Pet
         fields = [
-            'id', 
-            'name', 
-            'age', 
-            'breed', 
-            'address', 
+            'id',
+            'name',
+            'age',
+            'breed',
+            'address',
             'phone',
             'email',
-            'notes', 
-            'qr_code', 
-            'qr_uuid', 
-            'created_at', 
+            'notes',
+            'qr_code',
+            'qr_uuid',
+            'created_at',
             'is_lost',
-            'last_seen_date', 
-            'last_location', 
+            'last_seen_date',
+            'last_location',
             'photo',
+            'owner_name',
             # Campos de salud
             'allergies',
             'medical_conditions',
@@ -98,18 +100,28 @@ class PetSerializer(serializers.ModelSerializer):
             'vet_address'
         ]
         read_only_fields = ['id', 'qr_code', 'qr_uuid', 'created_at']
-    
-    def get_photo(self, obj):
-        """
-        Devuelve la URL completa de la foto
-        """
-        if obj.photo:
+
+    def to_representation(self, instance):
+        """Al leer, devolver la URL completa de la foto."""
+        data = super().to_representation(instance)
+        if instance.photo:
             request = self.context.get('request')
             if request:
-                return request.build_absolute_uri(obj.photo.url)
-            return obj.photo.url
-        return None
-    
+                data['photo'] = request.build_absolute_uri(instance.photo.url)
+            else:
+                data['photo'] = instance.photo.url
+        return data
+
+    def get_owner_name(self, obj):
+        """Nombre completo del dueño (solo nombre y apellido; no se muestra el username)."""
+        if not obj.owner_id:
+            return ''
+        user = obj.owner
+        first = (getattr(user, 'first_name', '') or '').strip()
+        last = (getattr(user, 'last_name', '') or '').strip()
+        full = f'{first} {last}'.strip()
+        return full
+
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         # Log de los campos requeridos

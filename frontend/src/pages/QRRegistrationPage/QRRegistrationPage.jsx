@@ -23,8 +23,11 @@ const QRRegistrationPage = () => {
         setIsLoading(true);
         const response = await checkQRStatus(uuid);
         setQRStatus(response);
+
+        // Si el QR ya está asignado a una mascota, redirigir al perfil público de la mascota
         if (response.is_assigned) {
-          setError('Este QR ya está asignado a una mascota.');
+          navigate(`/pet/${uuid}`, { replace: true });
+          return;
         }
 
         // Check for pending registration after login
@@ -110,10 +113,10 @@ const QRRegistrationPage = () => {
   };
 
   if (isLoading) return <div className="loading">Verificando QR...</div>;
-  if (error || !qrStatus || qrStatus.is_assigned) {
+  if (error || !qrStatus) {
     return (
       <div className="error-container">
-        {error || 'Este QR ya está asignado o no es válido.'}
+        {error || 'Este QR no es válido.'}
         <button onClick={() => navigate('/')} className="back-button">
           Volver al inicio
         </button>

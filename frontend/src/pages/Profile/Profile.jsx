@@ -166,7 +166,6 @@ const Profile = () => {
       <section className="profile-hero">
         <div className="pattern-bg"></div>
         <div className="hero-content">
-          <img src={mascotaImage} alt="Mascota EncuentraME" className="hero-mascota" />
           <h1 className="hero-title">MI PERFIL</h1>
           <p className="hero-subtitle">Gestiona tu cuenta y mascotas</p>
         </div>
@@ -202,11 +201,17 @@ const Profile = () => {
                   <span className="info-value">{userData.email}</span>
                 </div>
                 <div className="info-item">
-                  <span className="info-label">Nombre:</span>
-                  <span className="info-value">{userData.first_name} {userData.last_name}</span>
+                  <span className="info-label">Nombre y apellido:</span>
+                  <span className="info-value">
+                    {[userData.first_name ?? '', userData.last_name ?? ''].map(s => (s || '').trim()).filter(Boolean).join(' ') || 'No especificado'}
+                  </span>
+                </div>
+                <div className="info-item info-item-note">
+                  <span className="info-note">
+                    Este nombre aparecerá como dueño en el cartel de mascota perdida.
+                  </span>
                 </div>
 
-                
                 <button className="edit-btn" onClick={openModal}>
                   Editar perfil
                 </button>

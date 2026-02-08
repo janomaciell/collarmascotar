@@ -17,8 +17,10 @@ axios.interceptors.request.use(
       config.headers['Authorization'] = `Token ${token}`;
     }
     
-    // Asegurar que el Content-Type sea JSON solo si hay data
-    if (config.data && !config.headers['Content-Type']) {
+    // Con FormData no enviar Content-Type para que axios use multipart/form-data con boundary
+    if (config.data instanceof FormData) {
+      delete config.headers['Content-Type'];
+    } else if (config.data && !config.headers['Content-Type']) {
       config.headers['Content-Type'] = 'application/json';
     }
     
@@ -464,7 +466,10 @@ export const resetPassword = async (uid, token, newPassword) => {
 
 export const updatePet = async (petId, petData) => {
   try {
-    const response = await axios.put(`${API_URL}/pets/${petId}/`, petData);
+    const config = petData instanceof FormData
+      ? { transformRequest: [(data, headers) => { delete headers['Content-Type']; return data; }] }
+      : {};
+    const response = await axios.put(`${API_URL}/pets/${petId}/`, petData, config);
     return response.data;
   } catch (error) {
     throw error.response?.data || error.message;
