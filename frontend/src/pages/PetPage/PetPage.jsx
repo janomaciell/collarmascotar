@@ -4,7 +4,7 @@ import { getPetByUuid, notifyOwner, sendCommunityNotification, checkQRStatus } f
 import emailjs from '@emailjs/browser';
 import './PetPage.css';
 import mascotaImage from '../../img/personaje2.png';
-import { FaExclamationTriangle, FaPhone, FaWhatsapp, FaEnvelope, FaMapMarkerAlt, FaInfo, FaCheck, FaTimes } from 'react-icons/fa';
+import { FaExclamationTriangle, FaPhone, FaWhatsapp, FaEnvelope, FaMapMarkerAlt, FaInfo, FaCheck } from 'react-icons/fa';
 
 // Inicializar EmailJS
 emailjs.init(import.meta.env.VITE_EMAILJS_PUBLIC_KEY_NOTIFY);
@@ -303,8 +303,12 @@ const PetPage = () => {
       {showPermissionModal && (
         <div className="permission-modal-overlay" onClick={() => setShowPermissionModal(false)}>
           <div className="permission-modal" onClick={(e) => e.stopPropagation()}>
-            <button className="modal-close" onClick={() => setShowPermissionModal(false)}>
-              <FaTimes />
+            <button
+              className="modal-close"
+              onClick={() => setShowPermissionModal(false)}
+              aria-label="Cerrar instrucciones"
+            >
+              <span className="modal-close-icon">✕</span>
             </button>
             <div className="modal-icon">
               <FaMapMarkerAlt />
@@ -331,6 +335,12 @@ const PetPage = () => {
               </button>
               <button className="modal-btn secondary" onClick={requestLocation}>
                 Intentar de nuevo
+              </button>
+              <button
+                className="modal-btn secondary"
+                onClick={() => setShowPermissionModal(false)}
+              >
+                Cerrar
               </button>
             </div>
           </div>
