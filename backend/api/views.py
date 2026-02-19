@@ -568,69 +568,172 @@ def send_lost_pet_email(pet, email, alert=None, latitude=None, longitude=None):
     # Enlace a Google Maps
     if lat and lon:
         maps_link = f"https://www.google.com/maps?q={lat},{lon}"
-        location_text = f'<a href="{maps_link}" style="color: #87a8d0; text-decoration: none;">Ver en Google Maps</a>'
+        location_text = f'<a href="{maps_link}" style="color: #05408F; font-weight: 600; text-decoration: none;">Lat: {lat}, Long: {lon}</a>'
     else:
         maps_link = "#"
         location_text = "Ubicación no disponible"
-    
-    html_message = f"""
-    <html>
-      <body style="font-family: Arial, sans-serif; color: #333; margin: 0; padding: 0;">
-        <div style="max-width: 600px; margin: 20px auto; border: 1px solid #e0e0e0; border-radius: 10px; overflow: hidden;">
-          <div style="background: linear-gradient(135deg, #87a8d0, #f4b084); padding: 20px; text-align: center;">
-            <h1 style="color: #ffffff; margin: 0; font-size: 28px;">¡Mascota Perdida!</h1>
-            <p style="color: #ffffff; font-size: 16px; margin: 5px 0;">Encuentrame necesita tu ayuda</p>
-          </div>
-          <div style="padding: 20px; background: #ffffff;">
-            <h2 style="color: #4a3c31; font-size: 22px; margin-bottom: 15px;">¡{pet.name} se ha perdido!</h2>
-            <p style="font-size: 16px; line-height: 1.5; color: #666;">
-              Hola,<br>
-              Una mascota llamada <strong>{pet.name}</strong> se ha perdido cerca de tu área. Te pedimos que estés atento/a y nos ayudes a reunirla con su dueño.
-            </p>
-            <table style="width: 100%; margin: 20px 0; border-collapse: collapse;">
-              <tr style="background: #f5f1e9;">
-                <td style="padding: 10px; font-weight: bold; color: #4a3c31;">Nombre:</td>
-                <td style="padding: 10px; color: #333;">{pet.name}</td>
-              </tr>
-              <tr>
-                <td style="padding: 10px; font-weight: bold; color: #4a3c31;">Raza:</td>
-                <td style="padding: 10px; color: #333;">{pet.breed or 'No especificada'}</td>
-              </tr>
-              <tr style="background: #f5f1e9;">
-                <td style="padding: 10px; font-weight: bold; color: #4a3c31;">Última ubicación:</td>
-                <td style="padding: 10px; color: #333;">{location_text}</td>
-              </tr>
-              <tr>
-                <td style="padding: 10px; font-weight: bold; color: #4a3c31;">Contacto:</td>
-                <td style="padding: 10px; color: #333;">{pet.phone or 'No disponible'}</td>
-              </tr>
-            </table>
-            <div style="text-align: center; margin: 20px 0;">
-              {f'<a href="{maps_link}" style="background: #87a8d0; color: #fff; padding: 10px 20px; text-decoration: none; border-radius: 5px; display: inline-block; margin: 5px;">Ver mapa</a>' if lat and lon else ''}
-              <a href="tel:{pet.phone}" style="background: #f4b084; color: #fff; padding: 10px 20px; text-decoration: none; border-radius: 5px; display: inline-block; margin: 5px;">Llamar al dueño</a>
-            </div>
-            <p style="font-size: 14px; color: #666; line-height: 1.5;">
-              Si ves a {pet.name}, por favor escanea su QR o contacta al dueño directamente. ¡Tu ayuda puede hacer la diferencia!
-            </p>
-          </div>
-          <div style="background: #f5f1e9; padding: 15px; text-align: center; font-size: 12px; color: #777;">
-            <p style="margin: 0;">© 2026 Encuentrame QR - Juntos encontramos a {pet.name}</p>
-          </div>
-        </div>
-      </body>
-    </html>
-    """
+
+    map_button_html = f"""
+        <a href="{maps_link}" target="_blank" style="
+            display: block;
+            background: linear-gradient(135deg, #05408F 0%, #0657b8 100%);
+            color: #FFFFFF;
+            padding: 16px 35px;
+            border-radius: 10px;
+            text-decoration: none;
+            font-weight: 700;
+            font-size: 16px;
+            margin-top: 30px;
+            box-shadow: 0 6px 20px rgba(5, 64, 143, 0.35);
+            text-align: center;
+            letter-spacing: 0.3px;
+        ">📍 Ver ubicación exacta en Google Maps</a>
+    """ if lat and lon else ""
+
+    html_message = f"""<!DOCTYPE html>
+                        <html lang="es">
+                        <head>
+                            <meta charset="UTF-8">
+                            <meta name="viewport" content="width=device-width, initial-scale=1.0">
+                            <title>Mascota Perdida - EncuéntraME</title>
+                        </head>
+                        <body style="margin: 0; padding: 40px 20px; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Helvetica Neue', Arial, sans-serif; background-color: #F5F5F5; line-height: 1.6;">
+
+                            <div style="max-width: 600px; margin: 0 auto; background: #FFFFFF; border-radius: 16px; overflow: hidden; box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);">
+
+                                <!-- Header -->
+                                <div style="background: linear-gradient(135deg, #05408F 0%, #0657b8 100%); padding: 40px 30px; text-align: center; position: relative;">
+                                    <div style="width: 70px; height: 70px; background: rgba(255,255,255,0.2); border-radius: 50%; margin: 0 auto 20px; display: flex; align-items: center; justify-content: center; font-size: 36px; border: 3px solid rgba(255,255,255,0.3);">🐾</div>
+                                    <h1 style="color: #FFFFFF; font-size: 28px; font-weight: 700; margin: 0; text-shadow: 0 2px 4px rgba(0,0,0,0.1);">¡{pet.name} se ha perdido!</h1>
+                                    <div style="color: rgba(255,255,255,0.95); font-size: 15px; margin-top: 10px; font-weight: 400;">Encuentrame QR necesita tu ayuda</div>
+                                </div>
+
+                                <!-- Alert Badge -->
+                                <div style="text-align: center;">
+                                    <div style="background: linear-gradient(135deg, #FF6FA5 0%, #e85d93 100%); color: #FFFFFF; padding: 14px 35px; margin: -28px 30px 0; border-radius: 50px; font-size: 16px; font-weight: 700; box-shadow: 0 8px 25px rgba(255, 111, 165, 0.4); display: inline-block; position: relative; z-index: 1; text-transform: uppercase; letter-spacing: 0.5px;">
+                                        🚨 Mascota perdida
+                                    </div>
+                                </div>
+
+                                <!-- Content -->
+                                <div style="padding: 45px 35px;">
+
+                                    <div style="font-size: 20px; color: #181818; margin-bottom: 20px; font-weight: 600;">¡Hola! 👋</div>
+
+                                    <div style="font-size: 16px; color: #4a4a4a; margin-bottom: 35px; line-height: 1.8;">
+                                        Una mascota llamada <strong style="color: #05408F; font-weight: 600;">{pet.name}</strong> se ha perdido cerca de tu área.
+                                        Te pedimos que estés atento/a y nos ayudes a reunirla con su dueño.
+                                        Si la ves, por favor comunícate directamente con el dueño usando la información de contacto más abajo.
+                                    </div>
+
+                                    <!-- Info Card -->
+                                    <div style="background: linear-gradient(135deg, #E8F4F8 0%, #f0f7fa 100%); border-radius: 14px; padding: 30px; margin: 35px 0; border: 2px solid #d4e9f1;">
+
+                                        <div style="display: flex; align-items: flex-start; padding: 16px 0; border-bottom: 1px solid rgba(5,64,143,0.08);">
+                                            <div style="font-size: 28px; margin-right: 18px; min-width: 35px; text-align: center;">🐶</div>
+                                            <div style="flex: 1;">
+                                                <div style="font-size: 11px; text-transform: uppercase; color: #05408F; font-weight: 700; letter-spacing: 1px; margin-bottom: 6px;">Nombre</div>
+                                                <div style="font-size: 16px; color: #181818; font-weight: 600;">{pet.name}</div>
+                                            </div>
+                                        </div>
+
+                                        <div style="display: flex; align-items: flex-start; padding: 16px 0; border-bottom: 1px solid rgba(5,64,143,0.08);">
+                                            <div style="font-size: 28px; margin-right: 18px; min-width: 35px; text-align: center;">🦴</div>
+                                            <div style="flex: 1;">
+                                                <div style="font-size: 11px; text-transform: uppercase; color: #05408F; font-weight: 700; letter-spacing: 1px; margin-bottom: 6px;">Raza</div>
+                                                <div style="font-size: 16px; color: #181818; font-weight: 600;">{pet.breed or 'No especificada'}</div>
+                                            </div>
+                                        </div>
+
+                                        <div style="display: flex; align-items: flex-start; padding: 16px 0; border-bottom: 1px solid rgba(5,64,143,0.08);">
+                                            <div style="font-size: 28px; margin-right: 18px; min-width: 35px; text-align: center;">📍</div>
+                                            <div style="flex: 1;">
+                                                <div style="font-size: 11px; text-transform: uppercase; color: #05408F; font-weight: 700; letter-spacing: 1px; margin-bottom: 6px;">Última ubicación conocida</div>
+                                                <div style="font-size: 16px; color: #181818; font-weight: 600;">{location_text}</div>
+                                            </div>
+                                        </div>
+
+                                        <div style="display: flex; align-items: flex-start; padding: 16px 0;">
+                                            <div style="font-size: 28px; margin-right: 18px; min-width: 35px; text-align: center;">📞</div>
+                                            <div style="flex: 1;">
+                                                <div style="font-size: 11px; text-transform: uppercase; color: #05408F; font-weight: 700; letter-spacing: 1px; margin-bottom: 6px;">Contacto del dueño</div>
+                                                <div style="font-size: 16px; color: #181818; font-weight: 600;">{pet.phone or 'No disponible'}</div>
+                                            </div>
+                                        </div>
+
+                                    </div>
+
+                                    <!-- Map Button -->
+                                    {map_button_html}
+
+                                    <!-- Divider -->
+                                    <div style="height: 2px; background: linear-gradient(to right, transparent, #E8F4F8, transparent); margin: 35px 0;"></div>
+
+                                    <!-- Tips Section -->
+                                    <div style="background: #fffef7; border-left: 5px solid #FF6FA5; padding: 25px; border-radius: 10px; margin: 30px 0; box-shadow: 0 2px 8px rgba(255,111,165,0.1);">
+                                        <div style="font-size: 16px; font-weight: 700; color: #181818; margin-bottom: 15px;">💡 ¿Qué hacer si ves a {pet.name}?</div>
+                                        <ul style="font-size: 14px; color: #4a4a4a; line-height: 1.9; padding-left: 22px; margin: 0;">
+                                            <li style="margin-bottom: 10px;">Escanea el código QR de su collar para ver los datos de contacto.</li>
+                                            <li style="margin-bottom: 10px;">Comunícate directamente con el dueño al número indicado.</li>
+                                            <li style="margin-bottom: 10px;">Si es posible, mantenla en un lugar seguro mientras el dueño llega.</li>
+                                            <li>¡Tu ayuda puede hacer la diferencia!</li>
+                                        </ul>
+                                    </div>
+
+                                    <!-- CTA Section -->
+                                    <div style="background: linear-gradient(135deg, #E8F4F8 0%, #d4e9f1 100%); padding: 30px; border-radius: 14px; text-align: center; margin: 30px 0; border: 2px solid #c5e3ee;">
+                                        <div style="font-size: 15px; color: #05408F; margin-bottom: 18px; font-weight: 600; line-height: 1.6;">
+                                            ¿Tenés una mascota y querés protegerla con un collar QR?
+                                        </div>
+                                        <a href="https://www.encuentrameqr.com" target="_blank" style="display: inline-block; background: #05408F; color: #FFFFFF; padding: 14px 30px; border-radius: 10px; text-decoration: none; font-weight: 700; font-size: 15px; letter-spacing: 0.3px;">
+                                            Conocé Encuentrame QR
+                                        </a>
+                                    </div>
+
+                                </div>
+
+                                <!-- Footer -->
+                                <div style="background: #181818; padding: 35px 30px; text-align: center; color: #FFFFFF;">
+                                    <div style="font-size: 24px; font-weight: 700; color: #FFFFFF; margin-bottom: 12px; letter-spacing: 0.5px;">🐾 ENCUENTRAME</div>
+                                    <div style="font-size: 14px; color: #7ED957; margin-bottom: 20px; font-weight: 500;">Mascotas seguras, familias tranquilas</div>
+                                    <div style="font-size: 13px; color: #b8b8b8; margin: 10px 0; line-height: 1.7;">
+                                        Este es un mensaje automático generado por el sistema de alertas de EncuéntraME.<br>
+                                        No es necesario responder este correo.
+                                    </div>
+                                    <div style="margin-top: 25px; padding-top: 25px; border-top: 1px solid #333333;">
+                                        <a href="https://www.encuentrameqr.com" style="color: #FFFFFF; text-decoration: none; font-size: 13px; margin: 0 12px; font-weight: 600;">Sitio Web</a>
+                                        <a href="https://www.encuentrameqr.com/ayuda" style="color: #FFFFFF; text-decoration: none; font-size: 13px; margin: 0 12px; font-weight: 600;">Centro de Ayuda</a>
+                                        <a href="https://www.encuentrameqr.com/contacto" style="color: #FFFFFF; text-decoration: none; font-size: 13px; margin: 0 12px; font-weight: 600;">Contacto</a>
+                                    </div>
+                                    <div style="margin-top: 20px;">
+                                        <a href="https://www.facebook.com/share/17x6yNMTh5/?mibextid=wwXIfr" target="_blank" style="display: inline-block; width: 40px; height: 40px; background: #05408F; color: #FFFFFF; border-radius: 50%; margin: 0 6px; text-decoration: none; line-height: 40px; font-size: 18px; text-align: center;">f</a>
+                                        <a href="https://www.instagram.com/encuentrameqr?igsh=YWR2cm54aWYwNnVp&utm_source=qr" target="_blank" style="display: inline-block; width: 40px; height: 40px; background: #05408F; color: #FFFFFF; border-radius: 50%; margin: 0 6px; text-decoration: none; line-height: 40px; font-size: 18px; text-align: center;">📷</a>
+                                    </div>
+                                    <div style="margin-top: 25px; padding-top: 20px; border-top: 1px solid #333333; font-size: 12px; color: #999999;">
+                                        © 2026 EncuéntraME. Todos los derechos reservados.<br>
+                                        Buenos Aires, Argentina
+                                    </div>
+                                </div>
+
+                            </div>
+                        </body>
+                        </html>"""
 
     plain_message = f"""
-    ¡Mascota perdida cerca de ti!
-    Nombre: {pet.name}
-    Raza: {pet.breed or 'No especificada'}
-    Última ubicación: {maps_link if lat and lon else 'No disponible'}
-    Contacto: {pet.phone or 'No disponible'}
-    Si la ves, escanea su QR o contacta al dueño.
-    Gracias por tu ayuda,
-    Encuentrame QR
-    """
+¡Mascota perdida cerca de ti!
+
+Nombre: {pet.name}
+Raza: {pet.breed or 'No especificada'}
+Última ubicación: {maps_link if lat and lon else 'No disponible'}
+Contacto: {pet.phone or 'No disponible'}
+
+Si la ves, escanea su QR o contacta al dueño directamente.
+¡Tu ayuda puede hacer la diferencia!
+
+Gracias,
+Encuentrame QR
+www.encuentrameqr.com
+"""
 
     try:
         send_mail(
